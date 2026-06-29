@@ -19,14 +19,30 @@ export async function ordersRoutes(fastify: FastifyInstance) {
     { preHandler: adminMiddleware },
     ordersController.listPendingPayment
   )
-  fastify.patch(
-    '/admin/:id/review',
+  fastify.post(
+    '/admin/:id/run-queries',
     { preHandler: adminMiddleware },
-    ordersController.review
+    ordersController.runQueries 
   )
+  fastify.post(
+    '/admin/:id/retry-failed',
+    { preHandler: adminMiddleware },
+    ordersController.retryFailed
+  )
+  fastify.patch(
+    '/admin/:id/approve',
+    { preHandler: adminMiddleware },
+    ordersController.approveAfterQueries
+  )
+  
   fastify.patch(
     '/admin/:id/confirm-payment',
     { preHandler: adminMiddleware },
     ordersController.confirmPayment
+  )
+  fastify.patch(
+    '/admin/:id/review',
+    { preHandler: adminMiddleware },
+    ordersController.review
   )
 }

@@ -1,6 +1,9 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import { createOrderSchema, reviewOrderSchema } from './orders.schema'
 import { ordersService } from './orders.service'
+import { processOrder, retryFailedEndpoints } from './orders.processor'
+import { logger } from '@shared/logger'
+import { successProcessor } from 'node_modules/zod/v4/core/json-schema-processors.cjs'
 
 export class OrdersController {
   async create(request: FastifyRequest, reply: FastifyReply) {
@@ -79,6 +82,48 @@ export class OrdersController {
       data: { order },
     })
   }
+
+  async runQueries(request: FastifyRequest, reply: FastifyReply) {
+    const { id } = request.params as { id:string }
+
+    // Atualiza o status para queries_running e dispara
+    await ordersService.runQueries(id)
+
+    processOrder(id, 'review').catch((err) => {
+      logger.error({ err, orderId: id }, 'Erro no processamento de revisão')
+    })
+
+    return reply.status(200).send({
+      sucess: true,
+      message: 'Consultas disparadas. Aguarde alguns segundos para realizar a consultar o pedido novamente'
+    })
+  }
+
+  async retryFailed(request: FastifyRequest,reply: FastifyReply) {
+    const { id } = request.params as { id: string }
+
+    retryFailedEndpoints(id).catch((err) => {
+      logger.error({ err, orderId: id }, 'Erro no retry de endpoints')
+    })
+
+    return reply.status(200).send({
+      success: true,
+      message: 'Reprocessando endpoints com falha. Aguarde alguns segundos.'
+    })
+  }
+
+  async approveAfterQueries(request: FastifyRequest, reply: FastifyReply) {
+    const { id } = request.params as { id: string }
+
+    const order = await ordersService.approveAfterQueries(id, request.user.sub)
+
+    return reply.status(200).send({
+      success: true,
+      message: 'Pedido aprovado! Aguardando confirmação de pagamento.',
+      data: { order },
+    })
+  }
+  
 }
 
 export const ordersController = new OrdersController()

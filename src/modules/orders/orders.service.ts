@@ -79,7 +79,7 @@ export class OrdersService {
     }
 
     if (input.approved) {
-      order.status = 'pending_payment'
+      order.status = 'queries_runnig'
     } else {
       order.status = 'rejected'
       order.rejectionReason = input.rejectionReason ?? 'Não especificado'
@@ -88,6 +88,46 @@ export class OrdersService {
     order.reviewedBy = adminId as unknown as typeof order.reviewedBy
     order.reviewedAt = new Date()
 
+    await order.save()
+
+    return order
+  }
+
+  async runQueries(orderId: string) {
+    const order = await this.getById(orderId)
+
+    if (order.status !== 'pending_review' && order.status !== 'queries_done') {
+      throw AppError.conflict(
+      'Consultas só podem ser disparadas em pedidos pendentes de revisão ou já consultados'
+      )
+    }
+
+    order.status = 'queries_runnig'
+    await order.save()
+
+    return order
+  }
+
+  async markQueriesDone(orderId: string) {
+    const order = await this.getById(orderId)
+    order.status = 'queries_done'
+    await order.save()
+    return order
+  }
+
+  async approveAfterQueries(orderId: string, adminId: string) {
+    const order = await this.getById(orderId)
+
+    if (order.status !== 'queries_done') {
+      throw AppError.conflict (
+        'O pedido precisa ter as consultas concluídas antes de ser aprovado para pagamento'
+      )
+
+    }
+
+    order.status = 'pending_payment'
+    order.reviewedBy = adminId as unknown as typeof order.reviewedBy
+    order.reviewedAt = new Date()
     await order.save()
 
     return order
@@ -114,7 +154,7 @@ export class OrdersService {
     })
 
     // A partir daqui o processamento real (chamadas às APIs externas)
-    processOrder(order._id.toString()).catch((err) => {
+    processOrder(order._id.toString(), 'payment').catch((err) => {
       throw err
     })
 

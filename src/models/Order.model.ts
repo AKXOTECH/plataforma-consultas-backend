@@ -5,6 +5,8 @@ export type OrderType = 'report' | 'custom'
 
 export type OrderStatus =
   | 'pending_review'
+  | 'queries_runnig'
+  | 'queries_done'
   | 'pending_payment'
   | 'processing'
   | 'completed'
@@ -72,6 +74,8 @@ const OrderSchema = new Schema<IOrder>(
       type: String,
       enum: [
         'pending_review',
+        'queries_runnig',
+        'queries_done',
         'pending_payment',
         'processing',
         'completed',
