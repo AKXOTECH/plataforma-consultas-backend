@@ -4,6 +4,7 @@ import { env } from '../config/env'
 import { logger } from '../shared/logger'
 import { AppError } from '../shared/errors/AppError'
 import { PROVIDER_ENDPOINT_PATH, type ApiEndpoint } from '../config/constants'
+import { endpointConfigsService } from '../modules/endpoint-configs/endpoint-configs.service'
 
 /**
  *API do fornecedor AvaliService.
@@ -82,7 +83,7 @@ class AvaliServiceProvider {
   }
 
   async query(endpoint: ApiEndpoint, placa: string): Promise<Record<string, unknown>> {
-    const path = PROVIDER_ENDPOINT_PATH[endpoint]
+    const path = await endpointConfigsService.getPath(endpoint)
     let token = await this.getToken()
 
     const doRequest = async (authToken: string) => {

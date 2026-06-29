@@ -5,10 +5,12 @@ import { connectDatabase } from './db'
 import { env } from './config/env'
 import { logger } from './shared/logger'
 import { build } from 'pino-pretty'
+import { seedEndpointConfigs } from './scripts/seed-endpoint-configs'
 
 async function bootstrap() {
     try {
         await connectDatabase()
+        await seedEndpointConfigs()
 
         const app = await buildApp()
 

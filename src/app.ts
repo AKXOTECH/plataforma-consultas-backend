@@ -13,6 +13,7 @@ import { errorHandler } from './shared/errors/error-handler'
 import { logger } from './shared/logger'
 import staticFiles from '@fastify/static'
 import path from 'node:path'
+import { endpointConfigsRoutes } from './modules/endpoint-configs/endpoint-configs.routes'
 
 
 export async function buildApp() {
@@ -25,11 +26,7 @@ export async function buildApp() {
         contentSecurityPolicy: false,
     })
 
-    await app.register(staticFiles, {
-        root: path.join(process.cwd(), 'storage', 'reports'),
-        prefix: '/reports/',
-    })
-
+    
     await app.register(cors, {
         origin: env.NODE_ENV === 'production'
         ? ['https://lscheck.com.br']
@@ -37,7 +34,7 @@ export async function buildApp() {
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     })
-
+    
     await app.register(rateLimit, {
         max: env.RATE_LIMIT_MAX,
         timeWindow: env.RATE_LIMIT_WINDOWS_MS,
@@ -47,14 +44,14 @@ export async function buildApp() {
             message: 'Muitas requisições. Aguarde um momento.',
         }),
     })
-
+    
     await app.register(jwt, {
         secret: env.JWT_SECRET,
         sign: {
             expiresIn: env.JWT_EXPIRES_IN,
         },
     })
-
+    
     await app.register(swagger, {
         openapi: {
             info: {
@@ -73,7 +70,7 @@ export async function buildApp() {
             },
         },
     })
-
+    
     await app.register(swaggerUi, {
         routePrefix: '/docs',
         uiConfig: {
@@ -81,9 +78,13 @@ export async function buildApp() {
             deepLinking: false,
         },
     })
-
+    await app.register(staticFiles, {
+        root: path.join(process.cwd(), 'storage', 'reports'),
+        prefix: '/reports/',
+    })
+    
     app.setErrorHandler(errorHandler)
-
+    
     app.get('/health', async () => ({
         success: true,
         status: 'ok',
@@ -95,6 +96,8 @@ export async function buildApp() {
     await app.register(authRoutes,  { prefix: '/api/auth' })
 
     await app.register(ordersRoutes, { prefix: '/api/orders' })
+
+    await app.register(endpointConfigsRoutes, { prefix: '/api/admin/endpoint-configs'})
 
     logger.info(' App Fastify configurado')
 
