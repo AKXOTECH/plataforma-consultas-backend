@@ -29,6 +29,11 @@ export async function ordersRoutes(fastify: FastifyInstance) {
     { preHandler: adminMiddleware },
     ordersController.retryFailed
   )
+  fastify.post(
+    '/admin/:id/generate-pdf',
+    { preHandler: adminMiddleware },
+    ordersController.generatePdf
+  )
   fastify.patch(
     '/admin/:id/approve',
     { preHandler: adminMiddleware },

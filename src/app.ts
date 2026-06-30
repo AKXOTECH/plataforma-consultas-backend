@@ -82,6 +82,12 @@ export async function buildApp() {
         root: path.join(process.cwd(), 'storage', 'reports'),
         prefix: '/reports/',
     })
+
+    await app.register(staticFiles, {
+        root: path.join(process.cwd(), 'public'),
+        prefix: '/public/',
+        decorateReply: false,
+    })
     
     app.setErrorHandler(errorHandler)
     

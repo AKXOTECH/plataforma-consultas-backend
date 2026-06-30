@@ -11,6 +11,7 @@ import {
 import type { CreateOrderInput, ReviewOrderInput } from './orders.schema'
 import type { ReportType } from '../../config/constants'
 import { processOrder } from './orders.processor'
+import { logger } from '../../shared/logger'
 
 export class OrdersService {
   async createOrder(userId: string, input: CreateOrderInput) {
@@ -154,8 +155,24 @@ export class OrdersService {
     })
 
     // A partir daqui o processamento real (chamadas às APIs externas)
+    order.status = 'pdf_review'
+    await order.save()
+
+    return order
+  }
+  async generatePdf(orderId: string) {
+    const order = await this.getById(orderId)
+
+    if (order.status !== 'pdf_review') {
+      throw AppError.conflict(
+        'O PDF só pode ser gerado após a confirmação de pagamento e revisão dos resultados'
+      )
+    }
+    order.status = 'processing'
+    await order.save()
+
     processOrder(order._id.toString(), 'payment').catch((err) => {
-      throw err
+      logger.error({ err, orderId }, 'Erro ao gerar PDF')
     })
 
     return order

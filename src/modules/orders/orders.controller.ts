@@ -4,6 +4,7 @@ import { ordersService } from './orders.service'
 import { processOrder, retryFailedEndpoints } from './orders.processor'
 import { logger } from '@shared/logger'
 import { successProcessor } from 'node_modules/zod/v4/core/json-schema-processors.cjs'
+import { success } from 'zod'
 
 export class OrdersController {
   async create(request: FastifyRequest, reply: FastifyReply) {
@@ -80,6 +81,18 @@ export class OrdersController {
       success: true,
       message: 'Pagamento confirmado. Processando consultas.',
       data: { order },
+    })
+  }
+
+  async generatePdf(request: FastifyRequest, reply: FastifyReply) {
+    const { id } = request.params as { id:string }
+
+    const order = await ordersService.generatePdf(id)
+
+    return reply.status(200).send({
+      success: true,
+      message: 'Gerando PDF. Aguarde alguns segundos e consulte o pedido.',
+      data: { order }
     })
   }
 

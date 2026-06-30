@@ -8,6 +8,7 @@ export type OrderStatus =
   | 'queries_runnig'
   | 'queries_done'
   | 'pending_payment'
+  | 'pdf_review'
   | 'processing'
   | 'completed'
   | 'failed'
@@ -77,6 +78,7 @@ const OrderSchema = new Schema<IOrder>(
         'queries_runnig',
         'queries_done',
         'pending_payment',
+        'pdf_review',
         'processing',
         'completed',
         'failed',
