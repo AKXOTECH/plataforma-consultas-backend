@@ -72,6 +72,48 @@ export class OrdersService {
     return order
   }
 
+  async listAll(filters: {
+    status?: string | undefined
+    userId?: string | undefined 
+    startDate?: string | undefined
+    endDate?: string | undefined
+    page?: number | undefined
+    limit?: number | undefined
+  }) {
+    const query: Record<string, unknown> = {}
+
+    if (filters.status) query.status = filters.status
+    if (filters.userId) query.userId = filters.userId
+
+    if (filters.startDate || filters.endDate) {
+      query.createdAt = {
+        ...(filters.startDate && { $gte: new Date(filters.startDate) }),
+        ...(filters.endDate && { $lte: new Date(filters.endDate) }),
+      }
+    }
+
+    const page = filters.page ?? 1
+    const limit = filters.limit ?? 20
+    const skip = (page - 1) * limit
+
+    const [orders, total] = await Promise.all([
+      Order.find(query)
+        .populate('userId', 'name email phone')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Order.countDocuments(query),  
+    ])
+
+    return {
+      orders,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    }
+  }
+
   async review(orderId: string, adminId: string, input: ReviewOrderInput) {
     const order = await this.getById(orderId)
 

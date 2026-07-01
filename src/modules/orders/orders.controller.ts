@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import { createOrderSchema, reviewOrderSchema } from './orders.schema'
-import { ordersService } from './orders.service'
+import { OrdersService, ordersService } from './orders.service'
 import { processOrder, retryFailedEndpoints } from './orders.processor'
 import { logger } from '@shared/logger'
 import { successProcessor } from 'node_modules/zod/v4/core/json-schema-processors.cjs'
@@ -48,6 +48,25 @@ export class OrdersController {
       success: true,
       data: { orders },
     })
+  }
+
+  async listAll(request: FastifyRequest, reply: FastifyReply) {
+    const { status, userId, startDate, endDate, page, limit } = request.query as Record<string, string>
+
+    const result = await ordersService.listAll({
+      status,
+      userId,
+      startDate,
+      endDate,
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+    })
+
+    return reply.status(200).send({
+      success: true,
+      data: result,
+    })
+    
   }
 
   async listPendingPayment(_request: FastifyRequest, reply: FastifyReply) {

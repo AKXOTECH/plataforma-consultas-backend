@@ -19,6 +19,11 @@ export async function ordersRoutes(fastify: FastifyInstance) {
     { preHandler: adminMiddleware },
     ordersController.listPendingPayment
   )
+  fastify.get(
+    '/admin/all',
+    { preHandler: adminMiddleware },
+    ordersController.listAll
+  )
   fastify.post(
     '/admin/:id/run-queries',
     { preHandler: adminMiddleware },
