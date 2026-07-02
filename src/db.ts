@@ -1,6 +1,7 @@
 import mongosse from 'mongoose'
 import { env } from './config/env'
 import { logger } from './shared/logger'
+import { error } from 'node:console'
 
 export async function connectDatabase(): Promise<void> {
     try {
@@ -15,7 +16,12 @@ export async function connectDatabase(): Promise<void> {
         logger.info('MongoDB conectado')
 
         mongosse.connection.on('disconnected', () => {
-            logger.error('MongoDB desconectado')
+            logger.warn('MongoDB desconectado - tentando reconectar ...')
+            setTimeout(() => {
+                mongosse.connect(env.MONGODB_URI).catch((err) => {
+                    logger.error({ err }, 'Falha ao reconectar ao MongoDB')
+                })
+            }, 5000)
         })
 
         mongosse.connection.on('error', (err) => {
