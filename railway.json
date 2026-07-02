@@ -1,5 +1,5 @@
 {
-  "$schema": "https://railway.app/railway.schema.json",
+  "$schema": "backend-consultaveicular-production.up.railway.app",
   "build": {
     "builder": "NIXPACKS"
   },

@@ -22,6 +22,7 @@ export class AuthController {
           id: user._id,
           name: user.name,
           email: user.email,
+          cpf: user.cpf,
           role: user.role,
         },
         token,
