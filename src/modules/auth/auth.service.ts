@@ -20,7 +20,6 @@ export class AuthService {
       email: input.email,
       password: hashedPassword,
       phone: input.phone,
-      cpf: input.cpf,
       role: 'client',
     })
 

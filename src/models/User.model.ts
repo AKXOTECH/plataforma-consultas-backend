@@ -7,7 +7,7 @@ export interface IUser extends Document {
   email: string
   password: string
   phone: string
-  cpf: string
+  cpf?: string
   role: UserRole
   isActive: boolean
   createdAt: Date
@@ -35,8 +35,8 @@ const UserSchema = new Schema<IUser>(
     },
     cpf: {
       type: String,
-      required: [true, 'CPF obrigatório'],
-      minlength: [11, 'CPF deve ter ao menos 11 caracteres'],
+      trim: true,
+      default: null,
     },
     phone: {
       type: String,
