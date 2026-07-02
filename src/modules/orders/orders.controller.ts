@@ -155,6 +155,17 @@ export class OrdersController {
       data: { order },
     })
   }
+
+  async metrics(_request: FastifyRequest, reply: FastifyReply) {
+    const data = await ordersService.getMetrics()
+    return reply.status(200).send({ success: true, data })
+  }
+
+  async delete(request: FastifyRequest, reply: FastifyReply) {
+    const { id } = request.params as { id: string }
+    await ordersService.delete(id)
+    return reply.status(200).send({ success: true })
+  }
   
 }
 

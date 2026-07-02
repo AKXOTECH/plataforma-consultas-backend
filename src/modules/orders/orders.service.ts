@@ -12,6 +12,7 @@ import type { CreateOrderInput, ReviewOrderInput } from './orders.schema'
 import type { ReportType } from '../../config/constants'
 import { processOrder } from './orders.processor'
 import { logger } from '../../shared/logger'
+import { User } from '@models/User.model'
 
 export class OrdersService {
   async createOrder(userId: string, input: CreateOrderInput) {
@@ -218,6 +219,30 @@ export class OrdersService {
     })
 
     return order
+  }
+  async getMetrics() {
+    const [total, pendingReview, completed, failed] = await Promise.all([
+      Order.countDocuments(),
+      Order.countDocuments({status: 'pending_review'}),
+      Order.countDocuments({ status: 'completed'}),
+      Order.countDocuments({ status: 'failed' }),
+    ])
+
+    const admins = await User.countDocuments({ role: 'admin'})
+
+    return {
+      totalPedidos: total,
+      pendentes: pendingReview,
+      enviados: completed,
+      admins,
+    }
+  }
+
+  async delete(orderId: string) {
+    const order = await Order.findByIdAndDelete(orderId)
+    if (!order) throw AppError.notFound('Pedido não encontrado')
+      return { success: true }
+
   }
 }
 

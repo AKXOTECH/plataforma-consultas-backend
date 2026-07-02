@@ -14,6 +14,7 @@ import { logger } from './shared/logger'
 import staticFiles from '@fastify/static'
 import path from 'node:path'
 import { endpointConfigsRoutes } from './modules/endpoint-configs/endpoint-configs.routes'
+import { usersRoutes } from '@modules/users/users.routes'
 
 
 export async function buildApp() {
@@ -51,6 +52,8 @@ export async function buildApp() {
             expiresIn: env.JWT_EXPIRES_IN,
         },
     })
+
+    await app.register(usersRoutes, { prefix: '/api/usuarios' })
     
     await app.register(swagger, {
         openapi: {

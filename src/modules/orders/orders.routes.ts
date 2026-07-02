@@ -24,6 +24,11 @@ export async function ordersRoutes(fastify: FastifyInstance) {
     { preHandler: adminMiddleware },
     ordersController.listAll
   )
+  fastify.get(
+    '/admin/metrics',
+    {  preHandler: adminMiddleware },
+    ordersController.metrics
+  )
   fastify.post(
     '/admin/:id/run-queries',
     { preHandler: adminMiddleware },
@@ -54,5 +59,10 @@ export async function ordersRoutes(fastify: FastifyInstance) {
     '/admin/:id/review',
     { preHandler: adminMiddleware },
     ordersController.review
+  )
+  fastify.delete(
+    '/admin/:id',
+    { preHandler: adminMiddleware },
+    ordersController.delete
   )
 }
