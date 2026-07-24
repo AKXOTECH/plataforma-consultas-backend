@@ -2,8 +2,10 @@ import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify'
 import { success, ZodError } from 'zod'
 import { AppError } from './AppError'
 import { logger } from '../logger'
-import { floatSafeRemainder } from 'node_modules/zod/v4/core/util.cjs'
-
+function floatSafeRemainder(a: number, b: number): number {
+  const precision = 1000000000;
+  return (Math.round(a * precision) % Math.round(b * precision)) / precision;
+}
 
 export function errorHandler(
     error: FastifyError | AppError | ZodError | Error,
