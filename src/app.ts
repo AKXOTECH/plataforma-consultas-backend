@@ -30,7 +30,7 @@ export async function buildApp() {
     
     await app.register(cors, {
         origin: env.NODE_ENV === 'production'
-        ? ['https://lscheck.com.br']
+        ? env.FRONTEND_URL
         : true,
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
@@ -38,7 +38,7 @@ export async function buildApp() {
     
     await app.register(rateLimit, {
         max: env.RATE_LIMIT_MAX,
-        timeWindow: env.RATE_LIMIT_WINDOWS_MS,
+        timeWindow: env.RATE_LIMIT_WINDOW_MS,
         errorResponseBuilder: () => ({
             success: false,
             code: 'RATE_LIMIT_EXCEEDED',

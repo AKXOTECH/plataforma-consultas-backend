@@ -18,8 +18,10 @@ const envSchema = z.object({
     PROVIDER_USERNAME: z.string().min(1, 'PROVIDER_USERNAME obrigatório'),
     PROVIDER_PASSWORD: z.string().min(1, 'PROVIDER_PASSWORD obrigatório'),
 
+    FRONTEND_URL: z.string().default('*'),
+
     RATE_LIMIT_MAX: z.coerce.number().default(100),
-    RATE_LIMIT_WINDOWS_MS: z.coerce.number().default(60000),
+    RATE_LIMIT_WINDOW_MS: z.coerce.number().default(60000),
 
     MIN_OPERATIONAL_COST: z.coerce.number().default(500),
     DEV_PROFIT_SHARE: z.coerce.number().default(0.20),
