@@ -77,7 +77,21 @@ class AvaliServiceProvider {
 
       return token
     } catch (err) {
-      logger.error({ err }, 'Falha ao autenticar no AvaliService')
+      if (axios.isAxiosError(err)) {
+        logger.error({
+          status: err.response?.status,
+          data: err.response?.data,
+          headers: err.response?.headers,
+          url: err.config?.url,
+          baseURL: err.config?.baseURL,
+          method: err.config?.method,
+          message: err.message,
+          code: err.code,
+        }, 'Erro detalhado ao autenticar no AvaliService')
+      } else {
+        logger.error({ err }, 'Erro não esperado ao autenticar no AvaliService')
+      }
+
       throw AppError.externalApiError('Falha ao autenticar no provedor de consultas')
     }
   }
