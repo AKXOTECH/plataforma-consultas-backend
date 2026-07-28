@@ -26,7 +26,7 @@ class AvaliServiceProvider {
   constructor() {
     this.client = axios.create({
       baseURL: env.PROVIDER_BASE_URL,
-      timeout: 30_000,
+      timeout: 60_000,
     })
 
     axiosRetry(this.client, {
