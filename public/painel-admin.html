@@ -883,7 +883,7 @@ function renderOrder() {
               white-space:pre-wrap;
               word-break:break-all;
               margin:0;
-            ">${JSON.stringify(result, null, 2)}</pre>
+            ">${JSON.stringify(sanitizeResult, null, 2)}</pre>
           </div>
         </div>
     `
@@ -1085,6 +1085,17 @@ function toggleResult(id) {
   if (!el) return
   const isOpen = el.style.display !== 'none'
   el.style.display = isOpen ? 'none' : 'block'
+}
+
+function sanitizeResult(data) {
+  if (!data || typeof data !== 'object') return data
+  const cleaned = { ...data }
+
+  delete cleaned.pdfBase64
+  delete cleaned.base64
+  delete cleaned.pdf
+
+  return cleaned
 }
 
 

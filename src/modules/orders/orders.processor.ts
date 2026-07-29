@@ -35,29 +35,36 @@ export async function processOrder(
             try {
                 const data = await avaliServiceProvider.query(endpoint, order.placa)
                 
+                const dataRecord = data as Record<string, unknown>
                 const pdfBase64Endpoints = ['csv', 'csv2', 'crlv', 'crlvsp', 'crlvsp3']
+
+                const removeBase64 = (obj: Record<string, unknown>): Record<string, unknown> => Object.fromEntries(Object.entries(obj).filter(([k]) => k !== 'pdfBase64' ))
 
                 if (
                     pdfBase64Endpoints.includes(endpoint) &&
-                    typeof data.pdfBase64 === 'string' && data.pdfBase64.length > 0
+                    typeof dataRecord['pdfBase64'] === 'string' && (dataRecord['pdfBase64'] as string).length > 0
                 ) {
-                    const pdfBuffer = Buffer.from(data.pdfBase64 as string, 'base64')
-                    const pdfFileName = `${endpoint}-${order._id}.pdf`
-                    const pdfPath = path.join(process.cwd(), 'storage', 'reports', pdfFileName)
-                    fs.writeFileSync(pdfPath, pdfBuffer)
+                    const cleanData = removeBase64(dataRecord)
 
-                    // Guarda o link (Caso de necessidade) e descarta o Base64 gigante.
-                    const { pdfBase64: _removed, ...dataWithoutPdf } = data
-                    results[endpoint] = {
-                        ...dataWithoutPdf,
-                        pdfBase64: undefined,
-                        pdfUrl: `/reports/${pdfFileName}`,
+                    try {
+                        const pdfBuffer = Buffer.from(dataRecord['pdfBase64'] as string, 'base64')
+                        const pdfFileName = `${endpoint}-${order._id}.pdf`
+                        const pdfPath = path.join(process.cwd(), 'storage', 'reports', pdfFileName)
+                        fs.writeFileSync(pdfPath, pdfBuffer)
+                        cleanData['pdfUrl'] = `/reports/${pdfFileName}`
+                    } catch {
+
+                        logger.error({ endpoint}, 'Falha ao salvar PDF do Base64')
                     }
+
+                    results[endpoint] = cleanData
+                    successCount ++
+                    
                 } else {
                     results[endpoint] = data
+                    successCount++
                 }
 
-                successCount++
             } catch (err) {
                 logger.error({ err, endpoint, placa: order.placa}, 'Falha em endpoint individual')
                 results[endpoint] = {
