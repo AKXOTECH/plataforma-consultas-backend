@@ -39,7 +39,7 @@ export async function processOrder(
 
                 if (
                     pdfBase64Endpoints.includes(endpoint) &&
-                    data.pdfBase64
+                    typeof data.pdfBase64 === 'string' && data.pdfBase64.length > 0
                 ) {
                     const pdfBuffer = Buffer.from(data.pdfBase64 as string, 'base64')
                     const pdfFileName = `${endpoint}-${order._id}.pdf`
@@ -47,8 +47,9 @@ export async function processOrder(
                     fs.writeFileSync(pdfPath, pdfBuffer)
 
                     // Guarda o link (Caso de necessidade) e descarta o Base64 gigante.
+                    const { pdfBase64: _removed, ...dataWithoutPdf } = data
                     results[endpoint] = {
-                        ...data,
+                        ...dataWithoutPdf,
                         pdfBase64: undefined,
                         pdfUrl: `/reports/${pdfFileName}`,
                     }
