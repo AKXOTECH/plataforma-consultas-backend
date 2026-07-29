@@ -3,6 +3,8 @@ import { avaliServiceProvider } from '../../providers/avaliservice.provider'
 import { generateOrderReportPdf } from '../../shared/pdf/order-report.pdf'
 import { logger } from '../../shared/logger'
 import type { ApiEndpoint } from '../../config/constants'
+import fs from 'node:fs'
+import path from 'node:path'
 
 /**
  * Processa um pedido já com pagamento confirmado:
@@ -32,7 +34,28 @@ export async function processOrder(
         (order.endpoints as ApiEndpoint[]).map(async (endpoint) => {
             try {
                 const data = await avaliServiceProvider.query(endpoint, order.placa)
-                results[endpoint] = data
+                
+                const pdfBase64Endpoints = ['csv', 'csv2', 'crlv', 'crlvsp', 'crlvsp3']
+
+                if (
+                    pdfBase64Endpoints.includes(endpoint) &&
+                    data.pdfBase64
+                ) {
+                    const pdfBuffer = Buffer.from(data.pdfBase64 as string, 'base64')
+                    const pdfFileName = `${endpoint}-${order._id}.pdf`
+                    const pdfPath = path.join(process.cwd(), 'storage', 'reports', pdfFileName)
+                    fs.writeFileSync(pdfPath, pdfBuffer)
+
+                    // Guarda o link (Caso de necessidade) e descarta o Base64 gigante.
+                    results[endpoint] = {
+                        ...data,
+                        pdfBase64: undefined,
+                        pdfUrl: `/reports/${pdfFileName}`,
+                    }
+                } else {
+                    results[endpoint] = data
+                }
+
                 successCount++
             } catch (err) {
                 logger.error({ err, endpoint, placa: order.placa}, 'Falha em endpoint individual')

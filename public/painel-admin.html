@@ -706,11 +706,11 @@ function renderLogin() {
       <div style="display:flex;flex-direction:column;gap:12px">
         <div class="field">
           <label>Email</label>
-          <input id="loginEmail" type="email" placeholder="admin@email.com" value="lincoln@teste.com">
+          <input id="loginEmail" type="email" placeholder="admin@email.com" value="">
         </div>
         <div class="field">
           <label>Senha</label>
-          <input id="loginPass" type="password" placeholder="••••••" value="123456">
+          <input id="loginPass" type="password" placeholder="••••••" value="">
         </div>
         <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
         ${token ? `<div style="font-size:12px;color:var(--success)">✓ Já autenticado</div>` : ''}
@@ -1037,7 +1037,7 @@ async function runQueries() {
 async function retryFailed() {
   try {
     log('Retentando endpoints com erro...', 'warn')
-    await api('POST', `/api/orders/admin/${currentOrder._id}/retry-failed`)
+    await api('POST', `/api/orders/admin/${currentOrder._id}/retry-failed`, {})
     toast('Retry disparado!', 'info')
     setTimeout(refreshOrder, 5000)
   } catch (err) {

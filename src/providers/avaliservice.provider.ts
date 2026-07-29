@@ -132,8 +132,28 @@ class AvaliServiceProvider {
         }
       }
 
-      logger.error({ err, endpoint, placa }, ' Falha na consulta ao provedor')
-      throw AppError.externalApiError(`Falha ao consultar "${endpoint}" no provedor`)
+      const providerMessage = 
+        axios.isAxiosError(err)
+          ? (
+              err.response?.data?.mensagem ??
+              err.response?.data?.message ??
+              err.response?.data?.error
+            )
+            : undefined
+      logger.error(
+        {
+          err,
+          endpoint,
+          placa,
+          providerMessage,
+        },
+        'Falha na consulta ao provedor'
+      )
+      
+      throw AppError.externalApiError(
+        providerMessage ??
+        `Falha ao consultar "${endpoint}" no provedor`
+      )
     }
   }
 }
