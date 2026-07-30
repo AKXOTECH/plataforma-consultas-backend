@@ -1,0 +1,83 @@
+NECESSITO DA API - LS Check
+=====================================
+
+Base URL: (backend define)
+
+AUTENTICAÇÃO
+------------
+POST /login
+  ENTRA: { email: string, senha: string }
+  RETORNA: { token: string, user: { id, nome, email, role } }
+
+POST /register
+  ENTRA: { nome: string, email: string, cpf?: string, telefone?: string, senha: string }
+  RETORNA: { token: string, user: { id, nome, email, role } }
+
+PEDIDOS
+-------
+GET /pedidos
+  Query opcional: ?search=abc&status=Enviado&dataInicio=2026-05-01&dataFim=2026-05-31
+  RETORNA: { data: [{ id, protocolo, placa, cliente, status, pago, data, tipo }] }
+
+POST /pedidos
+  ENTRA: { protocolo, placa, cliente, tipo, status?, pago? }
+  RETORNA: { data: { id, protocolo, placa, cliente, status, pago, data, tipo } }
+
+DELETE /pedidos/:id
+  RETORNA: { success: true }
+
+PATCH /pedidos/:id/pagamento
+  ENTRA: { pago: "Pago" | "Aguardando" | "Não Pago" | "Reembolsado" }
+  RETORNA: { data: { ...pedido_atualizado } }
+
+USUÁRIOS
+--------
+GET /usuarios
+  RETORNA: { data: { admins: [...], usuarios: [...] } }
+
+POST /usuarios
+  ENTRA: { nome, email, tipo: "admin" | "comum" }
+  RETORNA: { data: { id, nome, email, role } }
+
+DELETE /usuarios/:id
+  RETORNA: { success: true }
+
+CLIENTES (Faturamento)
+----------------------
+GET /clientes
+  RETORNA: { data: [{ id, nome, preco, tipo }] }
+
+POST /clientes
+  ENTRA: { nome, preco, tipo }
+  RETORNA: { data: { id, nome, preco, tipo } }
+
+DELETE /clientes/:id
+  RETORNA: { success: true }
+
+RELATÓRIOS
+----------
+GET /relatorios?mes=2026-05
+  RETORNA: { 
+    data: [{ tipo, qtd, custo, total }],
+    totalGeral: { qtd, valor }
+  }
+
+MÉTRICAS
+--------
+GET /metricas
+  RETORNA: { 
+    totalPedidos: number,
+    pendentes: number,
+    enviados: number,
+    admins: number
+  }
+
+HEADERS OBRIGATÓRIOS
+--------------------
+Todas as rotas (exceto login/register) precisam:
+  Authorization: Bearer <token>
+  Content-Type: application/json
+
+FORMATO DE ERRO
+---------------
+{ success: false, error: "mensagem de erro" }
