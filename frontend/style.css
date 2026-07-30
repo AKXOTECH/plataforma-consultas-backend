@@ -278,6 +278,7 @@ ul {
   font-size: 0.95rem;
 }
 .nav-drawer .nav-actions {
+  display: flex;
   padding-top: 8px;
   flex-wrap: wrap;
 }
