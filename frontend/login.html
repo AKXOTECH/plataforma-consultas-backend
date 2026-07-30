@@ -535,7 +535,7 @@
         }
 
         try {
-          const res = await fetch(`${API_URL}/login`, {
+          const res = await fetch(`${API_URL}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, senha }),
@@ -573,7 +573,7 @@
         }
 
         try {
-          const res = await fetch(`${API_URL}/register`, {
+          const res = await fetch(`${API_URL}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ nome, email, cpf, telefone, senha }),
