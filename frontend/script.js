@@ -85,19 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* ---- WhatsApp float click ---- */
-  const waFloat = document.querySelector(".whatsapp-float");
-  if (waFloat) {
-    waFloat.addEventListener("click", () => {
-      const waNumber = "5587996541760";
-      const msg = "Olá! Tenho interesse na consulta veicular da LS Check.";
-      window.open(
-        `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`,
-        "_blank",
-      );
-    });
-  }
-
   /* ---- Active nav link on scroll ---- */
   const sections = document.querySelectorAll("section[id]");
   const navLinks = document.querySelectorAll(".nav-link[data-section]");
