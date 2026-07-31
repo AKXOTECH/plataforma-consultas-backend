@@ -538,7 +538,7 @@
           const res = await fetch(`${API_URL}/api/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, senha }),
+            body: JSON.stringify({ email, password: senha }),
           });
 
           const json = await res.json();
@@ -576,7 +576,13 @@
           const res = await fetch(`${API_URL}/api/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ nome, email, cpf, telefone, senha }),
+            body: JSON.stringify({
+              name: nome,
+              email,
+              cpf,
+              phone: telefone,
+              password: senha,
+            }),
           });
 
           const json = await res.json();
