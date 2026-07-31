@@ -939,6 +939,11 @@
         location.href = "login.html";
       }
 
+      const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+      if (!currentUser || currentUser.role !== "admin") {
+        location.href = "dashboard.html";
+      }
+
       // ============================================
       // API HELPER
       // ============================================

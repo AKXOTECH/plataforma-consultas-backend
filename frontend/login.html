@@ -358,7 +358,7 @@
       <div class="panel active" id="panel-login">
         <div class="form-head">
           <h1>Entrar</h1>
-          <p>Acesse o painel administrativo</p>
+          <p>Acesse sua conta</p>
         </div>
 
         <div class="field">
@@ -543,14 +543,19 @@
 
           const json = await res.json();
 
-          if (!res.ok || !json.token) {
-            alert(json.error || "Email ou senha incorretos");
+          if (!res.ok || !json.data?.token) {
+            alert(json.message || "Email ou senha incorretos");
             return;
           }
 
-          localStorage.setItem("token", json.token);
-          localStorage.setItem("user", JSON.stringify(json.user));
-          location.href = "admin.html";
+          localStorage.setItem("token", json.data.token);
+          localStorage.setItem("user", JSON.stringify(json.data.user));
+
+          if (json.data.user.role === "admin") {
+            location.href = "admin.html";
+          } else {
+            location.href = "dashboard.html";
+          }
         } catch (err) {
           alert("Erro ao conectar com o servidor. Tente novamente.");
           console.error(err);
@@ -587,14 +592,19 @@
 
           const json = await res.json();
 
-          if (!res.ok) {
-            alert(json.error || "Erro no cadastro");
+          if (!res.ok || !json.data?.token) {
+            alert(json.message || "Erro no cadastro");
             return;
           }
 
-          localStorage.setItem("token", json.token);
-          localStorage.setItem("user", JSON.stringify(json.user));
-          location.href = "admin.html";
+          localStorage.setItem("token", json.data.token);
+          localStorage.setItem("user", JSON.stringify(json.data.user));
+
+          if (json.data.user.role === "admin") {
+            location.href = "admin.html";
+          } else {
+            location.href = "dashboard.html";
+          }
         } catch (err) {
           alert("Erro ao conectar com o servidor. Tente novamente.");
           console.error(err);
