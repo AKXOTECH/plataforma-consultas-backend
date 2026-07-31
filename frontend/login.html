@@ -64,12 +64,40 @@
 
       /* ── CARD ── */
       .card {
+        position: relative;
         background: var(--white);
         border-radius: 20px;
         padding: 40px 36px 36px;
         width: 100%;
         max-width: 420px;
         box-shadow: 0 32px 80px rgba(0, 0, 0, 0.38);
+      }
+
+      /* ── VOLTAR PARA O SITE ── */
+      .back-home {
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--gray-100);
+        color: var(--gray-600);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .back-home:hover {
+        background: var(--blue-tint);
+        color: var(--blue-vivid);
+      }
+      .back-home svg {
+        width: 17px;
+        height: 17px;
       }
 
       /* ── LOGO ── */
@@ -297,6 +325,15 @@
   </head>
   <body>
     <div class="card">
+      <a
+        href="index.html"
+        class="back-home"
+        title="Voltar para o site"
+        target="_self"
+      >
+        <i data-lucide="home"></i>
+      </a>
+
       <!-- LOGO -->
       <div class="logo-wrap">
         <div class="logo-row">
