@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LS Check — Acesso</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+      /* ── RESET ── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        font-size: 16px;
+      }
+
+      /* ── VARIÁVEIS ── */
+      :root {
+        --blue-dark: #052288;
+        --blue-vivid: #0453cc;
+        --blue-hover: #0349b3;
+        --blue-tint: #eff6ff;
+        --gray-900: #111827;
+        --gray-600: #6b7280;
+        --gray-100: #f3f4f6;
+        --border: #e5e7eb;
+        --white: #ffffff;
+        --red: #dc2626;
+        --font: "DM Sans", sans-serif;
+      }
+
+      /* ── BODY / FUNDO ── */
+      body {
+        font-family: var(--font);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+        background:
+          radial-gradient(
+            ellipse at 15% 25%,
+            rgba(4, 83, 204, 0.4) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse at 85% 75%,
+            rgba(5, 34, 136, 0.55) 0%,
+            transparent 55%
+          ),
+          linear-gradient(150deg, #020e38 0%, #052288 55%, #031560 100%);
+      }
+
+      /* ── CARD ── */
+      .card {
+        position: relative;
+        background: var(--white);
+        border-radius: 20px;
+        padding: 40px 36px 36px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 32px 80px rgba(0, 0, 0, 0.38);
+      }
+
+      /* ── VOLTAR PARA O SITE ── */
+      .back-home {
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--gray-100);
+        color: var(--gray-600);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .back-home:hover {
+        background: var(--blue-tint);
+        color: var(--blue-vivid);
+      }
+      .back-home svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      /* ── LOGO ── */
+      .logo-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 28px;
+      }
+      .logo-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo-text-block {
+        display: flex;
+        flex-direction: column;
+      }
+      .logo-name {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        letter-spacing: 2px;
+        line-height: 1;
+      }
+      .logo-sub {
+        font-size: 0.6rem;
+        color: var(--gray-600);
+        letter-spacing: 0.8px;
+        margin-top: 3px;
+        text-transform: uppercase;
+      }
+
+      /* ── DIVISOR ── */
+      .divider {
+        width: 100%;
+        height: 1px;
+        background: var(--border);
+        margin-bottom: 24px;
+      }
+
+      /* ── PAINEL ── */
+      .panel {
+        display: none;
+      }
+      .panel.active {
+        display: block;
+      }
+
+      /* ── CABEÇALHO DO FORMULÁRIO ── */
+      .form-head {
+        text-align: center;
+        margin-bottom: 22px;
+      }
+      .form-head h1 {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin-bottom: 5px;
+      }
+      .form-head p {
+        font-size: 0.83rem;
+        color: var(--gray-600);
+      }
+
+      /* ── CAMPO ── */
+      .field {
+        position: relative;
+        margin-bottom: 12px;
+      }
+      .field-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        color: #9ca3af;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+      }
+      .field-icon svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .field input {
+        display: block;
+        width: 100%;
+        padding: 13px 44px 13px 42px;
+        background: var(--gray-100);
+        border: 1.5px solid transparent;
+        border-radius: 10px;
+        font-family: var(--font);
+        font-size: 0.88rem;
+        color: var(--gray-900);
+        outline: none;
+        transition:
+          border-color 0.15s,
+          background 0.15s,
+          box-shadow 0.15s;
+        -webkit-appearance: none;
+      }
+      .field input::placeholder {
+        color: #b0b7c3;
+      }
+      .field input:focus {
+        border-color: var(--blue-vivid);
+        background: var(--blue-tint);
+        box-shadow: 0 0 0 3px rgba(4, 83, 204, 0.12);
+      }
+
+      /* ── TOGGLE SENHA ── */
+      .toggle-pw {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        color: #9ca3af;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.15s;
+        line-height: 0;
+      }
+      .toggle-pw:hover {
+        color: var(--blue-vivid);
+      }
+      .toggle-pw svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* ── ESQUECI SENHA ── */
+      .forgot-row {
+        display: flex;
+        justify-content: flex-end;
+        margin: 2px 0 18px;
+      }
+      .link-sm {
+        font-size: 0.78rem;
+        color: var(--blue-vivid);
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .link-sm:hover {
+        text-decoration: underline;
+      }
+
+      /* ── BOTÃO PRINCIPAL ── */
+      .btn-main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 14px;
+        background: var(--blue-vivid);
+        color: var(--white);
+        border: none;
+        border-radius: 10px;
+        font-family: var(--font);
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: 0.2px;
+        transition:
+          background 0.15s,
+          transform 0.1s,
+          box-shadow 0.15s;
+        margin-top: 4px;
+      }
+      .btn-main svg {
+        width: 17px;
+        height: 17px;
+        flex-shrink: 0;
+      }
+      .btn-main:hover {
+        background: var(--blue-hover);
+        box-shadow: 0 6px 20px rgba(4, 83, 204, 0.35);
+      }
+      .btn-main:active {
+        transform: scale(0.98);
+      }
+
+      /* ── SWITCH ── */
+      .switch-text {
+        text-align: center;
+        font-size: 0.82rem;
+        color: var(--gray-600);
+        margin-top: 20px;
+      }
+      .link-action {
+        color: var(--blue-vivid);
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .link-action:hover {
+        text-decoration: underline;
+      }
+
+      /* ── RESPONSIVO ── */
+      @media (max-width: 480px) {
+        body {
+          padding: 16px 12px;
+          align-items: flex-start;
+          padding-top: 32px;
+        }
+        .card {
+          padding: 28px 20px 24px;
+          border-radius: 16px;
+        }
+        .logo-name {
+          font-size: 1.1rem;
+        }
+      }
+    </style>
+    <base target="_blank" />
+  </head>
+  <body>
+    <div class="card">
+      <a
+        href="index.html"
+        class="back-home"
+        title="Voltar para o site"
+        target="_self"
+      >
+        <i data-lucide="home"></i>
+      </a>
+
+      <!-- LOGO -->
+      <div class="logo-wrap">
+        <div class="logo-row">
+          <svg
+            width="52"
+            height="52"
+            viewBox="0 0 56 56"
+            xmlns="http://www.w3.org/2000/svg"
+            style="flex-shrink: 0"
+          >
+            <path
+              d="M28 3 L50 11 L50 31 C50 43 28 53 28 53 C28 53 6 43 6 31 L6 11 Z"
+              fill="#0453cc"
+            />
+            <path
+              d="M28 3 L50 11 L50 31 C50 43 28 53 28 53 C28 53 6 43 6 31 L6 11 Z"
+              fill="none"
+              stroke="rgba(255,255,255,0.3)"
+              stroke-width="1.5"
+            />
+            <circle
+              cx="38"
+              cy="38"
+              r="9"
+              fill="#052288"
+              stroke="rgba(255,255,255,.25)"
+              stroke-width="1.2"
+            />
+            <circle
+              cx="38"
+              cy="38"
+              r="5"
+              fill="none"
+              stroke="rgba(255,255,255,.5)"
+              stroke-width="1.2"
+            />
+            <text
+              x="27"
+              y="31"
+              text-anchor="middle"
+              font-family="DM Sans,sans-serif"
+              font-weight="800"
+              font-size="15"
+              fill="white"
+            >
+              LS
+            </text>
+          </svg>
+          <div class="logo-text-block">
+            <span class="logo-name">LS CHECK</span>
+            <span class="logo-sub">Verificação Técnica Veicular</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ===== PAINEL LOGIN ===== -->
+      <div class="panel active" id="panel-login">
+        <div class="form-head">
+          <h1>Entrar</h1>
+          <p>Acesse sua conta</p>
+        </div>
+
+        <div class="field">
+          <span class="field-icon"><i data-lucide="mail"></i></span>
+          <input
+            type="email"
+            id="login-email"
+            placeholder="E-mail"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="field">
+          <span class="field-icon"><i data-lucide="lock"></i></span>
+          <input
+            type="password"
+            placeholder="Senha"
+            id="senha-login"
+            autocomplete="current-password"
+          />
+          <button
+            class="toggle-pw"
+            type="button"
+            onclick="togglePw('senha-login', this)"
+            tabindex="-1"
+          >
+            <i data-lucide="eye"></i>
+          </button>
+        </div>
+
+        <div class="forgot-row">
+          <a href="#" class="link-sm">Esqueci minha senha</a>
+        </div>
+
+        <button class="btn-main" onclick="fazerLogin()">
+          <i data-lucide="log-in"></i> Entrar
+        </button>
+
+        <p class="switch-text">
+          Não tem conta?
+          <a
+            href="#"
+            class="link-action"
+            onclick="
+              mostrar('cadastro');
+              return false;
+            "
+            >Criar conta</a
+          >
+        </p>
+      </div>
+
+      <!-- ===== PAINEL CADASTRO ===== -->
+      <div class="panel" id="panel-cadastro">
+        <div class="form-head">
+          <h1>Criar Conta</h1>
+          <p>Cadastre-se para acessar suas consultas</p>
+        </div>
+
+        <div class="field">
+          <span class="field-icon"><i data-lucide="user-plus"></i></span>
+          <input
+            type="text"
+            id="cad-nome"
+            placeholder="Nome / Empresa"
+            autocomplete="name"
+          />
+        </div>
+
+        <div class="field">
+          <span class="field-icon"><i data-lucide="file-text"></i></span>
+          <input
+            type="text"
+            id="cad-cpf"
+            placeholder="CNPJ ou CPF"
+            maxlength="18"
+          />
+        </div>
+
+        <div class="field">
+          <span class="field-icon"><i data-lucide="phone"></i></span>
+          <input
+            type="tel"
+            id="cad-telefone"
+            placeholder="(00) 00000-0000"
+            maxlength="15"
+          />
+        </div>
+
+        <div class="field">
+          <span class="field-icon"><i data-lucide="mail"></i></span>
+          <input
+            type="email"
+            id="cad-email"
+            placeholder="E-mail"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="field">
+          <span class="field-icon"><i data-lucide="lock"></i></span>
+          <input
+            type="password"
+            placeholder="Senha"
+            id="senha-cad"
+            autocomplete="new-password"
+          />
+          <button
+            class="toggle-pw"
+            type="button"
+            onclick="togglePw('senha-cad', this)"
+            tabindex="-1"
+          >
+            <i data-lucide="eye"></i>
+          </button>
+        </div>
+
+        <button class="btn-main" onclick="fazerCadastro()">
+          <i data-lucide="user-plus"></i> Criar Conta
+        </button>
+
+        <p class="switch-text">
+          Já tem conta?
+          <a
+            href="#"
+            class="link-action"
+            onclick="
+              mostrar('login');
+              return false;
+            "
+            >Entrar</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // ============================================
+      // CONFIG - BACKEND VAI PASSAR A URL REAL
+      // ============================================
+      const API_URL = "https://plataforma-consultas-backend-rqp0.onrender.com";
+
+      // ============================================
+      // UTILITÁRIOS
+      // ============================================
+      function mostrar(painel) {
+        document
+          .querySelectorAll(".panel")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("panel-" + painel).classList.add("active");
+        lucide.createIcons();
+      }
+
+      function togglePw(id, btn) {
+        const inp = document.getElementById(id);
+        const show = inp.type === "password";
+        inp.type = show ? "text" : "password";
+        btn.innerHTML = show
+          ? '<i data-lucide="eye-off"></i>'
+          : '<i data-lucide="eye"></i>';
+        lucide.createIcons();
+      }
+
+      // ============================================
+      // LOGIN
+      // ============================================
+      async function fazerLogin() {
+        const email = document.getElementById("login-email").value.trim();
+        const senha = document.getElementById("senha-login").value;
+
+        if (!email || !senha) {
+          alert("Preencha email e senha");
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_URL}/api/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password: senha }),
+          });
+
+          const json = await res.json();
+
+          if (!res.ok || !json.data?.token) {
+            alert(json.message || "Email ou senha incorretos");
+            return;
+          }
+
+          localStorage.setItem("token", json.data.token);
+          localStorage.setItem("user", JSON.stringify(json.data.user));
+
+          if (json.data.user.role === "admin") {
+            location.href = "admin.html";
+          } else {
+            location.href = "dashboard.html";
+          }
+        } catch (err) {
+          alert("Erro ao conectar com o servidor. Tente novamente.");
+          console.error(err);
+        }
+      }
+
+      // ============================================
+      // CADASTRO
+      // ============================================
+      async function fazerCadastro() {
+        const nome = document.getElementById("cad-nome").value.trim();
+        const cpf = document.getElementById("cad-cpf").value.trim();
+        const telefone = document.getElementById("cad-telefone").value.trim();
+        const email = document.getElementById("cad-email").value.trim();
+        const senha = document.getElementById("senha-cad").value;
+
+        if (!nome || !email || !senha) {
+          alert("Preencha nome, email e senha");
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_URL}/api/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: nome,
+              email,
+              cpf,
+              phone: telefone,
+              password: senha,
+            }),
+          });
+
+          const json = await res.json();
+
+          if (!res.ok || !json.data?.token) {
+            alert(json.message || "Erro no cadastro");
+            return;
+          }
+
+          localStorage.setItem("token", json.data.token);
+          localStorage.setItem("user", JSON.stringify(json.data.user));
+
+          if (json.data.user.role === "admin") {
+            location.href = "admin.html";
+          } else {
+            location.href = "dashboard.html";
+          }
+        } catch (err) {
+          alert("Erro ao conectar com o servidor. Tente novamente.");
+          console.error(err);
+        }
+      }
+
+      // ============================================
+      // INIT
+      // ============================================
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

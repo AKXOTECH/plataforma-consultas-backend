@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LS Check — Minha Conta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+      :root {
+        --blue-dark: #052288;
+        --blue-vivid: #0453cc;
+        --blue-tint: #eff6ff;
+        --gray-main: #2a2a29;
+        --gray-bg: #f6f6f6;
+        --gray-mid: #6b7280;
+        --white: #ffffff;
+        --border: #e5e7eb;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --r-sm: 8px;
+        --r-md: 12px;
+        --font: "DM Sans", sans-serif;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        font-size: 16px;
+      }
+      body {
+        font-family: var(--font);
+        background: var(--gray-bg);
+        color: var(--gray-main);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+      }
+      button {
+        font-family: var(--font);
+        cursor: pointer;
+        border: none;
+        outline: none;
+      }
+
+      /* HEADER */
+      #header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: var(--blue-dark);
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        box-shadow: 0 2px 12px rgba(5, 34, 136, 0.3);
+      }
+      .header-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo-svg {
+        width: 40px;
+        height: 40px;
+      }
+      .header-title {
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: -0.3px;
+      }
+      .header-actions button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #fff;
+        width: 36px;
+        height: 36px;
+        border-radius: var(--r-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s;
+      }
+      .header-actions button:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .header-actions svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      /* MAIN */
+      #app {
+        padding-top: 60px;
+      }
+      .content-wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 48px 16px;
+      }
+
+      .welcome {
+        margin-bottom: 24px;
+      }
+      .welcome h1 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+      .welcome p {
+        color: var(--gray-mid);
+        font-size: 0.9rem;
+      }
+
+      .card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        box-shadow: var(--shadow-sm);
+        padding: 40px 32px;
+        text-align: center;
+      }
+      .card-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--blue-tint);
+        color: var(--blue-vivid);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+      }
+      .card-icon svg {
+        width: 26px;
+        height: 26px;
+      }
+      .card h2 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .card p {
+        color: var(--gray-mid);
+        font-size: 0.88rem;
+        line-height: 1.5;
+        max-width: 440px;
+        margin: 0 auto;
+      }
+
+      .contact-row {
+        margin-top: 24px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .contact-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 16px;
+        border-radius: var(--r-sm);
+        border: 1px solid var(--border);
+        background: var(--white);
+        color: var(--gray-main);
+        font-size: 0.83rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: border-color 0.15s;
+      }
+      .contact-btn:hover {
+        border-color: var(--blue-vivid);
+        color: var(--blue-vivid);
+      }
+      .contact-btn svg {
+        width: 15px;
+        height: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header">
+      <div class="header-logo">
+        <svg class="logo-svg" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M28 3 L50 11 L50 31 C50 43 28 53 28 53 C28 53 6 43 6 31 L6 11 Z"
+            fill="#0453cc"
+          />
+          <path
+            d="M28 3 L50 11 L50 31 C50 43 28 53 28 53 C28 53 6 43 6 31 L6 11 Z"
+            fill="none"
+            stroke="rgba(255,255,255,0.3)"
+            stroke-width="1.5"
+          />
+          <text
+            x="27"
+            y="34"
+            text-anchor="middle"
+            font-family="DM Sans,sans-serif"
+            font-weight="800"
+            font-size="17"
+            fill="white"
+          >
+            LS
+          </text>
+        </svg>
+        <span class="header-title">LS Check — Minha Conta</span>
+      </div>
+      <div class="header-actions">
+        <button title="Sair" onclick="logout()">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="app">
+      <div class="content-wrap">
+        <div class="welcome">
+          <h1 id="welcome-name">Olá!</h1>
+          <p>Este é o painel da sua conta.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon"><i data-lucide="hammer"></i></div>
+          <h2>Área do cliente em construção</h2>
+          <p>
+            Estamos preparando o painel para você acompanhar suas consultas e
+            pedidos por aqui. Enquanto isso, fale com a gente pelos canais
+            abaixo.
+          </p>
+          <div class="contact-row">
+            <a
+              class="contact-btn"
+              href="https://wa.me/5587996541760"
+              target="_blank"
+            >
+              <i data-lucide="message-circle"></i> WhatsApp
+            </a>
+            <a
+              class="contact-btn"
+              href="mailto:lincoleng2001@outlook.com"
+            >
+              <i data-lucide="mail"></i> E-mail
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ============================================
+      // PROTEÇÃO: verifica sessão e direciona admin pro painel certo
+      // ============================================
+      const token = localStorage.getItem("token");
+      if (!token) {
+        location.href = "login.html";
+      }
+
+      const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+      if (currentUser?.role === "admin") {
+        location.href = "admin.html";
+      }
+
+      if (currentUser?.name) {
+        document.getElementById("welcome-name").textContent =
+          "Olá, " + currentUser.name.split(" ")[0] + "!";
+      }
+
+      function logout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        location.href = "login.html";
+      }
+
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

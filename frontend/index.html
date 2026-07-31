@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Consulta veicular completa pela placa — sinistro, leilão, roubo/furto, débitos e muito mais em um único relatório. LS Check, Lincoln Santos Engenharia Mecânica."
+    />
+    <title>LS Check — Verificação Técnica Veicular</title>
+
+    <!-- Favicon inline SVG -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23052288'/><text x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='16' font-weight='bold' fill='white' font-family='sans-serif'>LS</text></svg>"
+    />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Sans:ital@1&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css" />
+    <base target="_blank" />
+    <base target="_blank" />
+  </head>
+  <body>
+    <!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+    <header id="navbar">
+      <div class="container nav-inner">
+        <!-- Logo inline SVG -->
+        <a
+          href="#"
+          class="nav-logo"
+          aria-label="LS Check — Verificação Técnica Veicular"
+        >
+          <img src="logo-navbar.png" alt="LS Check" class="logo-img" />
+        </a>
+
+        <!-- Desktop Menu -->
+        <nav class="nav-menu">
+          <a href="#hero" class="nav-link" data-section="hero">
+            <i data-lucide="search" style="width: 16px; height: 16px"></i>
+            Consultar
+          </a>
+          <a href="#servicos" class="nav-link" data-section="servicos">
+            <i data-lucide="wrench" style="width: 16px; height: 16px"></i>
+            Serviços
+          </a>
+          <a
+            href="https://wa.me/5587996541760?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20a%20consulta%20veicular."
+            target="_blank"
+            class="nav-link"
+            data-section="contato"
+          >
+            <i
+              data-lucide="message-circle"
+              style="width: 16px; height: 16px"
+            ></i>
+            Fale Conosco
+          </a>
+          <a href="#faq" class="nav-link" data-section="faq">
+            <i data-lucide="help-circle" style="width: 16px; height: 16px"></i>
+            FAQ
+          </a>
+        </nav>
+
+        <!-- Desktop Actions -->
+        <div class="nav-actions">
+          <a
+            href="https://wa.me/5587996541760?text=Já%20paguei%2C%20quero%20meu%20relatório."
+            target="_blank"
+            class="btn-outline"
+          >
+            <i data-lucide="credit-card" style="width: 15px; height: 15px"></i>
+            Já Paguei
+          </a>
+          <a href="login.html" class="btn-primary">
+            <i data-lucide="log-in" style="width: 15px; height: 15px"></i>
+            Entrar
+          </a>
+        </div>
+
+        <!-- Hamburger -->
+        <button class="hamburger" aria-label="Abrir menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+      <!-- Mobile Drawer -->
+      <nav class="nav-drawer">
+        <a href="#hero" class="nav-link"
+          ><i data-lucide="search"></i> Consultar</a
+        >
+        <a href="#servicos" class="nav-link"
+          ><i data-lucide="wrench"></i> Serviços</a
+        >
+        <a
+          href="https://wa.me/5587996541760?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20a%20consulta%20veicular."
+          target="_blank"
+          class="nav-link"
+          ><i data-lucide="message-circle"></i> Fale Conosco</a
+        >
+        <a href="#faq" class="nav-link"
+          ><i data-lucide="help-circle"></i> FAQ</a
+        >
+        <div class="nav-actions">
+          <a
+            href="https://wa.me/5587996541760?text=Já%20paguei%2C%20quero%20meu%20relatório."
+            target="_blank"
+            class="btn-outline"
+            ><i data-lucide="credit-card" style="width: 14px; height: 14px"></i>
+            Já Paguei</a
+          >
+          <a href="login.html" class="btn-primary"
+            ><i data-lucide="log-in" style="width: 14px; height: 14px"></i>
+            Entrar</a
+          >
+        </div>
+      </nav>
+    </header>
+
+    <!-- WhatsApp Flutuante -->
+    <a
+      class="whatsapp-float"
+      href="https://wa.me/5587996541760?text=Ol%C3%A1%21%20Tenho%20interesse%20na%20consulta%20veicular%20da%20LS%20Check."
+      target="_blank"
+      aria-label="Fale pelo WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+        />
+      </svg>
+    </a>
+
+    <!-- ============================================================
+     HERO
+     ============================================================ -->
+    <section id="hero">
+      <div class="container">
+        <div class="hero-content">
+          <span class="section-badge fade-up"
+            >A consulta mais completa do mercado</span
+          >
+
+          <h1 class="hero-title fade-up">
+            Consulta Veicular <span class="text-blue">Completa</span><br />pela
+            Placa
+          </h1>
+
+          <p class="hero-sub fade-up">
+            Sinistro, leilão, roubo/furto, débitos e muito mais — tudo em um
+            único relatório detalhado.
+          </p>
+
+          <!-- Search Box -->
+          <div class="hero-search fade-up">
+            <div class="hero-search-input-wrap">
+              <i
+                data-lucide="car"
+                style="width: 20px; height: 20px; color: var(--blue-vivid)"
+              ></i>
+              <input
+                type="text"
+                id="placa-input"
+                placeholder="ABC1D23 ou ABC1023"
+                maxlength="7"
+                autocomplete="off"
+              />
+            </div>
+            <button class="btn-primary consultar-trigger hero-search-btn">
+              Consultar Agora
+              <i
+                data-lucide="arrow-right"
+                style="width: 16px; height: 16px"
+              ></i>
+            </button>
+          </div>
+
+          <p class="hero-note fade-up">
+            <i
+              data-lucide="message-circle"
+              style="width: 14px; height: 14px; color: #25d366"
+            ></i>
+            Relatório completo e detalhado. Preço negociado via WhatsApp.
+          </p>
+
+          <!-- Trust badges -->
+          <div class="hero-trust fade-up">
+            <div class="trust-item">
+              <i
+                data-lucide="shield-check"
+                style="width: 16px; height: 16px; color: var(--blue-vivid)"
+              ></i>
+              Dados oficiais
+            </div>
+            <div class="trust-item">
+              <i
+                data-lucide="zap"
+                style="width: 16px; height: 16px; color: var(--blue-vivid)"
+              ></i>
+              Resultado em até 24h
+            </div>
+            <div class="trust-item">
+              <i
+                data-lucide="lock"
+                style="width: 16px; height: 16px; color: var(--blue-vivid)"
+              ></i>
+              Pagamento seguro
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     SERVIÇOS
+     ============================================================ -->
+    <section id="servicos">
+      <div class="container">
+        <div class="section-header text-center">
+          <span class="section-badge fade-up">Consulta Completa</span>
+          <h2 class="section-title fade-up">
+            A consulta mais <span class="text-blue">completa</span> do mercado
+          </h2>
+          <p class="section-sub fade-up">
+            Tudo que você precisa para tomar a melhor decisão na compra ou venda
+            do veículo, em um único relatório.
+          </p>
+        </div>
+
+        <div class="services-grid">
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i
+                data-lucide="shield-alert"
+                style="width: 22px; height: 22px"
+              ></i>
+            </div>
+            <div class="service-info">
+              <h3>Indício de Sinistro</h3>
+              <p>Verificação em múltiplas bases de sinistro e acidentes.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="gavel" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Leilão</h3>
+              <p>Histórico completo em base primária de leilões.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i
+                data-lucide="bar-chart-2"
+                style="width: 22px; height: 22px"
+              ></i>
+            </div>
+            <div class="service-info">
+              <h3>Leilão Avançado</h3>
+              <p>Score, aceitação por seguradoras e detalhes completos.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i
+                data-lucide="clipboard-check"
+                style="width: 22px; height: 22px"
+              ></i>
+            </div>
+            <div class="service-info">
+              <h3>Parecer Técnico</h3>
+              <p>Análise técnica detalhada e parecer profissional.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i
+                data-lucide="alert-triangle"
+                style="width: 22px; height: 22px"
+              ></i>
+            </div>
+            <div class="service-info">
+              <h3>Indício de Sinistro Avançado</h3>
+              <p>Base avançada com cruzamento de ocorrências.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="shield-off" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Roubo e Furto</h3>
+              <p>Histórico completo de ocorrências de roubo/furto.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="refresh-cw" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Leilão / Remarketing</h3>
+              <p>Eventos corporativos e remarketing de seguradoras.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="cpu" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Decodificador</h3>
+              <p>Decodificação completa do chassi e agregados.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="receipt" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Débitos Veiculares</h3>
+              <p>IPVA, licenciamento, multas e pendências financeiras.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="map-pin" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Estadual</h3>
+              <p>Consulta restrições estaduais.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="lock" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Bloqueios</h3>
+              <p>Bloqueios administrativos e restrições ativas.</p>
+            </div>
+          </div>
+
+          <!-- Placeholder para manter grid par -->
+          <div
+            class="service-card service-card--empty fade-up"
+            aria-hidden="true"
+          ></div>
+        </div>
+
+        <div class="services-cta fade-up">
+          <button
+            class="btn-primary consultar-trigger"
+            style="font-size: 1rem; padding: 15px 40px"
+          >
+            Consultar Agora
+            <i data-lucide="arrow-right" style="width: 18px; height: 18px"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     COMO FUNCIONA
+     ============================================================ -->
+    <section id="como-funciona">
+      <div class="container">
+        <div class="section-header text-center">
+          <h2 class="section-title fade-up">Como funciona?</h2>
+          <p class="section-sub fade-up">
+            Simples, rápido e prático. Seu relatório em poucos passos:
+          </p>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-card fade-up">
+            <span class="step-number">01</span>
+            <div class="step-icon">
+              <i data-lucide="search" style="width: 26px; height: 26px"></i>
+            </div>
+            <h3>Digite a placa</h3>
+            <p>Insira a placa no formato AAA0A00 ou AAA0000.</p>
+          </div>
+
+          <div class="step-card fade-up">
+            <span class="step-number">02</span>
+            <div class="step-icon">
+              <i
+                data-lucide="check-circle"
+                style="width: 26px; height: 26px"
+              ></i>
+            </div>
+            <h3>Confirme o veículo</h3>
+            <p>Verifique marca, modelo e ano do veículo encontrado.</p>
+          </div>
+
+          <div class="step-card fade-up">
+            <span class="step-number">03</span>
+            <div class="step-icon">
+              <i data-lucide="user" style="width: 26px; height: 26px"></i>
+            </div>
+            <h3>Preencha seus dados</h3>
+            <p>Nome, e-mail e WhatsApp para receber o relatório.</p>
+          </div>
+
+          <div class="step-card fade-up">
+            <span class="step-number">04</span>
+            <div class="step-icon">
+              <i data-lucide="bell" style="width: 26px; height: 26px"></i>
+            </div>
+            <h3>Receba o relatório</h3>
+            <p>
+              Após o pagamento, seu relatório completo é liberado em até 24h.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     POR QUE ESCOLHER
+     ============================================================ -->
+    <section id="por-que">
+      <div class="container">
+        <div class="section-header text-center">
+          <h2 class="section-title fade-up">
+            Por que escolher a LS Engenharia?
+          </h2>
+          <p class="section-sub fade-up">
+            Credibilidade técnica, dados certificados e atendimento de verdade.
+          </p>
+        </div>
+
+        <div class="why-grid">
+          <div class="why-card fade-up">
+            <div class="why-icon">
+              <i data-lucide="zap" style="width: 28px; height: 28px"></i>
+            </div>
+            <h3>Rápido</h3>
+            <p>Resultado em até 24 horas após aprovação do pagamento.</p>
+          </div>
+
+          <div class="why-card fade-up">
+            <div class="why-icon">
+              <i
+                data-lucide="shield-check"
+                style="width: 28px; height: 28px"
+              ></i>
+            </div>
+            <h3>Confiável</h3>
+            <p>Dados certificados e atualizados de fontes oficiais.</p>
+          </div>
+
+          <div class="why-card fade-up">
+            <div class="why-icon">
+              <i data-lucide="star" style="width: 28px; height: 28px"></i>
+            </div>
+            <h3>Completa</h3>
+            <p>
+              A consulta mais abrangente do mercado, tudo em um único relatório.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     FAQ
+     ============================================================ -->
+    <section
+      id="faq"
+      style="
+        padding: 90px 0;
+        background: var(--white);
+        border-top: 1px solid var(--border);
+      "
+    >
+      <div class="container" style="max-width: 760px">
+        <div class="section-header text-center" style="margin-bottom: 40px">
+          <span class="section-badge fade-up">Dúvidas frequentes</span>
+          <h2 class="section-title fade-up">Perguntas Frequentes</h2>
+        </div>
+
+        <div
+          class="faq-list"
+          style="display: flex; flex-direction: column; gap: 14px"
+        >
+          <details
+            class="faq-item fade-up"
+            style="
+              background: var(--gray-bg);
+              border-radius: var(--radius-md);
+              border: 1px solid var(--border);
+              overflow: hidden;
+            "
+          >
+            <summary
+              style="
+                padding: 18px 22px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.95rem;
+                color: var(--gray-main);
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Quanto tempo leva para receber o relatório?
+              <i
+                data-lucide="chevron-down"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  color: var(--blue-vivid);
+                  flex-shrink: 0;
+                "
+              ></i>
+            </summary>
+            <div
+              style="
+                padding: 0 22px 18px;
+                font-size: 0.9rem;
+                color: var(--gray-dark);
+                line-height: 1.7;
+              "
+            >
+              Após a confirmação do pagamento, o relatório é entregue em até 24
+              horas úteis pelo WhatsApp ou e-mail informado.
+            </div>
+          </details>
+
+          <details
+            class="faq-item fade-up"
+            style="
+              background: var(--gray-bg);
+              border-radius: var(--radius-md);
+              border: 1px solid var(--border);
+              overflow: hidden;
+            "
+          >
+            <summary
+              style="
+                padding: 18px 22px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.95rem;
+                color: var(--gray-main);
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Qual o formato de placa aceito?
+              <i
+                data-lucide="chevron-down"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  color: var(--blue-vivid);
+                  flex-shrink: 0;
+                "
+              ></i>
+            </summary>
+            <div
+              style="
+                padding: 0 22px 18px;
+                font-size: 0.9rem;
+                color: var(--gray-dark);
+                line-height: 1.7;
+              "
+            >
+              Aceitamos placas no formato antigo (AAA0000) e Mercosul (AAA0A00).
+              Basta digitar no campo de busca.
+            </div>
+          </details>
+
+          <details
+            class="faq-item fade-up"
+            style="
+              background: var(--gray-bg);
+              border-radius: var(--radius-md);
+              border: 1px solid var(--border);
+              overflow: hidden;
+            "
+          >
+            <summary
+              style="
+                padding: 18px 22px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.95rem;
+                color: var(--gray-main);
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Os dados são confiáveis e atualizados?
+              <i
+                data-lucide="chevron-down"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  color: var(--blue-vivid);
+                  flex-shrink: 0;
+                "
+              ></i>
+            </summary>
+            <div
+              style="
+                padding: 0 22px 18px;
+                font-size: 0.9rem;
+                color: var(--gray-dark);
+                line-height: 1.7;
+              "
+            >
+              Sim. Utilizamos bases de dados certificadas e fontes oficiais para
+              garantir a precisão e atualidade das informações.
+            </div>
+          </details>
+
+          <details
+            class="faq-item fade-up"
+            style="
+              background: var(--gray-bg);
+              border-radius: var(--radius-md);
+              border: 1px solid var(--border);
+              overflow: hidden;
+            "
+          >
+            <summary
+              style="
+                padding: 18px 22px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.95rem;
+                color: var(--gray-main);
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Como funciona o pagamento?
+              <i
+                data-lucide="chevron-down"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  color: var(--blue-vivid);
+                  flex-shrink: 0;
+                "
+              ></i>
+            </summary>
+            <div
+              style="
+                padding: 0 22px 18px;
+                font-size: 0.9rem;
+                color: var(--gray-dark);
+                line-height: 1.7;
+              "
+            >
+              O valor é combinado via WhatsApp antes da realização da consulta.
+              O pagamento é feito de forma segura via Pix ou outro meio
+              acordado.
+            </div>
+          </details>
+
+          <details
+            class="faq-item fade-up"
+            style="
+              background: var(--gray-bg);
+              border-radius: var(--radius-md);
+              border: 1px solid var(--border);
+              overflow: hidden;
+            "
+          >
+            <summary
+              style="
+                padding: 18px 22px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.95rem;
+                color: var(--gray-main);
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Já paguei. Como recebo meu relatório?
+              <i
+                data-lucide="chevron-down"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  color: var(--blue-vivid);
+                  flex-shrink: 0;
+                "
+              ></i>
+            </summary>
+            <div
+              style="
+                padding: 0 22px 18px;
+                font-size: 0.9rem;
+                color: var(--gray-dark);
+                line-height: 1.7;
+              "
+            >
+              Clique no botão "Já Paguei" no menu ou entre em contato pelo
+              WhatsApp (87) 99654-1760 enviando o comprovante.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     CTA FINAL
+     ============================================================ -->
+    <section id="cta-final">
+      <div class="container">
+        <div class="cta-final-inner">
+          <h2 class="section-title fade-up">Não compre um veículo às cegas</h2>
+          <p
+            class="section-sub fade-up"
+            style="margin-top: 12px; margin-bottom: 32px"
+          >
+            Evite prejuízos com sinistro, leilão, roubo e débitos ocultos. Faça
+            sua consulta agora.
+          </p>
+          <div class="cta-final-actions fade-up">
+            <button
+              class="btn-primary consultar-trigger"
+              style="font-size: 1rem; padding: 16px 44px"
+            >
+              Consultar Agora
+              <i
+                data-lucide="arrow-right"
+                style="width: 18px; height: 18px"
+              ></i>
+            </button>
+            <div class="cta-secure">
+              <i data-lucide="lock" style="width: 14px; height: 14px"></i>
+              Pagamento seguro &bull; Dados protegidos
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     FOOTER
+     ============================================================ -->
+    <footer id="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <!-- Marca -->
+          <div class="footer-brand">
+            <img
+              src="logo-icon-footer.png"
+              alt="LS Check"
+              class="footer-logo-img"
+            />
+            <p class="footer-tagline">
+              Consultas veiculares completas e confiáveis.
+            </p>
+          </div>
+
+          <!-- Links -->
+          <div class="footer-col">
+            <h4>Links Úteis</h4>
+            <ul>
+              <li><a href="#hero">Consultar Placa</a></li>
+              <li><a href="#servicos">Serviços</a></li>
+              <li>
+                <a
+                  href="https://wa.me/5587996541760?text=Já%20paguei%2C%20quero%20meu%20relatório."
+                  target="_blank"
+                  >Já Paguei</a
+                >
+              </li>
+              <li><a href="#faq">Perguntas Frequentes</a></li>
+              <li>
+                <a
+                  href="https://wa.me/5587996541760?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20a%20consulta%20veicular."
+                  target="_blank"
+                  >Fale Conosco</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contato -->
+          <div class="footer-col">
+            <h4>Contato</h4>
+            <div class="footer-contact-item">
+              <a
+                href="https://wa.me/5587996541760"
+                target="_blank"
+                style="color: rgba(255, 255, 255, 0.5)"
+                >WhatsApp: (87) 99654-1760</a
+              >
+            </div>
+            <div class="footer-contact-item">
+              <a
+                href="mailto:lincoleng2001@outlook.com"
+                style="color: rgba(255, 255, 255, 0.5)"
+                >lincoleng2001@outlook.com</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          &copy; 2026 LS Engenharia. Todos os direitos reservados.
+        </div>
+      </div>
+    </footer>
+
+    <!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+    <script>
+      lucide.createIcons();
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>
