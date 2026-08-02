@@ -27,82 +27,161 @@
       }
       html {
         font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
       /* ── VARIÁVEIS ── */
       :root {
-        --blue-dark: #052288;
-        --blue-vivid: #0453cc;
-        --blue-hover: #0349b3;
-        --blue-tint: #eff6ff;
-        --gray-900: #111827;
-        --gray-600: #6b7280;
-        --gray-100: #f3f4f6;
-        --border: #e5e7eb;
-        --white: #ffffff;
-        --red: #dc2626;
         --font: "DM Sans", sans-serif;
+        --blue-50: #eff6ff;
+        --blue-100: #dbeafe;
+        --blue-400: #60a5fa;
+        --blue-500: #3b82f6;
+        --blue-600: #2563eb;
+        --blue-700: #1d4ed8;
+        --blue-800: #1e40af;
+        --blue-900: #1e3a8a;
+        --blue-950: #0f172a;
+        --slate-50: #f8fafc;
+        --slate-100: #f1f5f9;
+        --slate-200: #e2e8f0;
+        --slate-300: #cbd5e1;
+        --slate-400: #94a3b8;
+        --slate-500: #64748b;
+        --slate-600: #475569;
+        --slate-700: #334155;
+        --slate-800: #1e293b;
+        --slate-900: #0f172a;
+        --white: #ffffff;
+        --red: #ef4444;
+        --red-soft: #fca5a5;
       }
 
       /* ── BODY / FUNDO ── */
       body {
         font-family: var(--font);
-        -webkit-font-smoothing: antialiased;
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 24px 16px;
+        position: relative;
+        overflow-x: hidden;
+        background-color: #020617;
+      }
+
+      /* Background image with layered overlays */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background: url("15452724-design-de-linhas-de-onda-horizontal-de-fundo-abstrato-e-padrao-em-fundo-azul-escuro-e-textura-gratis-vetor.jpg")
+          no-repeat center center;
+        background-size: cover;
+        filter: saturate(1.1) contrast(1.05);
+      }
+
+      /* Dark gradient overlay for depth and readability */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 1;
         background:
           radial-gradient(
-            ellipse at 15% 25%,
-            rgba(4, 83, 204, 0.4) 0%,
-            transparent 55%
+            ellipse 80% 60% at 50% 0%,
+            rgba(30, 64, 175, 0.18) 0%,
+            transparent 60%
           ),
           radial-gradient(
-            ellipse at 85% 75%,
-            rgba(5, 34, 136, 0.55) 0%,
-            transparent 55%
+            ellipse 60% 50% at 80% 90%,
+            rgba(4, 83, 204, 0.15) 0%,
+            transparent 50%
           ),
-          linear-gradient(150deg, #020e38 0%, #052288 55%, #031560 100%);
+          radial-gradient(
+            ellipse 50% 40% at 20% 80%,
+            rgba(30, 58, 138, 0.12) 0%,
+            transparent 50%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(2, 6, 23, 0.55) 0%,
+            rgba(2, 6, 23, 0.75) 50%,
+            rgba(2, 6, 23, 0.92) 100%
+          );
+        pointer-events: none;
+      }
+
+      /* Subtle animated grain texture */
+      .grain {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        opacity: 0.035;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 180px 180px;
       }
 
       /* ── CARD ── */
       .card {
         position: relative;
-        background: var(--white);
-        border-radius: 20px;
-        padding: 40px 36px 36px;
+        z-index: 10;
         width: 100%;
-        max-width: 420px;
-        box-shadow: 0 32px 80px rgba(0, 0, 0, 0.38);
+        max-width: 440px;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(28px) saturate(1.4);
+        -webkit-backdrop-filter: blur(28px) saturate(1.4);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 48px 40px 40px;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+          0 24px 64px rgba(0, 0, 0, 0.45),
+          0 8px 24px rgba(0, 0, 0, 0.25),
+          0 0 80px rgba(4, 83, 204, 0.08);
+        animation: cardEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+        transform: translateY(16px) scale(0.98);
       }
 
-      /* ── VOLTAR PARA O SITE ── */
+      @keyframes cardEnter {
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* ── BACK HOME ── */
       .back-home {
         position: absolute;
-        top: 18px;
-        left: 18px;
-        width: 34px;
-        height: 34px;
-        border-radius: 9px;
-        background: var(--gray-100);
-        color: var(--gray-600);
+        top: 20px;
+        left: 20px;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: var(--slate-400);
         display: flex;
         align-items: center;
         justify-content: center;
         text-decoration: none;
-        transition:
-          background 0.15s,
-          color 0.15s;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       }
       .back-home:hover {
-        background: var(--blue-tint);
-        color: var(--blue-vivid);
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.12);
+        color: var(--white);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       }
       .back-home svg {
-        width: 17px;
-        height: 17px;
+        width: 16px;
+        height: 16px;
       }
 
       /* ── LOGO ── */
@@ -110,111 +189,216 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 28px;
+        gap: 14px;
+        margin-bottom: 32px;
+        animation: fadeUp 0.6s 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+        transform: translateY(10px);
       }
-      .logo-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+
+      @keyframes fadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
+
+      .logo-img {
+        width: 72px;
+        height: 72px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 24px rgba(59, 130, 246, 0.35))
+          drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .logo-img:hover {
+        transform: scale(1.05) rotate(-2deg);
+      }
+
       .logo-text-block {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        gap: 4px;
       }
       .logo-name {
-        font-size: 1.3rem;
+        font-size: 1.35rem;
         font-weight: 800;
-        color: var(--gray-900);
-        letter-spacing: 2px;
+        color: var(--white);
+        letter-spacing: 3px;
         line-height: 1;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
       }
       .logo-sub {
-        font-size: 0.6rem;
-        color: var(--gray-600);
-        letter-spacing: 0.8px;
-        margin-top: 3px;
+        font-size: 0.65rem;
+        color: var(--slate-400);
+        letter-spacing: 2.5px;
         text-transform: uppercase;
+        font-weight: 500;
       }
 
       /* ── DIVISOR ── */
       .divider {
         width: 100%;
         height: 1px;
-        background: var(--border);
-        margin-bottom: 24px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        margin-bottom: 28px;
+        animation: fadeUp 0.6s 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+      }
+
+      /* ── TABS (Segmented Control) ── */
+      .tabs {
+        display: flex;
+        position: relative;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 4px;
+        margin-bottom: 28px;
+        animation: fadeUp 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+      }
+      .tab-btn {
+        flex: 1;
+        position: relative;
+        z-index: 2;
+        padding: 10px 16px;
+        border: none;
+        background: transparent;
+        color: var(--slate-400);
+        font-family: var(--font);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: color 0.3s ease;
+        letter-spacing: 0.3px;
+      }
+      .tab-btn:hover {
+        color: var(--slate-200);
+      }
+      .tab-btn.active {
+        color: var(--white);
+      }
+      .tab-indicator {
+        position: absolute;
+        top: 4px;
+        bottom: 4px;
+        left: 4px;
+        width: calc(50% - 4px);
+        background: linear-gradient(
+          135deg,
+          rgba(59, 130, 246, 0.9),
+          rgba(37, 99, 235, 0.9)
+        );
+        border-radius: 10px;
+        box-shadow:
+          0 2px 8px rgba(37, 99, 235, 0.35),
+          0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 1;
+      }
+      .tab-indicator.right {
+        transform: translateX(calc(100% + 4px));
       }
 
       /* ── PAINEL ── */
       .panel {
         display: none;
+        animation: panelFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
       .panel.active {
         display: block;
       }
+      @keyframes panelFade {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-      /* ── CABEÇALHO DO FORMULÁRIO ── */
+      /* ── FORM HEAD ── */
       .form-head {
         text-align: center;
-        margin-bottom: 22px;
+        margin-bottom: 24px;
       }
       .form-head h1 {
-        font-size: 1.4rem;
-        font-weight: 800;
-        color: var(--gray-900);
-        margin-bottom: 5px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 6px;
+        letter-spacing: -0.2px;
       }
       .form-head p {
-        font-size: 0.83rem;
-        color: var(--gray-600);
+        font-size: 0.82rem;
+        color: var(--slate-400);
+        font-weight: 400;
       }
 
       /* ── CAMPO ── */
       .field {
         position: relative;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
       }
       .field-icon {
         position: absolute;
         left: 14px;
         top: 50%;
         transform: translateY(-50%);
-        width: 16px;
-        height: 16px;
-        color: #9ca3af;
+        width: 18px;
+        height: 18px;
+        color: var(--slate-500);
         pointer-events: none;
         display: flex;
         align-items: center;
+        transition:
+          color 0.25s ease,
+          transform 0.25s ease;
       }
       .field-icon svg {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
       }
 
       .field input {
         display: block;
         width: 100%;
-        padding: 13px 44px 13px 42px;
-        background: var(--gray-100);
-        border: 1.5px solid transparent;
-        border-radius: 10px;
+        padding: 13px 44px 13px 44px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1.5px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
         font-family: var(--font);
-        font-size: 0.88rem;
-        color: var(--gray-900);
+        font-size: 0.9rem;
+        color: var(--white);
         outline: none;
-        transition:
-          border-color 0.15s,
-          background 0.15s,
-          box-shadow 0.15s;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         -webkit-appearance: none;
       }
       .field input::placeholder {
-        color: #b0b7c3;
+        color: var(--slate-500);
+        font-weight: 400;
       }
       .field input:focus {
-        border-color: var(--blue-vivid);
-        background: var(--blue-tint);
-        box-shadow: 0 0 0 3px rgba(4, 83, 204, 0.12);
+        border-color: rgba(59, 130, 246, 0.5);
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow:
+          0 0 0 3px rgba(59, 130, 246, 0.1),
+          0 0 20px rgba(59, 130, 246, 0.08);
+      }
+      .field input:focus + .field-icon,
+      .field:focus-within .field-icon {
+        color: var(--blue-400);
+        transform: translateY(-50%) scale(1.05);
       }
 
       /* ── TOGGLE SENHA ── */
@@ -226,36 +410,53 @@
         background: transparent;
         border: none;
         cursor: pointer;
-        padding: 4px;
-        color: #9ca3af;
+        padding: 6px;
+        color: var(--slate-500);
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: color 0.15s;
+        transition: all 0.2s ease;
+        border-radius: 8px;
         line-height: 0;
       }
       .toggle-pw:hover {
-        color: var(--blue-vivid);
+        color: var(--slate-300);
+        background: rgba(255, 255, 255, 0.05);
       }
       .toggle-pw svg {
-        width: 16px;
-        height: 16px;
+        width: 17px;
+        height: 17px;
       }
 
       /* ── ESQUECI SENHA ── */
       .forgot-row {
         display: flex;
         justify-content: flex-end;
-        margin: 2px 0 18px;
+        margin: 2px 0 20px;
       }
       .link-sm {
         font-size: 0.78rem;
-        color: var(--blue-vivid);
+        color: var(--slate-400);
         text-decoration: none;
         font-weight: 500;
+        transition: color 0.2s ease;
+        position: relative;
+      }
+      .link-sm::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: var(--blue-400);
+        transition: width 0.25s ease;
       }
       .link-sm:hover {
-        text-decoration: underline;
+        color: var(--blue-400);
+      }
+      .link-sm:hover::after {
+        width: 100%;
       }
 
       /* ── BOTÃO PRINCIPAL ── */
@@ -266,48 +467,80 @@
         gap: 8px;
         width: 100%;
         padding: 14px;
-        background: var(--blue-vivid);
+        background: linear-gradient(135deg, var(--blue-600), var(--blue-700));
         color: var(--white);
         border: none;
-        border-radius: 10px;
+        border-radius: 12px;
         font-family: var(--font);
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         font-weight: 700;
         cursor: pointer;
         letter-spacing: 0.2px;
-        transition:
-          background 0.15s,
-          transform 0.1s,
-          box-shadow 0.15s;
-        margin-top: 4px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.25);
+      }
+      .btn-main::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.15),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
       }
       .btn-main svg {
         width: 17px;
         height: 17px;
         flex-shrink: 0;
+        transition: transform 0.25s ease;
       }
       .btn-main:hover {
-        background: var(--blue-hover);
-        box-shadow: 0 6px 20px rgba(4, 83, 204, 0.35);
+        background: linear-gradient(135deg, var(--blue-500), var(--blue-600));
+        box-shadow:
+          0 6px 24px rgba(37, 99, 235, 0.4),
+          0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+        transform: translateY(-1px);
+      }
+      .btn-main:hover::before {
+        opacity: 1;
+      }
+      .btn-main:hover svg {
+        transform: translateX(2px);
       }
       .btn-main:active {
-        transform: scale(0.98);
+        transform: translateY(0) scale(0.98);
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
       }
 
       /* ── SWITCH ── */
       .switch-text {
         text-align: center;
         font-size: 0.82rem;
-        color: var(--gray-600);
-        margin-top: 20px;
+        color: var(--slate-500);
+        margin-top: 22px;
+        font-weight: 400;
       }
       .link-action {
-        color: var(--blue-vivid);
-        font-weight: 700;
+        color: var(--blue-400);
+        font-weight: 600;
         text-decoration: none;
+        transition: color 0.2s ease;
+        cursor: pointer;
+        background: none;
+        border: none;
+        font-family: var(--font);
+        font-size: inherit;
+        padding: 0;
       }
       .link-action:hover {
+        color: var(--blue-300);
         text-decoration: underline;
+        text-underline-offset: 3px;
       }
 
       /* ── RESPONSIVO ── */
@@ -315,20 +548,142 @@
         body {
           padding: 16px 12px;
           align-items: flex-start;
-          padding-top: 32px;
+          padding-top: 28px;
         }
         .card {
-          padding: 28px 20px 24px;
-          border-radius: 16px;
+          padding: 36px 24px 32px;
+          border-radius: 20px;
+          max-width: 100%;
+        }
+        .logo-img {
+          width: 60px;
+          height: 60px;
         }
         .logo-name {
-          font-size: 1.1rem;
+          font-size: 1.15rem;
+          letter-spacing: 2px;
+        }
+        .tab-btn {
+          font-size: 0.8rem;
+          padding: 9px 12px;
+        }
+      }
+
+      /* ── FLOATING PARTICLES (decorative) ── */
+      .particle {
+        position: fixed;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.15);
+        pointer-events: none;
+        z-index: 3;
+        animation: floatParticle linear infinite;
+      }
+      @keyframes floatParticle {
+        0% {
+          transform: translateY(100vh) scale(0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-10vh) scale(1);
+          opacity: 0;
         }
       }
     </style>
     <base target="_blank" />
+    <base target="_blank" />
   </head>
   <body>
+    <!-- Subtle grain overlay -->
+    <div class="grain"></div>
+
+    <!-- Decorative floating particles -->
+    <div
+      class="particle"
+      style="
+        width: 3px;
+        height: 3px;
+        left: 10%;
+        animation-duration: 12s;
+        animation-delay: 0s;
+      "
+    ></div>
+    <div
+      class="particle"
+      style="
+        width: 2px;
+        height: 2px;
+        left: 25%;
+        animation-duration: 15s;
+        animation-delay: 2s;
+      "
+    ></div>
+    <div
+      class="particle"
+      style="
+        width: 4px;
+        height: 4px;
+        left: 40%;
+        animation-duration: 10s;
+        animation-delay: 1s;
+      "
+    ></div>
+    <div
+      class="particle"
+      style="
+        width: 2px;
+        height: 2px;
+        left: 55%;
+        animation-duration: 18s;
+        animation-delay: 3s;
+      "
+    ></div>
+    <div
+      class="particle"
+      style="
+        width: 3px;
+        height: 3px;
+        left: 70%;
+        animation-duration: 14s;
+        animation-delay: 0.5s;
+      "
+    ></div>
+    <div
+      class="particle"
+      style="
+        width: 2px;
+        height: 2px;
+        left: 85%;
+        animation-duration: 11s;
+        animation-delay: 4s;
+      "
+    ></div>
+    <div
+      class="particle"
+      style="
+        width: 3px;
+        height: 3px;
+        left: 15%;
+        animation-duration: 16s;
+        animation-delay: 5s;
+      "
+    ></div>
+    <div
+      class="particle"
+      style="
+        width: 2px;
+        height: 2px;
+        left: 90%;
+        animation-duration: 13s;
+        animation-delay: 1.5s;
+      "
+    ></div>
+
     <div class="card">
       <a
         href="index.html"
@@ -341,66 +696,39 @@
 
       <!-- LOGO -->
       <div class="logo-wrap">
-        <div class="logo-row">
-          <svg
-            width="52"
-            height="52"
-            viewBox="0 0 56 56"
-            xmlns="http://www.w3.org/2000/svg"
-            style="flex-shrink: 0"
-          >
-            <path
-              d="M28 3 L50 11 L50 31 C50 43 28 53 28 53 C28 53 6 43 6 31 L6 11 Z"
-              fill="#0453cc"
-            />
-            <path
-              d="M28 3 L50 11 L50 31 C50 43 28 53 28 53 C28 53 6 43 6 31 L6 11 Z"
-              fill="none"
-              stroke="rgba(255,255,255,0.3)"
-              stroke-width="1.5"
-            />
-            <circle
-              cx="38"
-              cy="38"
-              r="9"
-              fill="#052288"
-              stroke="rgba(255,255,255,.25)"
-              stroke-width="1.2"
-            />
-            <circle
-              cx="38"
-              cy="38"
-              r="5"
-              fill="none"
-              stroke="rgba(255,255,255,.5)"
-              stroke-width="1.2"
-            />
-            <text
-              x="27"
-              y="31"
-              text-anchor="middle"
-              font-family="DM Sans,sans-serif"
-              font-weight="800"
-              font-size="15"
-              fill="white"
-            >
-              LS
-            </text>
-          </svg>
-          <div class="logo-text-block">
-            <span class="logo-name">LS CHECK</span>
-            <span class="logo-sub">Verificação Técnica Veicular</span>
-          </div>
+        <img src="logo-icon-footer.png" alt="LS Check" class="logo-img" />
+        <div class="logo-text-block">
+          <span class="logo-name">LS CHECK</span>
+          <span class="logo-sub">Verificação Técnica Veicular</span>
         </div>
       </div>
 
       <div class="divider"></div>
 
+      <!-- TABS -->
+      <div class="tabs">
+        <div class="tab-indicator" id="tabIndicator"></div>
+        <button
+          class="tab-btn active"
+          id="tabLogin"
+          onclick="switchTab('login')"
+        >
+          Entrar
+        </button>
+        <button
+          class="tab-btn"
+          id="tabCadastro"
+          onclick="switchTab('cadastro')"
+        >
+          Criar conta
+        </button>
+      </div>
+
       <!-- ===== PAINEL LOGIN ===== -->
       <div class="panel active" id="panel-login">
         <div class="form-head">
-          <h1>Entrar</h1>
-          <p>Acesse sua conta</p>
+          <h1>Bem-vindo de volta</h1>
+          <p>Acesse sua conta para continuar</p>
         </div>
 
         <div class="field">
@@ -438,25 +766,12 @@
         <button class="btn-main" onclick="fazerLogin()">
           <i data-lucide="log-in"></i> Entrar
         </button>
-
-        <p class="switch-text">
-          Não tem conta?
-          <a
-            href="#"
-            class="link-action"
-            onclick="
-              mostrar('cadastro');
-              return false;
-            "
-            >Criar conta</a
-          >
-        </p>
       </div>
 
       <!-- ===== PAINEL CADASTRO ===== -->
       <div class="panel" id="panel-cadastro">
         <div class="form-head">
-          <h1>Criar Conta</h1>
+          <h1>Criar conta</h1>
           <p>Cadastre-se para acessar suas consultas</p>
         </div>
 
@@ -521,27 +836,35 @@
         <button class="btn-main" onclick="fazerCadastro()">
           <i data-lucide="user-plus"></i> Criar Conta
         </button>
-
-        <p class="switch-text">
-          Já tem conta?
-          <a
-            href="#"
-            class="link-action"
-            onclick="
-              mostrar('login');
-              return false;
-            "
-            >Entrar</a
-          >
-        </p>
       </div>
     </div>
 
     <script>
       // ============================================
-      // CONFIG - BACKEND VAI PASSAR A URL REAL
+      // CONFIG
       // ============================================
       const API_URL = "https://plataforma-consultas-backend-rqp0.onrender.com";
+
+      // ============================================
+      // TAB SWITCHING
+      // ============================================
+      function switchTab(tab) {
+        const indicator = document.getElementById("tabIndicator");
+        const btnLogin = document.getElementById("tabLogin");
+        const btnCadastro = document.getElementById("tabCadastro");
+
+        if (tab === "login") {
+          indicator.classList.remove("right");
+          btnLogin.classList.add("active");
+          btnCadastro.classList.remove("active");
+          mostrar("login");
+        } else {
+          indicator.classList.add("right");
+          btnCadastro.classList.add("active");
+          btnLogin.classList.remove("active");
+          mostrar("cadastro");
+        }
+      }
 
       // ============================================
       // UTILITÁRIOS
