@@ -731,6 +731,16 @@
     <script>
       // ─── CONFIG ────────────────────────────────────────────────────────────────
       const API = "https://plataforma-consultas-backend-rqp0.onrender.com";
+
+      // ─── PROTEÇÃO: só admin acessa este painel ──────────────────────────────────
+      const mainUser = JSON.parse(localStorage.getItem("user") || "null");
+      if (
+        !localStorage.getItem("token") ||
+        !mainUser ||
+        mainUser.role !== "admin"
+      ) {
+        location.href = "login.html";
+      }
       let token = localStorage.getItem("admin_token") || "";
       let currentOrder = null;
 
