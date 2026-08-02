@@ -1154,7 +1154,7 @@
 
       async function carregarUsuarios() {
         try {
-          const json = await api("/usuarios");
+          const json = await api("/api/usuarios");
           admins = json.data?.admins || [];
           usuarios = json.data?.usuarios || [];
           renderUsuarios();
@@ -1401,7 +1401,7 @@
       async function deletarUsuario(id) {
         if (!confirm2("Remover este usuário?")) return;
         try {
-          await api(`/usuarios/${id}`, { method: "DELETE" });
+          await api(`/api/usuarios/${id}`, { method: "DELETE" });
           admins = admins.filter((a) => a._id !== id);
           usuarios = usuarios.filter((u) => u._id !== id);
           renderUsuarios();
