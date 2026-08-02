@@ -944,17 +944,55 @@
 
         <!-- ABA FATURAMENTO -->
         <div class="tab-panel" id="tab-faturamento">
-          <div class="empty-state">
-            <i data-lucide="clock"></i>
-            <p>Faturamento em breve</p>
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-label">Faturamento Total</div>
+              <div class="metric-value black" id="fat-total">R$ 0,00</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Recebido</div>
+              <div class="metric-value green" id="fat-recebido">R$ 0,00</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Pendente</div>
+              <div class="metric-value yellow" id="fat-pendente">R$ 0,00</div>
+            </div>
+          </div>
+          <div class="rel-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Placa</th>
+                  <th>Cliente</th>
+                  <th>Valor</th>
+                  <th>Status</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody id="fat-tbody">
+                <tr>
+                  <td colspan="5" class="empty-state">
+                    <i data-lucide="clock"></i>
+                    <p>Carregando...</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
         <!-- ABA PAGAMENTOS -->
         <div class="tab-panel" id="tab-pagamentos">
-          <div class="empty-state">
-            <i data-lucide="clock"></i>
-            <p>Pagamentos em breve</p>
+          <div class="section-header">
+            <div class="section-title">
+              <i data-lucide="hourglass"></i> Aguardando Pagamento
+            </div>
+          </div>
+          <div id="pagamentos-list">
+            <div class="empty-state">
+              <i data-lucide="inbox"></i>
+              <p>Carregando...</p>
+            </div>
           </div>
         </div>
 
@@ -966,8 +1004,8 @@
               Consulta
             </div>
             <div class="rel-controls">
-              <input type="month" class="date-input" value="2026-05" />
-              <button class="btn-primary">
+              <input type="month" class="date-input" id="rel-month" />
+              <button class="btn-primary" onclick="exportarRelatorio()">
                 <i data-lucide="download"></i> Exportar
               </button>
             </div>
@@ -978,7 +1016,7 @@
                 <tr>
                   <th>Tipo de Consulta</th>
                   <th>Quantidade</th>
-                  <th>Custo Unitário</th>
+                  <th>Valor Médio</th>
                   <th>Total</th>
                 </tr>
               </thead>
@@ -1103,6 +1141,9 @@
           const json = await api("/api/orders/admin/all");
           pedidos = json.data?.orders || [];
           renderPedidos();
+          if (typeof renderFaturamento === "function") renderFaturamento();
+          if (typeof renderPagamentos === "function") renderPagamentos();
+          if (typeof renderRelatorios === "function") renderRelatorios();
         } catch (err) {
           console.error("Erro ao carregar pedidos:", err);
           document.getElementById("pedidos-list").innerHTML =
@@ -1371,8 +1412,177 @@
       }
 
       // ============================================
+      // FATURAMENTO (derivado dos pedidos já carregados)
+      // ============================================
+      function fmtMoeda(v) {
+        return (v || 0).toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+      }
+
+      function renderFaturamento() {
+        const tbody = document.getElementById("fat-tbody");
+        if (!pedidos.length) {
+          tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i data-lucide="inbox"></i><p>Nenhum pedido encontrado.</p></td></tr>`;
+          document.getElementById("fat-total").textContent = fmtMoeda(0);
+          document.getElementById("fat-recebido").textContent = fmtMoeda(0);
+          document.getElementById("fat-pendente").textContent = fmtMoeda(0);
+          lucide.createIcons();
+          return;
+        }
+
+        const total = pedidos.reduce((s, p) => s + (p.totalPrice || 0), 0);
+        const recebido = pedidos
+          .filter((p) => p.status === "completed")
+          .reduce((s, p) => s + (p.totalPrice || 0), 0);
+        const pendente = pedidos
+          .filter((p) =>
+            ["pending_payment", "pdf_review", "processing"].includes(p.status),
+          )
+          .reduce((s, p) => s + (p.totalPrice || 0), 0);
+
+        document.getElementById("fat-total").textContent = fmtMoeda(total);
+        document.getElementById("fat-recebido").textContent =
+          fmtMoeda(recebido);
+        document.getElementById("fat-pendente").textContent =
+          fmtMoeda(pendente);
+
+        tbody.innerHTML = pedidos
+          .slice()
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .map((p) => {
+            const data = p.createdAt
+              ? new Date(p.createdAt).toLocaleDateString("pt-BR")
+              : "";
+            return `<tr>
+        <td>${p.placa}</td>
+        <td>${p.userId?.name || "Cliente"}</td>
+        <td>${fmtMoeda(p.totalPrice)}</td>
+        <td><span class="badge ${STATUS_BADGE[p.status] || "badge-gray"}">${STATUS_LABELS[p.status] || p.status}</span></td>
+        <td>${data}</td>
+      </tr>`;
+          })
+          .join("");
+        lucide.createIcons();
+      }
+
+      // ============================================
+      // PAGAMENTOS (pedidos aguardando confirmação)
+      // ============================================
+      function renderPagamentos() {
+        const list = document.getElementById("pagamentos-list");
+        const pendentes = pedidos.filter((p) => p.status === "pending_payment");
+
+        if (!pendentes.length) {
+          list.innerHTML = `<div class="empty-state"><i data-lucide="inbox"></i><p>Nenhum pagamento pendente.</p></div>`;
+          lucide.createIcons();
+          return;
+        }
+
+        list.innerHTML = pendentes
+          .map((p) => {
+            const nomeCliente = p.userId?.name || "Cliente";
+            const data = p.createdAt
+              ? new Date(p.createdAt).toLocaleDateString("pt-BR")
+              : "";
+            return `
+      <div class="list-card" id="pagamento-${p._id}">
+        <div class="card-icon-wrap"><i data-lucide="dollar-sign"></i></div>
+        <div class="card-info">
+          <div class="card-top">
+            <span class="card-title">${p.placa}</span>
+            <span class="badge badge-yellow">${fmtMoeda(p.totalPrice)}</span>
+          </div>
+          <div class="card-sub">${nomeCliente} &middot; ${data}</div>
+        </div>
+        <div class="card-right">
+          <div class="action-btns">
+            <button class="action-btn" title="Confirmar pagamento" onclick="confirmarPagamento('${p._id}')"><i data-lucide="check"></i></button>
+          </div>
+        </div>
+      </div>`;
+          })
+          .join("");
+        lucide.createIcons();
+      }
+
+      // ============================================
+      // RELATÓRIOS (agrupado por tipo de consulta)
+      // ============================================
+      function renderRelatorios() {
+        const tbody = document.getElementById("rel-tbody");
+        const mesFiltro = document.getElementById("rel-month")?.value;
+
+        const filtrados = pedidos.filter((p) => {
+          if (!mesFiltro) return true;
+          const mesPedido = p.createdAt
+            ? new Date(p.createdAt).toISOString().slice(0, 7)
+            : "";
+          return mesPedido === mesFiltro;
+        });
+
+        if (!filtrados.length) {
+          tbody.innerHTML = `<tr><td colspan="4" class="empty-state"><i data-lucide="inbox"></i><p>Nenhum dado no período.</p></td></tr>`;
+          lucide.createIcons();
+          return;
+        }
+
+        const grupos = {};
+        filtrados.forEach((p) => {
+          const tipo =
+            p.orderType === "report" ? p.reportType || "Relatório" : "Avulso";
+          if (!grupos[tipo]) grupos[tipo] = { qtd: 0, total: 0 };
+          grupos[tipo].qtd += 1;
+          grupos[tipo].total += p.totalPrice || 0;
+        });
+
+        tbody.innerHTML = Object.entries(grupos)
+          .map(
+            ([tipo, g]) => `<tr>
+        <td>${tipo}</td>
+        <td>${g.qtd}</td>
+        <td>${fmtMoeda(g.total / g.qtd)}</td>
+        <td>${fmtMoeda(g.total)}</td>
+      </tr>`,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      function exportarRelatorio() {
+        const mesFiltro =
+          document.getElementById("rel-month")?.value || "todos";
+        const rows = [
+          ["Tipo de Consulta", "Quantidade", "Valor Médio", "Total"],
+        ];
+        document.querySelectorAll("#rel-tbody tr").forEach((tr) => {
+          const cells = Array.from(tr.children).map((td) =>
+            td.textContent.trim(),
+          );
+          if (cells.length === 4) rows.push(cells);
+        });
+        const csv = rows.map((r) => r.join(";")).join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `relatorio-${mesFiltro}.csv`;
+        link.click();
+      }
+
+      document
+        .getElementById("rel-month")
+        ?.addEventListener("change", renderRelatorios);
+
+      // ============================================
       // TABS
       // ============================================
+      const TAB_RENDERERS = {
+        faturamento: renderFaturamento,
+        pagamentos: renderPagamentos,
+        relatorios: renderRelatorios,
+      };
+
       document.querySelectorAll(".tab-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           document
@@ -1385,6 +1595,9 @@
           document
             .getElementById("tab-" + btn.dataset.tab)
             .classList.add("active");
+
+          const renderer = TAB_RENDERERS[btn.dataset.tab];
+          if (renderer) renderer();
         });
       });
 
