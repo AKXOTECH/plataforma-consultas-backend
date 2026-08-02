@@ -616,8 +616,30 @@ ul {
    ============================================ */
 #por-que {
   padding: 90px 0;
-  background: var(--blue-dark);
+  background: radial-gradient(
+    ellipse at center,
+    #0f1a3a 0%,
+    #060b1f 60%,
+    #02040f 100%
+  );
   color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+#por-que::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(4, 83, 204, 0.15) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+#por-que .container {
+  position: relative;
+  z-index: 1;
 }
 #por-que .section-title {
   color: var(--white);
@@ -639,13 +661,14 @@ ul {
   width: 64px;
   height: 64px;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 50%;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 18px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   transition: var(--transition);
+  backdrop-filter: blur(4px);
 }
 .why-card:hover .why-icon {
   background: rgba(255, 255, 255, 0.15);
