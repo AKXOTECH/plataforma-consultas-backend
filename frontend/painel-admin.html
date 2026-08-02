@@ -3,26 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Painel Admin — Consulta Veicular</title>
+    <title>Painel Admin — LS Check</title>
     <link
       rel="icon"
       type="image/svg+xml"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cpath d='M22 2 L38 8 L38 24 C38 33 22 42 22 42 C22 42 6 33 6 24 L6 8 Z' fill='%230453cc'/%3E%3Ctext x='22' y='28' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='16' fill='white'%3ELS%3C/text%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cpath d='M22 2 L38 8 L38 24 C38 33 22 42 22 42 C22 42 6 33 6 24 L6 8 Z' fill='%233b82f6'/%3E%3Ctext x='22' y='28' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='16' fill='white'%3ELS%3C/text%3E%3C/svg%3E"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
-      * {
+      *,
+      *::before,
+      *::after {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
-
+      html {
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+      }
       :root {
-        --bg: #0f1117;
-        --surface: #1a1d27;
-        --surface2: #222636;
-        --border: #2e3348;
-        --accent: #4f8ef7;
-        --accent2: #7c3aed;
+        --bg: #0b0f19;
+        --surface: #111827;
+        --surface-hover: #1a2235;
+        --border: rgba(255, 255, 255, 0.06);
+        --border-hover: rgba(255, 255, 255, 0.1);
+        --accent: #3b82f6;
+        --accent-hover: #2563eb;
+        --accent-soft: rgba(59, 130, 246, 0.12);
         --success: #22c55e;
         --warning: #f59e0b;
         --danger: #ef4444;
@@ -32,7 +46,6 @@
         --font: "Inter", system-ui, sans-serif;
         --mono: "JetBrains Mono", "Fira Code", monospace;
       }
-
       body {
         font-family: var(--font);
         background: var(--bg);
@@ -40,195 +53,236 @@
         min-height: 100vh;
         display: flex;
         flex-direction: column;
+        overflow: hidden;
       }
 
       /* HEADER */
       header {
+        height: 52px;
         background: var(--surface);
         border-bottom: 1px solid var(--border);
-        padding: 0 2rem;
-        height: 56px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        position: sticky;
-        top: 0;
+        padding: 0 20px;
+        flex-shrink: 0;
         z-index: 100;
       }
-
       .logo {
-        font-size: 15px;
-        font-weight: 600;
-        letter-spacing: -0.02em;
         display: flex;
         align-items: center;
         gap: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--text);
       }
-
-      .logo-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--accent);
-        box-shadow: 0 0 8px var(--accent);
+      .logo svg {
+        width: 26px;
+        height: 26px;
       }
-
       .header-right {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
       }
-
-      .server-status {
-        font-size: 12px;
-        color: var(--text3);
+      .status-pill {
         display: flex;
         align-items: center;
         gap: 6px;
+        font-size: 12px;
+        color: var(--text3);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        padding: 4px 10px;
+        border-radius: 20px;
       }
-
       .status-dot {
         width: 6px;
         height: 6px;
         border-radius: 50%;
         background: var(--text3);
       }
-
       .status-dot.online {
         background: var(--success);
-        box-shadow: 0 0 6px var(--success);
+        box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
       }
       .status-dot.offline {
         background: var(--danger);
+      }
+      .user-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #6366f1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: white;
       }
 
       /* LAYOUT */
       .layout {
         display: flex;
         flex: 1;
+        overflow: hidden;
       }
 
       /* SIDEBAR */
       aside {
-        width: 240px;
+        width: 210px;
         background: var(--surface);
         border-right: 1px solid var(--border);
-        padding: 1.5rem 0;
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        min-height: calc(100vh - 56px);
+        padding: 12px 0;
+        flex-shrink: 0;
       }
-
       .nav-section {
-        padding: 0 1rem 0.5rem;
-        font-size: 11px;
+        padding: 16px 16px 6px;
+        font-size: 10px;
         font-weight: 600;
         color: var(--text3);
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        margin-top: 1rem;
       }
-
       .nav-item {
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 8px 1rem;
-        margin: 0 0.5rem;
-        border-radius: 6px;
-        font-size: 13.5px;
+        padding: 8px 14px;
+        margin: 1px 10px;
+        border-radius: 8px;
+        font-size: 13px;
         color: var(--text2);
         cursor: pointer;
         transition: all 0.15s;
         border: 1px solid transparent;
+        white-space: nowrap;
       }
-
       .nav-item:hover {
-        background: var(--surface2);
+        background: var(--surface-hover);
         color: var(--text);
       }
       .nav-item.active {
-        background: rgba(79, 142, 247, 0.12);
+        background: var(--accent-soft);
         color: var(--accent);
-        border-color: rgba(79, 142, 247, 0.2);
+        border-color: rgba(59, 130, 246, 0.15);
       }
-
+      .nav-item svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
       .nav-badge {
         margin-left: auto;
-        background: var(--accent2);
+        background: var(--accent);
         color: white;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 600;
         padding: 1px 7px;
         border-radius: 20px;
-        min-width: 20px;
+        min-width: 18px;
         text-align: center;
       }
 
       /* MAIN */
       main {
         flex: 1;
-        padding: 2rem;
+        padding: 20px 24px;
         overflow-y: auto;
-        max-width: 1100px;
+        min-width: 0;
+      }
+      .page-title {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 4px;
+      }
+      .page-subtitle {
+        font-size: 12px;
+        color: var(--text3);
+        margin-bottom: 16px;
       }
 
-      /* CONFIG CARD */
-      .config-card {
+      /* CARDS */
+      .card {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 14px;
+        overflow: hidden;
       }
-
-      .config-card h3 {
-        font-size: 13px;
+      .card-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .card-header h3 {
+        font-size: 12px;
         font-weight: 600;
         color: var(--text2);
-        margin-bottom: 1rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
-
-      .config-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 12px;
+      .card-body {
+        padding: 14px 16px;
       }
 
+      /* GRID */
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      @media (max-width: 900px) {
+        .grid-4 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      /* FIELD */
       .field {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 5px;
       }
-
       .field label {
-        font-size: 12px;
+        font-size: 11px;
         color: var(--text3);
         font-weight: 500;
       }
-
       .field input,
       .field select {
-        background: var(--bg);
+        background: #0b0f19;
         border: 1px solid var(--border);
         border-radius: 6px;
-        padding: 8px 10px;
+        padding: 7px 10px;
         color: var(--text);
-        font-size: 13px;
+        font-size: 12px;
         font-family: var(--font);
         transition: border-color 0.15s;
         width: 100%;
+        outline: none;
       }
-
       .field input:focus,
       .field select:focus {
-        outline: none;
         border-color: var(--accent);
       }
-
       .field input::placeholder {
         color: var(--text3);
       }
@@ -237,17 +291,18 @@
       .btn {
         display: inline-flex;
         align-items: center;
-        gap: 7px;
-        padding: 8px 16px;
+        justify-content: center;
+        gap: 6px;
+        padding: 7px 14px;
         border-radius: 6px;
-        font-size: 13px;
-        font-weight: 500;
+        font-size: 12px;
+        font-weight: 600;
         cursor: pointer;
         border: none;
         transition: all 0.15s;
         font-family: var(--font);
+        white-space: nowrap;
       }
-
       .btn:disabled {
         opacity: 0.4;
         cursor: not-allowed;
@@ -257,28 +312,28 @@
         color: white;
       }
       .btn-primary:hover:not(:disabled) {
-        background: #3d7de8;
+        background: var(--accent-hover);
       }
       .btn-success {
         background: var(--success);
-        color: white;
+        color: #0a0a0a;
       }
       .btn-success:hover:not(:disabled) {
-        background: #16a34a;
+        filter: brightness(1.1);
       }
       .btn-warning {
         background: var(--warning);
-        color: #1a1a1a;
+        color: #0a0a0a;
       }
       .btn-warning:hover:not(:disabled) {
-        background: #d97706;
+        filter: brightness(1.1);
       }
       .btn-danger {
         background: var(--danger);
         color: white;
       }
       .btn-danger:hover:not(:disabled) {
-        background: #dc2626;
+        filter: brightness(1.1);
       }
       .btn-ghost {
         background: transparent;
@@ -286,81 +341,164 @@
         border: 1px solid var(--border);
       }
       .btn-ghost:hover:not(:disabled) {
-        background: var(--surface2);
+        background: rgba(255, 255, 255, 0.04);
         color: var(--text);
       }
       .btn-sm {
         padding: 5px 10px;
+        font-size: 11px;
+      }
+
+      /* METRICS */
+      .metric-card {
+        padding: 14px 16px;
+      }
+      .metric-value {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 2px;
+      }
+      .metric-label {
+        font-size: 11px;
+        color: var(--text3);
+      }
+      .metric-delta {
+        font-size: 11px;
+        margin-top: 4px;
+        font-weight: 500;
+      }
+      .metric-delta.up {
+        color: var(--success);
+      }
+      .metric-delta.down {
+        color: var(--danger);
+      }
+
+      /* TABLE */
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
         font-size: 12px;
       }
-
-      /* PAGE TITLE */
-      .page-title {
-        font-size: 20px;
-        font-weight: 700;
-        letter-spacing: -0.03em;
-        margin-bottom: 0.25rem;
+      th {
+        text-align: left;
+        padding: 8px 12px;
+        color: var(--text3);
+        font-weight: 600;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text2);
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      tr:last-child td {
+        border-bottom: none;
       }
 
-      .page-subtitle {
-        font-size: 13px;
-        color: var(--text3);
-        margin-bottom: 1.5rem;
+      /* STATUS BADGES */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .badge-pending {
+        background: rgba(148, 163, 184, 0.12);
+        color: #94a3b8;
+      }
+      .badge-running {
+        background: rgba(59, 130, 246, 0.12);
+        color: #60a5fa;
+      }
+      .badge-done {
+        background: rgba(124, 58, 237, 0.12);
+        color: #a78bfa;
+      }
+      .badge-payment {
+        background: rgba(245, 158, 11, 0.12);
+        color: #fbbf24;
+      }
+      .badge-processing {
+        background: rgba(59, 130, 246, 0.12);
+        color: #60a5fa;
+      }
+      .badge-completed {
+        background: rgba(34, 197, 94, 0.12);
+        color: #4ade80;
+      }
+      .badge-failed {
+        background: rgba(239, 68, 68, 0.12);
+        color: #f87171;
+      }
+      .badge-rejected {
+        background: rgba(239, 68, 68, 0.12);
+        color: #f87171;
       }
 
       /* PIPELINE */
       .pipeline {
         display: flex;
         align-items: center;
-        gap: 0;
-        margin-bottom: 2rem;
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 10px;
+        border-radius: 8px;
         overflow: hidden;
+        margin-bottom: 14px;
       }
-
       .pipeline-step {
         flex: 1;
-        padding: 14px 16px;
+        padding: 10px 8px;
         text-align: center;
         position: relative;
         border-right: 1px solid var(--border);
-        transition: all 0.3s;
+        transition: background 0.2s;
       }
-
       .pipeline-step:last-child {
         border-right: none;
       }
-
-      .pipeline-step.active {
-        background: rgba(79, 142, 247, 0.1);
-      }
-
       .pipeline-step.done {
-        background: rgba(34, 197, 94, 0.08);
+        background: rgba(34, 197, 94, 0.06);
       }
-
       .pipeline-step.current {
-        background: rgba(79, 142, 247, 0.18);
+        background: var(--accent-soft);
         box-shadow: inset 0 -2px 0 var(--accent);
       }
-
       .step-num {
-        font-size: 10px;
+        font-size: 9px;
         color: var(--text3);
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        margin-bottom: 3px;
+        margin-bottom: 2px;
       }
-
+      .pipeline-step.done .step-num {
+        color: var(--success);
+      }
+      .pipeline-step.current .step-num {
+        color: var(--accent);
+      }
       .step-label {
-        font-size: 12px;
+        font-size: 10px;
         font-weight: 600;
-        color: var(--text2);
+        color: var(--text3);
       }
-
       .pipeline-step.done .step-label {
         color: var(--success);
       }
@@ -369,181 +507,128 @@
       }
 
       /* ORDER CARD */
-      .order-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 1.5rem;
-      }
-
-      .order-header {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .order-info {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-
-      .placa-badge {
-        background: var(--bg);
+      .order-placa {
+        background: #0b0f19;
         border: 1px solid var(--border);
         border-radius: 6px;
-        padding: 6px 14px;
+        padding: 5px 12px;
         font-family: var(--mono);
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 700;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.08em;
         color: var(--text);
       }
-
       .order-meta {
-        font-size: 12px;
-        color: var(--text3);
-        line-height: 1.6;
-      }
-
-      .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 4px 10px;
-        border-radius: 20px;
         font-size: 11px;
-        font-weight: 600;
+        color: var(--text3);
+        line-height: 1.5;
       }
 
-      .status-pending_review {
-        background: rgba(148, 163, 184, 0.15);
-        color: #94a3b8;
-      }
-      .status-queries_running {
-        background: rgba(79, 142, 247, 0.15);
-        color: #4f8ef7;
-      }
-      .status-queries_done {
-        background: rgba(124, 58, 237, 0.15);
-        color: #a78bfa;
-      }
-      .status-pending_payment {
-        background: rgba(245, 158, 11, 0.15);
-        color: #f59e0b;
-      }
-      .status-processing {
-        background: rgba(79, 142, 247, 0.15);
-        color: #4f8ef7;
-      }
-      .status-completed {
-        background: rgba(34, 197, 94, 0.15);
-        color: #22c55e;
-      }
-      .status-failed {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-      }
-      .status-rejected {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-      }
-
-      /* ENDPOINTS LIST */
-      .order-body {
-        padding: 1.5rem;
-      }
-
-      .endpoints-grid {
+      /* ENDPOINTS */
+      .ep-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 8px;
-        margin-bottom: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 6px;
+        margin-bottom: 12px;
       }
-
-      .endpoint-item {
-        background: var(--bg);
+      .ep-item {
+        background: #0b0f19;
         border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 10px 12px;
+        border-radius: 6px;
+        padding: 8px 10px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        font-size: 12.5px;
+        font-size: 11px;
       }
-
-      .endpoint-name {
+      .ep-name {
         color: var(--text2);
         font-weight: 500;
       }
-
-      .endpoint-status {
-        font-size: 11px;
+      .ep-status {
+        font-size: 10px;
         font-weight: 600;
-        padding: 2px 7px;
+        padding: 1px 6px;
         border-radius: 10px;
       }
-
       .ep-pending {
-        background: rgba(148, 163, 184, 0.12);
+        background: rgba(148, 163, 184, 0.1);
         color: var(--text3);
       }
       .ep-success {
-        background: rgba(34, 197, 94, 0.15);
+        background: rgba(34, 197, 94, 0.12);
         color: var(--success);
       }
       .ep-error {
-        background: rgba(239, 68, 68, 0.15);
+        background: rgba(239, 68, 68, 0.12);
         color: var(--danger);
       }
       .ep-running {
-        background: rgba(79, 142, 247, 0.15);
+        background: rgba(59, 130, 246, 0.12);
         color: var(--accent);
       }
 
-      /* RESULTS PREVIEW */
-      .results-preview {
-        background: var(--bg);
+      /* ACCORDION */
+      .accordion-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: #0b0f19;
         border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s;
+        margin-bottom: 6px;
+      }
+      .accordion-header:hover {
+        border-color: var(--border-hover);
+      }
+      .accordion-header span {
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .accordion-header .toggle {
+        font-size: 11px;
+        color: var(--text3);
+      }
+      .accordion-body {
+        display: none;
+        padding: 10px;
+        background: #0b0f19;
+        border: 1px solid var(--border);
+        border-top: none;
+        border-radius: 0 0 6px 6px;
+        margin-top: -6px;
+        margin-bottom: 8px;
         font-family: var(--mono);
         font-size: 11px;
         color: var(--text2);
-        max-height: 200px;
+        max-height: 280px;
         overflow-y: auto;
         white-space: pre-wrap;
         word-break: break-all;
-        margin-bottom: 1.5rem;
       }
-
-      /* ACTIONS */
-      .actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        align-items: center;
+      .accordion-body.open {
+        display: block;
       }
 
       /* LOG */
       .log-area {
-        background: var(--bg);
+        background: #0b0f19;
         border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 12px;
+        border-radius: 6px;
+        padding: 10px;
         font-family: var(--mono);
-        font-size: 11.5px;
-        max-height: 200px;
+        font-size: 11px;
+        max-height: 160px;
         overflow-y: auto;
         color: var(--text2);
       }
-
       .log-line {
-        padding: 2px 0;
-        line-height: 1.6;
+        padding: 1px 0;
+        line-height: 1.5;
       }
       .log-line.info {
         color: var(--accent);
@@ -561,16 +646,16 @@
         color: var(--text3);
       }
 
-      /* LOADING SPINNER */
+      /* SPINNER */
       @keyframes spin {
         to {
           transform: rotate(360deg);
         }
       }
       .spinner {
-        width: 14px;
-        height: 14px;
-        border: 2px solid rgba(255, 255, 255, 0.2);
+        width: 12px;
+        height: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.15);
         border-top-color: white;
         border-radius: 50%;
         animation: spin 0.7s linear infinite;
@@ -580,24 +665,23 @@
       /* TOAST */
       #toast {
         position: fixed;
-        bottom: 24px;
-        right: 24px;
-        background: var(--surface2);
+        bottom: 20px;
+        right: 20px;
+        background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 8px;
-        padding: 12px 16px;
-        font-size: 13px;
+        padding: 10px 14px;
+        font-size: 12px;
         color: var(--text);
-        max-width: 320px;
+        max-width: 300px;
         transform: translateY(80px);
         opacity: 0;
         transition: all 0.25s;
         z-index: 999;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
       }
-
       #toast.show {
         transform: translateY(0);
         opacity: 1;
@@ -612,101 +696,105 @@
         border-left: 3px solid var(--accent);
       }
 
-      /* DIVIDER */
-      .divider {
-        border: none;
-        border-top: 1px solid var(--border);
-        margin: 1.5rem 0;
-      }
-
-      .section-title {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--text3);
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        margin-bottom: 10px;
-      }
-
+      /* PDF LINK */
       .pdf-link {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 10px 16px;
-        background: rgba(34, 197, 94, 0.1);
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        border-radius: 8px;
+        gap: 6px;
+        padding: 8px 14px;
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        border-radius: 6px;
         color: var(--success);
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 600;
         text-decoration: none;
         transition: all 0.15s;
       }
-
       .pdf-link:hover {
-        background: rgba(34, 197, 94, 0.2);
+        background: rgba(34, 197, 94, 0.14);
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        aside {
+          width: 60px;
+        }
+        .nav-item span:not(.nav-badge) {
+          display: none;
+        }
+        .nav-item {
+          justify-content: center;
+          padding: 8px;
+          margin: 1px 6px;
+        }
+        .nav-section {
+          text-align: center;
+          padding: 12px 0 4px;
+          font-size: 9px;
+        }
+        main {
+          padding: 14px;
+        }
+        .grid-3,
+        .grid-4 {
+          grid-template-columns: 1fr;
+        }
+        .pipeline {
+          overflow-x: auto;
+        }
       }
     </style>
+    <base target="_blank" />
   </head>
   <body>
     <header>
       <div class="logo">
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 44 44"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M22 2 L38 8 L38 24 C38 33 22 42 22 42 C22 42 6 33 6 24 L6 8 Z"
-            fill="#0453cc"
-            stroke="#fff"
-            stroke-width="1.5"
-          />
-          <text
-            x="22"
-            y="27"
-            text-anchor="middle"
-            font-family="DM Sans,sans-serif"
-            font-weight="800"
-            font-size="13"
-            fill="white"
-          >
-            LS
-          </text>
-        </svg>
+        <img
+          src="logo-icon-footer(1).png"
+          alt="LS Check"
+          style="
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.4));
+          "
+        />
         LS Check — Painel Admin
       </div>
       <div class="header-right">
-        <div class="server-status">
+        <div class="status-pill">
           <div class="status-dot" id="statusDot"></div>
-          <span id="statusText">Verificando...</span>
+          <span id="statusText">Verificando</span>
         </div>
+        <div class="user-avatar" id="userAvatar">A</div>
       </div>
     </header>
 
     <div class="layout">
       <aside>
-        <div class="nav-section">Acesso</div>
-        <div class="nav-item" onclick="showSection('login')">
-          <span>🔑</span> Login Admin
+        <div class="nav-section">Menu</div>
+        <div
+          class="nav-item"
+          id="nav-dashboard"
+          onclick="showSection('dashboard')"
+        >
+          <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
         </div>
-
-        <div class="nav-section">Pedidos</div>
         <div
           class="nav-item active"
           id="nav-fluxo"
           onclick="showSection('fluxo')"
         >
-          <span>⚡</span> Novo Pedido
+          <i data-lucide="zap"></i><span>Novo Pedido</span>
         </div>
         <div
           class="nav-item"
           id="nav-pendentes"
           onclick="showSection('pendentes')"
         >
-          <span>📋</span> Pendentes
-          <span class="nav-badge" id="badgePendentes">0</span>
+          <i data-lucide="clipboard-list"></i><span>Pendentes</span
+          ><span class="nav-badge" id="badgePendentes">0</span>
         </div>
 
         <div class="nav-section">Sistema</div>
@@ -715,29 +803,27 @@
           id="nav-historico"
           onclick="showSection('historico')"
         >
-          <span>🔌</span> Historico
+          <i data-lucide="history"></i><span>Histórico</span>
         </div>
         <div
           class="nav-item"
           id="nav-endpoints"
           onclick="showSection('endpoints')"
         >
-          <span>🔌</span> Endpoints
+          <i data-lucide="plug"></i><span>Endpoints</span>
+        </div>
+        <div class="nav-item" onclick="logout()">
+          <i data-lucide="log-out"></i><span>Sair</span>
         </div>
       </aside>
 
-      <main id="mainContent">
-        <!-- Conteúdo dinâmico aqui -->
-      </main>
+      <main id="mainContent"></main>
     </div>
 
     <div id="toast"></div>
 
     <script>
-      // ─── CONFIG ────────────────────────────────────────────────────────────────
       const API = "https://plataforma-consultas-backend-rqp0.onrender.com";
-
-      // ─── PROTEÇÃO: só admin acessa este painel ──────────────────────────────────
       const mainUser = JSON.parse(localStorage.getItem("user") || "null");
       if (
         !localStorage.getItem("token") ||
@@ -746,28 +832,29 @@
       ) {
         location.href = "login.html";
       }
+      document.getElementById("userAvatar").textContent = (
+        mainUser?.name || "A"
+      )
+        .charAt(0)
+        .toUpperCase();
       let token = localStorage.getItem("admin_token") || "";
       let currentOrder = null;
 
-      // ─── UTILS ─────────────────────────────────────────────────────────────────
       function toast(msg, type = "info") {
         const el = document.getElementById("toast");
         el.textContent = msg;
         el.className = `show toast-${type}`;
         setTimeout(() => (el.className = ""), 3000);
       }
-
       function log(msg, type = "dim") {
         const area = document.getElementById("logArea");
         if (!area) return;
         const line = document.createElement("div");
         line.className = `log-line ${type}`;
-        const time = new Date().toLocaleTimeString("pt-BR");
-        line.textContent = `[${time}] ${msg}`;
+        line.textContent = `[${new Date().toLocaleTimeString("pt-BR")}] ${msg}`;
         area.appendChild(line);
         area.scrollTop = area.scrollHeight;
       }
-
       async function api(method, path, body) {
         const opts = {
           method,
@@ -779,24 +866,185 @@
         };
         const res = await fetch(API + path, opts);
         const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Erro na requisição");
+        if (!res.ok) throw new Error(data.message || "Erro");
         return data;
       }
 
-      // ─── STATUS CHECK ───────────────────────────────────────────────────────────
       async function checkServer() {
         try {
           await fetch(API + "/health");
           document.getElementById("statusDot").className = "status-dot online";
-          document.getElementById("statusText").textContent = "Servidor online";
+          document.getElementById("statusText").textContent = "Online";
         } catch {
           document.getElementById("statusDot").className = "status-dot offline";
-          document.getElementById("statusText").textContent =
-            "Servidor offline";
+          document.getElementById("statusText").textContent = "Offline";
         }
       }
 
-      // ─── PIPELINE HELPER ────────────────────────────────────────────────────────
+      function logout() {
+        localStorage.clear();
+        location.href = "login.html";
+      }
+
+      function showSection(name) {
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((el) => el.classList.remove("active"));
+        const navEl = document.getElementById(`nav-${name}`);
+        if (navEl) navEl.classList.add("active");
+        const sections = {
+          dashboard: renderDashboard,
+          fluxo: renderFluxo,
+          pendentes: renderPendentes,
+          historico: renderHistorico,
+          endpoints: renderEndpoints2,
+        };
+        if (sections[name]) sections[name]();
+        lucide.createIcons();
+      }
+
+      /* ─── DASHBOARD ─── */
+      function renderDashboard() {
+        document.getElementById("mainContent").innerHTML = `
+    <div class="page-title">Dashboard</div>
+    <div class="page-subtitle">Visão geral do sistema</div>
+    <div class="grid-4">
+      <div class="card metric-card"><div class="metric-value" id="dashHoje">0</div><div class="metric-label">Pedidos hoje</div></div>
+      <div class="card metric-card"><div class="metric-value" id="dashPendentes">0</div><div class="metric-label">Pendentes</div></div>
+      <div class="card metric-card"><div class="metric-value" id="dashFaturamento">R$ 0</div><div class="metric-label">Faturamento (7d)</div></div>
+      <div class="card metric-card"><div class="metric-value" id="dashTaxa">0%</div><div class="metric-label">Taxa de sucesso</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Ações rápidas</h3></div>
+      <div class="card-body" style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="showSection('fluxo')"><i data-lucide="plus"></i> Novo pedido</button>
+        <button class="btn btn-ghost" onclick="showSection('pendentes')"><i data-lucide="clipboard-list"></i> Ver pendentes</button>
+        <button class="btn btn-ghost" onclick="showSection('historico')"><i data-lucide="history"></i> Histórico</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Pedidos recentes</h3></div>
+      <div class="card-body" id="dashRecentes"><div style="color:var(--text3);font-size:12px">Carregando...</div></div>
+    </div>`;
+        loadDashboardData();
+        lucide.createIcons();
+      }
+      async function loadDashboardData() {
+        try {
+          const [rev, pay, all] = await Promise.all([
+            api("GET", "/api/orders/admin/pending-review"),
+            api("GET", "/api/orders/admin/pending-payment"),
+            api("GET", "/api/orders/admin/all?page=1&limit=5"),
+          ]);
+          const pendentes = rev.data.orders.length + pay.data.orders.length;
+          document.getElementById("dashPendentes").textContent = pendentes;
+          document.getElementById("badgePendentes").textContent = pendentes;
+          const orders = all.data.orders || [];
+          const hoje = orders.filter(
+            (o) =>
+              new Date(o.createdAt).toDateString() ===
+              new Date().toDateString(),
+          ).length;
+          document.getElementById("dashHoje").textContent = hoje;
+          const total = orders.reduce((s, o) => s + (o.totalPrice || 0), 0);
+          document.getElementById("dashFaturamento").textContent =
+            `R$ ${total.toFixed(2).replace(".", ",")}`;
+          const completed = orders.filter(
+            (o) => o.status === "completed",
+          ).length;
+          document.getElementById("dashTaxa").textContent = orders.length
+            ? Math.round((completed / orders.length) * 100) + "%"
+            : "0%";
+          document.getElementById("dashRecentes").innerHTML = orders.length
+            ? `
+      <div class="table-wrap"><table><thead><tr><th>Placa</th><th>Cliente</th><th>Valor</th><th>Status</th><th>Data</th><th></th></tr></thead><tbody>
+      ${orders.map((o) => `<tr><td><span style="font-family:var(--mono);font-weight:700">${o.placa}</span></td><td>${o.userId?.name || "—"}</td><td>R$ ${o.totalPrice}</td><td>${renderBadge(o.status)}</td><td>${new Date(o.createdAt).toLocaleDateString("pt-BR")}</td><td><button class="btn btn-primary btn-sm" onclick="abrirPedido('${o._id}')">Abrir</button></td></tr>`).join("")}
+      </tbody></table></div>`
+            : `<div style="color:var(--text3);font-size:12px">Nenhum pedido encontrado.</div>`;
+        } catch (err) {
+          document.getElementById("dashRecentes").innerHTML =
+            `<div style="color:var(--danger);font-size:12px">Erro: ${err.message}</div>`;
+        }
+      }
+
+      /* ─── FLUXO ─── */
+      function renderFluxo() {
+        document.getElementById("mainContent").innerHTML = `
+    <div class="page-title">Novo Pedido</div>
+    <div class="page-subtitle">Simule o fluxo completo — do pedido ao PDF</div>
+    <div class="card">
+      <div class="card-header"><h3>Criar Pedido</h3></div>
+      <div class="card-body">
+        <div class="grid-3">
+          <div class="field"><label>Placa</label><input id="inputPlaca" placeholder="ABC1234"></div>
+          <div class="field"><label>Tipo</label><select id="inputTipo" onchange="toggleTipo()"><option value="custom">Avulso</option><option value="report">Relatório pronto</option></select></div>
+          <div class="field" id="fieldReport" style="display:none"><label>Relatório</label><select id="inputReport"><option value="check_basic">Check Basic</option><option value="check_pro">Check Pro</option><option value="check_premium">Check Premium</option><option value="check_leilao_sinistro">Check Leilão & Sinistro</option><option value="check_leilao_completo">Check Leilão Completo</option></select></div>
+        </div>
+        <div class="field" id="fieldEndpoints" style="margin-top:10px"><label>Endpoints (separados por vírgula)</label><input id="inputEndpoints" placeholder="decodificador, debitosveiculares, renajud"></div>
+        <div style="margin-top:12px"><button class="btn btn-primary" onclick="criarPedido()"><i data-lucide="plus"></i> Criar Pedido</button></div>
+      </div>
+    </div>
+    <div id="orderSection" style="display:none">
+      <div id="pipelineWrap"></div>
+      <div id="orderCard"></div>
+      <div class="card" id="logCard">
+        <div class="card-header" style="cursor:pointer" onclick="toggleLog()"><h3>Log de Ações</h3><span id="logToggle" style="font-size:11px;color:var(--text3)">Ocultar ▾</span></div>
+        <div class="card-body" id="logBody"><div class="log-area" id="logArea"><div class="log-line dim">Aguardando ações...</div></div></div>
+      </div>
+    </div>`;
+        lucide.createIcons();
+      }
+      function toggleTipo() {
+        const tipo = document.getElementById("inputTipo").value;
+        document.getElementById("fieldReport").style.display =
+          tipo === "report" ? "flex" : "none";
+        document.getElementById("fieldEndpoints").style.display =
+          tipo === "custom" ? "block" : "none";
+      }
+      function toggleLog() {
+        const body = document.getElementById("logBody");
+        const toggle = document.getElementById("logToggle");
+        if (body.style.display === "none") {
+          body.style.display = "block";
+          toggle.textContent = "Ocultar ▾";
+        } else {
+          body.style.display = "none";
+          toggle.textContent = "Exibir ▴";
+        }
+      }
+      async function criarPedido() {
+        if (!token) {
+          toast("Faça login primeiro", "error");
+          return;
+        }
+        const placa = document.getElementById("inputPlaca").value.trim();
+        const tipo = document.getElementById("inputTipo").value;
+        let body = { placa, orderType: tipo };
+        if (tipo === "report") {
+          body.reportType = document.getElementById("inputReport").value;
+        } else {
+          body.endpoints = document
+            .getElementById("inputEndpoints")
+            .value.split(",")
+            .map((e) => e.trim())
+            .filter(Boolean);
+        }
+        try {
+          const data = await api("POST", "/api/orders", body);
+          currentOrder = data.data.order;
+          document.getElementById("orderSection").style.display = "block";
+          renderOrder();
+          log(
+            `Pedido criado: ${currentOrder._id} — Placa: ${currentOrder.placa} | R$ ${currentOrder.totalPrice}`,
+            "info",
+          );
+          toast("Pedido criado!", "success");
+        } catch (err) {
+          toast(err.message, "error");
+          log(`Erro: ${err.message}`, "error");
+        }
+      }
+
       function getPipelineStep(status) {
         const map = {
           pending_review: 0,
@@ -811,7 +1059,6 @@
         };
         return map[status] ?? 0;
       }
-
       function renderPipeline(status) {
         const steps = [
           "Criado",
@@ -827,428 +1074,136 @@
               : "Concluído",
         ];
         const current = getPipelineStep(status);
-
-        return `<div class="pipeline">
-    ${steps
-      .map(
-        (s, i) => `
-      <div class="pipeline-step ${i < current ? "done" : i === current ? "current" : ""}">
-        <div class="step-num">${i < current ? "✓" : `0${i + 1}`}</div>
-        <div class="step-label">${s}</div>
-      </div>
-    `,
-      )
-      .join("")}
-  </div>`;
+        document.getElementById("pipelineWrap").innerHTML =
+          `<div class="pipeline">${steps.map((s, i) => `<div class="pipeline-step ${i < current ? "done" : i === current ? "current" : ""}"><div class="step-num">${i < current ? "✓" : String(i + 1).padStart(2, "0")}</div><div class="step-label">${s}</div></div>`).join("")}</div>`;
       }
-
-      function renderEndpoints(endpoints, results) {
-        return endpoints
-          .map((ep) => {
-            const result = results?.[ep];
-            let statusClass = "ep-pending";
-            let statusLabel = "Pendente";
-
-            if (result) {
-              if (result.error) {
-                statusClass = "ep-error";
-                statusLabel = "Erro";
-              } else {
-                statusClass = "ep-success";
-                statusLabel = "OK";
-              }
-            }
-
-            return `<div class="endpoint-item">
-      <span class="endpoint-name">${ep}</span>
-      <span class="endpoint-status ${statusClass}">${statusLabel}</span>
-    </div>`;
-          })
-          .join("");
-      }
-
-      // ─── SECTIONS ───────────────────────────────────────────────────────────────
-      function showSection(name) {
-        document
-          .querySelectorAll(".nav-item")
-          .forEach((el) => el.classList.remove("active"));
-        const navEl = document.getElementById(`nav-${name}`);
-        if (navEl) navEl.classList.add("active");
-
-        const sections = {
-          login: renderLogin,
-          fluxo: renderFluxo,
-          pendentes: renderPendentes,
-          historico: renderHistorico,
-          endpoints: renderEndpoints2,
+      function renderBadge(status) {
+        const map = {
+          pending_review: "badge-pending",
+          queries_running: "badge-running",
+          queries_done: "badge-done",
+          pending_payment: "badge-payment",
+          processing: "badge-processing",
+          completed: "badge-completed",
+          failed: "badge-failed",
+          rejected: "badge-rejected",
         };
-        if (sections[name]) sections[name]();
+        return `<span class="badge ${map[status] || "badge-pending"}">${status.replaceAll("_", " ")}</span>`;
       }
-
-      // ─── LOGIN ──────────────────────────────────────────────────────────────────
-      function renderLogin() {
-        document.getElementById("mainContent").innerHTML = `
-    <div class="page-title">Login Admin</div>
-    <div class="page-subtitle">Entre com sua conta de administrador</div>
-
-    <div class="config-card" style="max-width:420px">
-      <h3>Credenciais</h3>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div class="field">
-          <label>Email</label>
-          <input id="loginEmail" type="email" placeholder="admin@email.com" value="">
-        </div>
-        <div class="field">
-          <label>Senha</label>
-          <input id="loginPass" type="password" placeholder="••••••" value="">
-        </div>
-        <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
-        ${token ? `<div style="font-size:12px;color:var(--success)">✓ Já autenticado</div>` : ""}
-      </div>
-    </div>
-  `;
-      }
-
-      async function doLogin() {
-        try {
-          const email = document.getElementById("loginEmail").value;
-          const pass = document.getElementById("loginPass").value;
-          const data = await api("POST", "/api/auth/login", {
-            email,
-            password: pass,
-          });
-          token = data.data.token;
-          localStorage.setItem("admin_token", token);
-          toast("Login realizado com sucesso!", "success");
-          showSection("fluxo");
-        } catch (err) {
-          toast(err.message, "error");
-        }
-      }
-
-      // ─── FLUXO PRINCIPAL ────────────────────────────────────────────────────────
-      function renderFluxo() {
-        document.getElementById("mainContent").innerHTML = `
-    <div class="page-title">Novo Pedido de Consulta</div>
-    <div class="page-subtitle">Simule o fluxo completo como admin — do pedido ao PDF</div>
-
-    <div class="config-card">
-      <h3>1. Criar Pedido (como cliente)</h3>
-      <div class="config-grid">
-        <div class="field">
-          <label>Placa do veículo</label>
-          <input id="inputPlaca" placeholder="ABC1234">
-        </div>
-        <div class="field">
-          <label>Tipo</label>
-          <select id="inputTipo" onchange="toggleTipo()">
-            <option value="custom">Avulso</option>
-            <option value="report">Relatório pronto</option>
-          </select>
-        </div>
-        <div class="field" id="fieldReport" style="display:none">
-          <label>Relatório</label>
-          <select id="inputReport">
-            <option value="check_basic">Check Basic</option>
-            <option value="check_pro">Check Pro</option>
-            <option value="check_premium">Check Premium</option>
-            <option value="check_leilao_sinistro">Check Leilão & Sinistro</option>
-            <option value="check_leilao_completo">Check Leilão Completo</option>
-          </select>
-        </div>
-      </div>
-      <div id="fieldEndpoints" style="margin-top:12px">
-        <div class="field">
-          <label>Endpoints (separados por vírgula)</label>
-          <input id="inputEndpoints" placeholder="decodificador, debitosveiculares, renajud">
-        </div>
-      </div>
-      <div style="margin-top:14px">
-        <button class="btn btn-primary" onclick="criarPedido()">Criar Pedido</button>
-      </div>
-    </div>
-
-    <div id="orderSection" style="display:none">
-      <div id="orderContent"></div>
-
-      <div class="config-card">
-        <h3>Log de Ações</h3>
-        <div class="log-area" id="logArea">
-          <div class="log-line dim">Aguardando ações...</div>
-        </div>
-      </div>
-    </div>
-  `;
-      }
-
-      function toggleTipo() {
-        const tipo = document.getElementById("inputTipo").value;
-        document.getElementById("fieldReport").style.display =
-          tipo === "report" ? "flex" : "none";
-        document.getElementById("fieldEndpoints").style.display =
-          tipo === "custom" ? "block" : "none";
-      }
-
-      async function criarPedido() {
-        if (!token) {
-          toast("Faça login primeiro", "error");
-          return;
-        }
-
-        const placa = document.getElementById("inputPlaca").value.trim();
-        const tipo = document.getElementById("inputTipo").value;
-
-        let body = { placa, orderType: tipo };
-
-        if (tipo === "report") {
-          body.reportType = document.getElementById("inputReport").value;
-        } else {
-          const eps = document
-            .getElementById("inputEndpoints")
-            .value.split(",")
-            .map((e) => e.trim())
-            .filter(Boolean);
-          body.endpoints = eps;
-        }
-
-        try {
-          const data = await api("POST", "/api/orders", body);
-          currentOrder = data.data.order;
-          document.getElementById("orderSection").style.display = "block";
-          renderOrder();
-          log(`Pedido criado: ${currentOrder._id}`, "info");
-          log(
-            `Placa: ${currentOrder.placa} | Valor: R$ ${currentOrder.totalPrice}`,
-            "dim",
-          );
-          toast("Pedido criado!", "success");
-        } catch (err) {
-          toast(err.message, "error");
-          log(`Erro ao criar: ${err.message}`, "error");
-        }
-      }
-
       function renderOrder() {
         if (!currentOrder) return;
         const o = currentOrder;
-        const failedCount =
+        const failed =
           o.endpoints?.filter((ep) => o.results?.[ep]?.error).length || 0;
-        const successCount =
+        const success =
           o.endpoints?.filter((ep) => o.results?.[ep] && !o.results[ep].error)
             .length || 0;
-
+        renderPipeline(o.status);
         const pdfSection = o.pdfPath
-          ? `
-    <hr class="divider">
-    <div class="section-title">Relatório Gerado</div>
-    <a href="${API}${o.pdfPath}" target="_blank" class="pdf-link">
-      📄 Abrir PDF do Relatório
-    </a>
-  `
+          ? `<div style="margin-bottom:12px"><a href="${API}${o.pdfPath}" target="_blank" class="pdf-link"><i data-lucide="file-text" style="width:14px;height:14px"></i> Abrir PDF</a></div>`
           : "";
-
         const resultsSection = o.results
           ? `
-    <hr class="divider">
-    <div class="section-title">Resultados (${successCount} ok, ${failedCount} erro)</div>
-    <div class="endpoints-grid">${renderEndpoints(o.endpoints, o.results)}</div>
-    ${
-      failedCount > 0 && ["queries_done", "pdf_review"].includes(o.status)
-        ? `
-      <button class="btn btn-warning btn-sm" style="margin-bottom:14px" onclick="retryFailed()">
-      🔄 Retentar ${failedCount} endpoint(s) com erro
-      </button>
-    `
-        : ""
-    }
-    <div class="section-title" style="margin-top:14px">Dados retornados por endpoint</div>
-    ${o.endpoints
-      .map((ep) => {
-        const result = o.results[ep];
-        const hasError = result?.error;
-        return `
-        <div style="margin-bottom:10px">
-          <div style="
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            padding:8px 12px;
-            background:${hasError ? "rgba(239,68,68,0.08)" : "rgba(34,197,94,0.08)"};
-            border:1px solid ${hasError ? "rgba(239,68,68,0.25)" : "rgba(34,197,94,0.25)"};
-            border-radius:8px 8px 0 0;
-            cursor:pointer;
-          " onclick="toggleResult('result_${ep}')">
-            <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:${hasError ? "var(--danger)" : "var(--success)"}">
-              ${hasError ? "✕" : "✓"} ${ep}
-            </span>
-            <span style="font-size:11px;color:var(--text3)">clique para expandir ▾</span>
-          </div>
-          <div id="result_${ep}" style="display:none">
-            <pre style="
-              background:var(--bg);
-              border:1px solid ${hasError ? "rgba(239,68,68,0.25)" : "rgba(34,197,94,0.25)"};
-              border-top:none;
-              border-radius:0 0 8px 8px;
-              padding:12px;
-              font-family:var(--mono);
-              font-size:11px;
-              color:var(--text2);
-              max-height:400px;
-              overflow-y:auto;
-              white-space:pre-wrap;
-              word-break:break-all;
-              margin:0;
-            ">${JSON.stringify(sanitizeResult, null, 2)}</pre>
-          </div>
-        </div>
-    `;
-      })
-      .join("")}
-`
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em">Resultados (${success} ok, ${failed} erro)</div>
+      <div class="ep-grid">${o.endpoints
+        .map((ep) => {
+          const r = o.results[ep];
+          let cls = "ep-pending",
+            lbl = "Pendente";
+          if (r) {
+            if (r.error) {
+              cls = "ep-error";
+              lbl = "Erro";
+            } else {
+              cls = "ep-success";
+              lbl = "OK";
+            }
+          }
+          return `<div class="ep-item"><span class="ep-name">${ep}</span><span class="ep-status ${cls}">${lbl}</span></div>`;
+        })
+        .join("")}</div>
+      ${failed > 0 && ["queries_done", "pdf_review"].includes(o.status) ? `<button class="btn btn-warning btn-sm" style="margin-top:6px" onclick="retryFailed()"><i data-lucide="refresh-cw" style="width:12px;height:12px"></i> Retentar ${failed} erro(s)</button>` : ""}
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em">Dados por endpoint</div>
+      ${o.endpoints
+        .map((ep) => {
+          const r = o.results[ep];
+          const hasError = r?.error;
+          return `<div><div class="accordion-header" onclick="toggleResult('res_${ep}')" style="border-color:${hasError ? "rgba(239,68,68,0.25)" : "rgba(34,197,94,0.25)"};background:${hasError ? "rgba(239,68,68,0.04)" : "rgba(34,197,94,0.04)"}"><span style="color:${hasError ? "var(--danger)" : "var(--success)"}">${hasError ? "✕" : "✓"} ${ep}</span><span class="toggle">▾</span></div><div class="accordion-body" id="res_${ep}">${JSON.stringify(sanitizeResult(r), null, 2)}</div></div>`;
+        })
+        .join("")}
+    </div>`
           : `
-  <hr class="divider">
-  <div class="section-title">Endpoints solicitados</div>
-  <div class="endpoints-grid">${renderEndpoints(o.endpoints, null)}</div>
-`;
-
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em">Endpoints solicitados</div>
+      <div class="ep-grid">${o.endpoints.map((ep) => `<div class="ep-item"><span class="ep-name">${ep}</span><span class="ep-status ep-pending">Pendente</span></div>`).join("")}</div>
+    </div>`;
         const actions = renderActions(o.status);
-
-        document.getElementById("orderContent").innerHTML = `
-    ${renderPipeline(o.status)}
-
-    <div class="order-card">
-      <div class="order-header">
-        <div class="order-info">
-          <div class="placa-badge">${o.placa}</div>
-          <div class="order-meta">
-            ID: ${o._id}<br>
-            Tipo: ${o.orderType === "report" ? o.reportType : "Avulso"} &nbsp;·&nbsp;
-            Custo: R$ ${o.totalCost} &nbsp;·&nbsp; Venda: R$ ${o.totalPrice}
-          </div>
+        document.getElementById("orderCard").innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="order-placa">${o.placa}</div>
+          <div class="order-meta">${o.orderType === "report" ? o.reportType : "Avulso"} · Custo: R$ ${o.totalCost} · Venda: R$ ${o.totalPrice}<br>ID: ${o._id}</div>
         </div>
-        <span class="status-badge status-${o.status}">${o.status.replaceAll("_", " ")}</span>
+        ${renderBadge(o.status)}
       </div>
-
-      <div class="order-body">
+      <div class="card-body">
         ${resultsSection}
         ${pdfSection}
         ${actions}
       </div>
-    </div>
-  `;
+    </div>`;
+        lucide.createIcons();
       }
-
       function renderActions(status) {
-        const btnRefresh = `<button class="btn btn-ghost btn-sm" onclick="refreshOrder()">↻ Atualizar</button>`;
-
+        const refresh = `<button class="btn btn-ghost btn-sm" onclick="refreshOrder()"><i data-lucide="refresh-cw" style="width:12px;height:12px"></i> Atualizar</button>`;
         const map = {
-          pending_review: `
-      <div class="section-title">Ações disponíveis</div>
-      <div class="actions">
-        <button class="btn btn-primary" onclick="runQueries()">
-          ▶ Disparar Consultas
-        </button>
-        <button class="btn btn-danger btn-sm" onclick="rejeitar()">✕ Rejeitar</button>
-        ${btnRefresh}
-      </div>
-    `,
-          queries_running: `
-      <div class="section-title">Status</div>
-      <div class="actions">
-        <span style="color:var(--accent);font-size:13px">
-          <span class="spinner"></span> &nbsp;Consultando APIs em paralelo...
-        </span>
-        ${btnRefresh}
-      </div>
-    `,
-          queries_done: `
-      <div class="section-title">Ações disponíveis</div>
-      <div class="actions">
-        <button class="btn btn-success" onclick="aprovar()">✓ Aprovar para Pagamento</button>
-        <button class="btn btn-primary btn-sm" onclick="runQueries()">↻ Consultar Novamente</button>
-        <button class="btn btn-danger btn-sm" onclick="rejeitar()">✕ Rejeitar</button>
-        ${btnRefresh}
-      </div>
-    `,
-          pending_payment: `
-      <div class="section-title">Aguardando Pix</div>
-      <div class="actions">
-        <button class="btn btn-success" onclick="confirmarPagamento()">
-          💰 Confirmar Pagamento Recebido
-        </button>
-        ${btnRefresh}
-      </div>
-      <div style="margin-top:10px;font-size:12px;color:var(--text3)">
-        ⚡ Envie a chave Pix para o cliente via WhatsApp e confirme aqui quando pagar.
-      </div>
-    `,
-          pdf_review: `
-      <div class="section-title">Revisar antes de entregar ao cliente</div>
-      <div style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.3);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:#a78bfa">
-        Revise os resultados acima antes de gerar o PDF.
-        Relatório só será entregue após clicar em "Gerar PDF".
-      </div>
-      <div class="actions">
-        <button class="btn btn-success" onclick="gerarPdf()">
-          Gerar PDF e Entregar
-        </button>
-        <button class="btn btn-primary btn-sm" onclick="runQueries()">Reprocessar Consultas</button>
-        ${btnRefresh}
-      </div>
-    `,
-          processing: `
-      <div class="actions">
-        <span style="color:var(--accent);font-size:13px">
-          <span class="spinner"></span> &nbsp;Gerando relatório PDF...
-        </span>
-        ${btnRefresh}
-      </div>
-    `,
-          completed: `
-      <div class="actions">
-        <span style="color:var(--success);font-size:13px;font-weight:600">
-          ✓ Pedido concluído com sucesso
-        </span>
-        ${btnRefresh}
-      </div>
-    `,
-          failed: `
-      <div class="actions">
-        <span style="color:var(--danger);font-size:13px">✕ Pedido falhou</span>
-        ${btnRefresh}
-      </div>
-    `,
-          rejected: `
-      <div class="actions">
-        <span style="color:var(--danger);font-size:13px">✕ Pedido rejeitado</span>
-      </div>
-    `,
+          pending_review: `<div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em">Ações</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" onclick="runQueries()"><i data-lucide="play" style="width:12px;height:12px"></i> Disparar Consultas</button><button class="btn btn-danger btn-sm" onclick="rejeitar()">Rejeitar</button>${refresh}</div>`,
+          queries_running: `<div style="display:flex;gap:8px;align-items:center"><span style="color:var(--accent);font-size:12px;display:flex;align-items:center;gap:6px"><span class="spinner"></span>Consultando APIs...</span>${refresh}</div>`,
+          queries_done: `<div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em">Ações</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-success" onclick="aprovar()">Aprovar para Pagamento</button><button class="btn btn-primary btn-sm" onclick="runQueries()">Consultar Novamente</button><button class="btn btn-danger btn-sm" onclick="rejeitar()">Rejeitar</button>${refresh}</div>`,
+          pending_payment: `<div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em">Aguardando Pix</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-success" onclick="confirmarPagamento()">Confirmar Pagamento</button>${refresh}</div><div style="margin-top:8px;font-size:11px;color:var(--text3)">Envie a chave Pix ao cliente e confirme aqui.</div>`,
+          pdf_review: `<div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em">Revisar antes de entregar</div><div style="background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.15);border-radius:6px;padding:10px;margin-bottom:10px;font-size:11px;color:#a78bfa">Revise os resultados acima antes de gerar o PDF.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-success" onclick="gerarPdf()">Gerar PDF e Entregar</button><button class="btn btn-primary btn-sm" onclick="runQueries()">Reprocessar</button>${refresh}</div>`,
+          processing: `<div style="display:flex;gap:8px;align-items:center"><span style="color:var(--accent);font-size:12px;display:flex;align-items:center;gap:6px"><span class="spinner"></span>Gerando PDF...</span>${refresh}</div>`,
+          completed: `<div style="display:flex;gap:8px;align-items:center"><span style="color:var(--success);font-size:12px;font-weight:600">✓ Pedido concluído</span>${refresh}</div>`,
+          failed: `<div style="display:flex;gap:8px;align-items:center"><span style="color:var(--danger);font-size:12px">✕ Pedido falhou</span>${refresh}</div>`,
+          rejected: `<div style="display:flex;gap:8px;align-items:center"><span style="color:var(--danger);font-size:12px">✕ Pedido rejeitado</span></div>`,
         };
-
-        return map[status] || btnRefresh;
+        return map[status] || refresh;
+      }
+      function toggleResult(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle("open");
+      }
+      function sanitizeResult(data) {
+        if (!data || typeof data !== "object") return data;
+        const cleaned = { ...data };
+        delete cleaned.pdfBase64;
+        delete cleaned.base64;
+        delete cleaned.pdf;
+        return cleaned;
       }
 
-      // ─── AÇÕES DO FLUXO ─────────────────────────────────────────────────────────
       async function runQueries() {
         try {
-          log("Disparando consultas nas APIs...", "info");
+          log("Disparando consultas...", "info");
           await api(
             "POST",
             `/api/orders/admin/${currentOrder._id}/run-queries`,
             {},
           );
           toast("Consultas disparadas!", "info");
-          log("Consultas em andamento — aguardando resultados...", "dim");
+          log("Consultas em andamento...", "dim");
           currentOrder.status = "queries_running";
           renderOrder();
           const poll = setInterval(async () => {
             await refreshOrder();
             if (currentOrder.status !== "queries_running") {
               clearInterval(poll);
-              log(
-                `Consultas finalizadas - status: ${currentOrder.status}`,
-                "success",
-              );
+              log(`Consultas finalizadas: ${currentOrder.status}`, "success");
             }
           }, 5000);
         } catch (err) {
@@ -1256,7 +1211,6 @@
           log(`Erro: ${err.message}`, "error");
         }
       }
-
       async function retryFailed() {
         try {
           log("Retentando endpoints com erro...", "warn");
@@ -1271,7 +1225,6 @@
           toast(err.message, "error");
         }
       }
-
       async function aprovar() {
         try {
           const data = await api(
@@ -1288,17 +1241,16 @@
           log(`Erro: ${err.message}`, "error");
         }
       }
-
       async function gerarPdf() {
         try {
-          log("Gerando PDF do relatório...", "info");
+          log("Gerando PDF...", "info");
           await api(
             "POST",
             `/api/orders/admin/${currentOrder._id}/generate-pdf`,
             {},
           );
           toast("PDF sendo gerado!", "success");
-          log("PDF em processamento - aguardando...", "dim");
+          log("PDF em processamento...", "dim");
           currentOrder.status = "processing";
           renderOrder();
           const poll = setInterval(async () => {
@@ -1313,35 +1265,13 @@
           log(`Erro: ${err.message}`, "error");
         }
       }
-
-      function toggleResult(id) {
-        const el = document.getElementById(id);
-        if (!el) return;
-        const isOpen = el.style.display !== "none";
-        el.style.display = isOpen ? "none" : "block";
-      }
-
-      function sanitizeResult(data) {
-        if (!data || typeof data !== "object") return data;
-        const cleaned = { ...data };
-
-        delete cleaned.pdfBase64;
-        delete cleaned.base64;
-        delete cleaned.pdf;
-
-        return cleaned;
-      }
-
       async function rejeitar() {
         const motivo = prompt("Motivo da rejeição:") || "Não especificado";
         try {
           const data = await api(
             "PATCH",
             `/api/orders/admin/${currentOrder._id}/review`,
-            {
-              approved: false,
-              rejectionReason: motivo,
-            },
+            { approved: false, rejectionReason: motivo },
           );
           currentOrder = data.data.order;
           log(`Pedido rejeitado: ${motivo}`, "error");
@@ -1351,7 +1281,6 @@
           toast(err.message, "error");
         }
       }
-
       async function confirmarPagamento() {
         try {
           const data = await api(
@@ -1369,35 +1298,30 @@
           log(`Erro: ${err.message}`, "error");
         }
       }
-
       async function refreshOrder() {
         try {
           const data = await api("GET", `/api/orders/${currentOrder._id}`);
           const prev = currentOrder.status;
           currentOrder = data.data.order;
-          if (prev !== currentOrder.status) {
+          if (prev !== currentOrder.status)
             log(`Status: ${prev} → ${currentOrder.status}`, "success");
-          }
           renderOrder();
         } catch (err) {
           log(`Erro ao atualizar: ${err.message}`, "error");
         }
       }
 
-      // ─── PEDIDOS PENDENTES ──────────────────────────────────────────────────────
+      /* ─── PENDENTES ─── */
       async function renderPendentes() {
         document.getElementById("mainContent").innerHTML = `
     <div class="page-title">Pedidos Pendentes</div>
-    <div class="page-subtitle">Pedidos aguardando revisão ou pagamento</div>
-    <div id="listaPendentes"><div style="color:var(--text3);font-size:13px">Carregando...</div></div>
-  `;
-
+    <div class="page-subtitle">Aguardando revisão ou pagamento</div>
+    <div class="card"><div class="card-body" id="listaPendentes"><div style="color:var(--text3);font-size:12px">Carregando...</div></div></div>`;
         try {
           const [rev, pay] = await Promise.all([
             api("GET", "/api/orders/admin/pending-review"),
             api("GET", "/api/orders/admin/pending-payment"),
           ]);
-
           const all = [
             ...rev.data.orders.map((o) => ({
               ...o,
@@ -1408,193 +1332,79 @@
               _group: "Aguardando Pagamento",
             })),
           ];
-
           document.getElementById("badgePendentes").textContent = all.length;
-
-          if (all.length === 0) {
+          if (!all.length) {
             document.getElementById("listaPendentes").innerHTML =
-              `<div style="color:var(--text3);font-size:13px;padding:2rem 0">Nenhum pedido pendente 🎉</div>`;
+              `<div style="color:var(--text3);font-size:12px;padding:1rem 0;text-align:center">Nenhum pedido pendente 🎉</div>`;
             return;
           }
-
-          document.getElementById("listaPendentes").innerHTML = all
-            .map(
-              (o) => `
-      <div class="order-card" style="margin-bottom:1rem">
-        <div class="order-header">
-          <div class="order-info">
-            <div class="placa-badge">${o.placa}</div>
-            <div class="order-meta">
-              ${o._group}<br>
-              ${o.userId?.name || o.userId?.email || "Cliente"} &nbsp;·&nbsp;
-              R$ ${o.totalPrice} &nbsp;·&nbsp;
-              ${new Date(o.createdAt).toLocaleString("pt-BR")}
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span class="status-badge status-${o.status}">${o.status.replace("_", " ")}</span>
-            <button class="btn btn-primary btn-sm" onclick="abrirPedido('${o._id}')">
-              Gerenciar →
-            </button>
-          </div>
-        </div>
-      </div>
-    `,
-            )
-            .join("");
+          document.getElementById("listaPendentes").innerHTML =
+            `<div class="table-wrap"><table><thead><tr><th>Placa</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Status</th><th>Data</th><th></th></tr></thead><tbody>
+    ${all.map((o) => `<tr><td><span style="font-family:var(--mono);font-weight:700">${o.placa}</span></td><td>${o.userId?.name || "—"}</td><td>${o.orderType === "report" ? o.reportType : "Avulso"}</td><td>R$ ${o.totalPrice}</td><td>${renderBadge(o.status)}</td><td>${new Date(o.createdAt).toLocaleString("pt-BR")}</td><td><button class="btn btn-primary btn-sm" onclick="abrirPedido('${o._id}')">Gerenciar</button></td></tr>`).join("")}
+    </tbody></table></div>`;
         } catch (err) {
           document.getElementById("listaPendentes").innerHTML =
-            `<div style="color:var(--danger);font-size:13px">Erro: ${err.message}</div>`;
+            `<div style="color:var(--danger);font-size:12px">Erro: ${err.message}</div>`;
         }
       }
 
-      async function renderHistorico() {
+      /* ─── HISTÓRICO ─── */
+      function renderHistorico() {
         document.getElementById("mainContent").innerHTML = `
-    <div class="page-title">Histórico de Pedidos</div>
-    <div class="page-subtitle">Todos os pedidos — filtre por status, cliente ou período</div>
-
-    <div class="config-card">
-      <h3>Filtros</h3>
-      <div class="config-grid">
-        <div class="field">
-          <label>Status</label>
-          <select id="filtroStatus">
-            <option value="">Todos</option>
-            <option value="pending_review">Pendente revisão</option>
-            <option value="queries_running">Consultando</option>
-            <option value="queries_done">Consultado</option>
-            <option value="pending_payment">Aguardando Pix</option>
-            <option value="pdf_review">Revisão PDF</option>
-            <option value="processing">Processando</option>
-            <option value="completed">Concluído</option>
-            <option value="failed">Falhou</option>
-            <option value="rejected">Rejeitado</option>
-          </select>
+    <div class="page-title">Histórico</div>
+    <div class="page-subtitle">Todos os pedidos</div>
+    <div class="card">
+      <div class="card-body">
+        <div class="grid-3">
+          <div class="field"><label>Status</label><select id="filtroStatus"><option value="">Todos</option><option value="pending_review">Pendente revisão</option><option value="queries_running">Consultando</option><option value="queries_done">Consultado</option><option value="pending_payment">Aguardando Pix</option><option value="pdf_review">Revisão PDF</option><option value="processing">Processando</option><option value="completed">Concluído</option><option value="failed">Falhou</option><option value="rejected">Rejeitado</option></select></div>
+          <div class="field"><label>Data inicial</label><input type="date" id="filtroInicio"></div>
+          <div class="field"><label>Data final</label><input type="date" id="filtroFim"></div>
         </div>
-        <div class="field">
-          <label>Data inicial</label>
-          <input type="date" id="filtroInicio">
-        </div>
-        <div class="field">
-          <label>Data final</label>
-          <input type="date" id="filtroFim">
-        </div>
-      </div>
-      <div style="margin-top:14px;display:flex;gap:10px">
-        <button class="btn btn-primary" onclick="buscarHistorico(1)">🔍 Buscar</button>
-        <button class="btn btn-ghost" onclick="limparFiltros()">✕ Limpar</button>
+        <div style="margin-top:12px;display:flex;gap:8px"><button class="btn btn-primary" onclick="buscarHistorico(1)"><i data-lucide="search" style="width:12px;height:12px"></i> Buscar</button><button class="btn btn-ghost" onclick="limparFiltros()">Limpar</button></div>
       </div>
     </div>
-
-    <div id="resultadoHistorico">
-      <div style="color:var(--text3);font-size:13px">Use os filtros acima para buscar pedidos.</div>
-    </div>
-  `;
+    <div id="resultadoHistorico"><div style="color:var(--text3);font-size:12px">Use os filtros acima para buscar.</div></div>`;
+        lucide.createIcons();
       }
-
       async function buscarHistorico(page = 1) {
         const status = document.getElementById("filtroStatus").value;
         const startDate = document.getElementById("filtroInicio").value;
         const endDate = document.getElementById("filtroFim").value;
-
-        const params = new URLSearchParams({ page });
+        const params = new URLSearchParams({ page: page.toString() });
         if (status) params.append("status", status);
         if (startDate) params.append("startDate", startDate);
         if (endDate) params.append("endDate", endDate);
-
         document.getElementById("resultadoHistorico").innerHTML =
-          `<div style="color:var(--text3);font-size:13px">Carregando...</div>`;
-
+          `<div style="color:var(--text3);font-size:12px">Carregando...</div>`;
         try {
           const data = await api(
             "GET",
             `/api/orders/admin/all?${params.toString()}`,
           );
           const { orders, total, totalPages, page: currentPage } = data.data;
-
-          if (orders.length === 0) {
+          if (!orders.length) {
             document.getElementById("resultadoHistorico").innerHTML =
-              `<div style="color:var(--text3);font-size:13px;padding:1rem 0">Nenhum pedido encontrado.</div>`;
+              `<div style="color:var(--text3);font-size:12px;padding:1rem 0;text-align:center">Nenhum pedido encontrado.</div>`;
             return;
           }
-
-          document.getElementById("resultadoHistorico").innerHTML = `
-      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">
-        ${total} pedido(s) encontrado(s) — página ${currentPage} de ${totalPages}
-      </div>
-
-      ${orders
-        .map(
-          (o) => `
-        <div class="order-card" style="margin-bottom:10px">
-          <div class="order-header">
-            <div class="order-info">
-              <div class="placa-badge">${o.placa}</div>
-              <div class="order-meta">
-                <strong>${o.userId?.name || "Cliente"}</strong> &nbsp;·&nbsp;
-                ${o.userId?.email || ""}<br>
-                R$ ${o.totalPrice} &nbsp;·&nbsp;
-                ${new Date(o.createdAt).toLocaleString("pt-BR")}
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px">
-              <span class="status-badge status-${o.status}">
-                ${o.status.replaceAll("_", " ")}
-              </span>
-              <button class="btn btn-primary btn-sm" onclick="abrirPedido('${o._id}')">
-                Gerenciar →
-              </button>
-            </div>
-          </div>
-        </div>
-      `,
-        )
-        .join("")}
-
-      ${
-        totalPages > 1
-          ? `
-        <div style="display:flex;gap:8px;margin-top:14px;justify-content:center">
-          ${
-            currentPage > 1
-              ? `
-            <button class="btn btn-ghost btn-sm" onclick="buscarHistorico(${currentPage - 1})">
-              ← Anterior
-            </button>
-          `
-              : ""
-          }
-          <span style="font-size:13px;color:var(--text3);align-self:center">
-            ${currentPage} / ${totalPages}
-          </span>
-          ${
-            currentPage < totalPages
-              ? `
-            <button class="btn btn-ghost btn-sm" onclick="buscarHistorico(${currentPage + 1})">
-              Próxima →
-            </button>
-          `
-              : ""
-          }
-        </div>
-      `
-          : ""
-      }
-    `;
+          document.getElementById("resultadoHistorico").innerHTML =
+            `<div style="font-size:11px;color:var(--text3);margin-bottom:10px">${total} pedido(s) — página ${currentPage} de ${totalPages}</div>
+    <div class="card"><div class="card-body" style="padding:0"><div class="table-wrap"><table><thead><tr><th>Placa</th><th>Cliente</th><th>Email</th><th>Valor</th><th>Status</th><th>Data</th><th></th></tr></thead><tbody>
+    ${orders.map((o) => `<tr><td><span style="font-family:var(--mono);font-weight:700">${o.placa}</span></td><td>${o.userId?.name || "—"}</td><td>${o.userId?.email || "—"}</td><td>R$ ${o.totalPrice}</td><td>${renderBadge(o.status)}</td><td>${new Date(o.createdAt).toLocaleDateString("pt-BR")}</td><td><button class="btn btn-primary btn-sm" onclick="abrirPedido('${o._id}')">Abrir</button></td></tr>`).join("")}
+    </tbody></table></div></div></div>
+    ${totalPages > 1 ? `<div style="display:flex;gap:8px;margin-top:12px;justify-content:center">${currentPage > 1 ? `<button class="btn btn-ghost btn-sm" onclick="buscarHistorico(${currentPage - 1})">← Anterior</button>` : ""}<span style="font-size:12px;color:var(--text3);align-self:center">${currentPage} / ${totalPages}</span>${currentPage < totalPages ? `<button class="btn btn-ghost btn-sm" onclick="buscarHistorico(${currentPage + 1})">Próxima →</button>` : ""}</div>` : ""}`;
         } catch (err) {
           document.getElementById("resultadoHistorico").innerHTML =
-            `<div style="color:var(--danger);font-size:13px">Erro: ${err.message}</div>`;
+            `<div style="color:var(--danger);font-size:12px">Erro: ${err.message}</div>`;
         }
       }
-
       function limparFiltros() {
         document.getElementById("filtroStatus").value = "";
         document.getElementById("filtroInicio").value = "";
         document.getElementById("filtroFim").value = "";
         document.getElementById("resultadoHistorico").innerHTML =
-          `<div style="color:var(--text3);font-size:13px">Use os filtros acima para buscar pedidos.</div>`;
+          `<div style="color:var(--text3);font-size:12px">Use os filtros acima para buscar.</div>`;
       }
-
       async function abrirPedido(id) {
         try {
           const data = await api("GET", `/api/orders/${id}`);
@@ -1607,46 +1417,24 @@
         }
       }
 
-      // ─── ENDPOINTS ───────────────────────────────────────────────────────────────
+      /* ─── ENDPOINTS ─── */
       async function renderEndpoints2() {
         document.getElementById("mainContent").innerHTML = `
-    <div class="page-title">Gerenciar Endpoints</div>
-    <div class="page-subtitle">Atualize os paths das APIs do fornecedor sem precisar de deploy</div>
-    <div id="listaEndpoints"><div style="color:var(--text3);font-size:13px">Carregando...</div></div>
-  `;
-
+    <div class="page-title">Endpoints</div>
+    <div class="page-subtitle">Configure os paths das APIs do fornecedor</div>
+    <div id="listaEndpoints"><div style="color:var(--text3);font-size:12px">Carregando...</div></div>`;
         try {
           const data = await api("GET", "/api/admin/endpoint-configs");
           const configs = data.data.configs;
-
-          document.getElementById("listaEndpoints").innerHTML = `
-      <div class="config-card">
-        <h3>${configs.length} endpoints configurados</h3>
-        <div style="display:grid;gap:8px">
-          ${configs
-            .map(
-              (c) => `
-            <div style="display:grid;grid-template-columns:180px 1fr auto;gap:10px;align-items:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px">
-              <span style="font-family:var(--mono);font-size:12px;color:var(--text2)">${c.key}</span>
-              <input
-                id="ep_${c.key}"
-                value="${c.path}"
-                style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-family:var(--mono);font-size:12px;width:100%"
-              >
-              <button class="btn btn-primary btn-sm" onclick="salvarEndpoint('${c.key}')">Salvar</button>
-            </div>
-          `,
-            )
-            .join("")}
-        </div>
-      </div>
-    `;
+          document.getElementById("listaEndpoints").innerHTML =
+            `<div class="card"><div class="card-header"><h3>${configs.length} endpoints</h3></div><div class="card-body" style="display:grid;gap:8px">
+    ${configs.map((c) => `<div style="display:grid;grid-template-columns:160px 1fr auto;gap:10px;align-items:center;padding:8px 10px;background:#0B0F19;border:1px solid var(--border);border-radius:6px"><span style="font-family:var(--mono);font-size:11px;color:var(--text2)">${c.key}</span><input id="ep_${c.key}" value="${c.path}" style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-family:var(--mono);font-size:11px;width:100%;outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"><button class="btn btn-primary btn-sm" onclick="salvarEndpoint('${c.key}')">Salvar</button></div>`).join("")}
+    </div></div>`;
         } catch (err) {
           document.getElementById("listaEndpoints").innerHTML =
-            `<div style="color:var(--danger);font-size:13px">Erro: ${err.message}. Faça login primeiro.</div>`;
+            `<div style="color:var(--danger);font-size:12px">Erro: ${err.message}. Faça login.</div>`;
         }
       }
-
       async function salvarEndpoint(key) {
         const path = document.getElementById(`ep_${key}`).value.trim();
         try {
@@ -1657,7 +1445,7 @@
         }
       }
 
-      // ─── INIT ────────────────────────────────────────────────────────────────────
+      /* ─── INIT ─── */
       checkServer();
       setInterval(checkServer, 15000);
       showSection("fluxo");
