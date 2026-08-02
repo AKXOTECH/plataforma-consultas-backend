@@ -38,16 +38,31 @@ export async function processOrder(
                 const dataRecord = data as Record<string, unknown>
                 const pdfBase64Endpoints = ['csv', 'csv2', 'crlv', 'crlvsp', 'crlvsp3']
 
-                const removeBase64 = (obj: Record<string, unknown>): Record<string, unknown> => Object.fromEntries(Object.entries(obj).filter(([k]) => k !== 'pdfBase64' ))
+                const removeBase64 = (obj: Record<string, unknown>): Record<string, unknown> => {
+                    const result: Record<string, unknown> = {}
+                    for (const [k, v] of Object.entries(obj)) {
+                        if (k === 'pdfBase64') continue
+                        if (v && typeof v === 'object' && !Array.isArray(v)) {
+                            result[k] = removeBase64(v as Record<string, unknown>)
+                        } else {
+                            result[k] = v
+                        }
+                    }
+                    return result
+                }
+                const retorno = dataRecord['retorno'] as Record<string, unknown> | undefined
+                const base64String = (typeof dataRecord['pdfBase64'] === 'string'
+                    ? dataRecord['pdfBase64']
+                    : retorno?.['pdfBase64'])
 
                 if (
                     pdfBase64Endpoints.includes(endpoint) &&
-                    typeof dataRecord['pdfBase64'] === 'string' && (dataRecord['pdfBase64'] as string).length > 0
+                    typeof base64String === 'string' && base64String.length > 0
                 ) {
                     const cleanData = removeBase64(dataRecord)
 
                     try {
-                        const pdfBuffer = Buffer.from(dataRecord['pdfBase64'] as string, 'base64')
+                        const pdfBuffer = Buffer.from(base64String, 'base64')
                         const pdfFileName = `${endpoint}-${order._id}.pdf`
                         const pdfPath = path.join(process.cwd(), 'storage', 'reports', pdfFileName)
                         fs.writeFileSync(pdfPath, pdfBuffer)
