@@ -3,1382 +3,898 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LS Check — Painel Admin</title>
+    <meta
+      name="description"
+      content="Consulta veicular completa pela placa — sinistro, leilão, roubo/furto, débitos e muito mais em um único relatório. LS Check, Lincoln Santos Engenharia Mecânica."
+    />
+    <title>LS Check — Verificação Técnica Veicular</title>
+
+    <!-- Favicon inline SVG -->
     <link
       rel="icon"
-      type="image/svg+xml"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cpath d='M22 2 L38 8 L38 24 C38 33 22 42 22 42 C22 42 6 33 6 24 L6 8 Z' fill='%230453cc'/%3E%3Ctext x='22' y='28' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='16' fill='white'%3ELS%3C/text%3E%3C/svg%3E"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23052288'/><text x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='16' font-weight='bold' fill='white' font-family='sans-serif'>LS</text></svg>"
     />
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Sans:ital@1&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <style>
-      :root {
-        --blue-dark: #052288;
-        --blue-vivid: #0453cc;
-        --blue-hover: #0349b3;
-        --blue-light: #dbeafe;
-        --blue-tint: #eff6ff;
-        --gray-main: #2a2a29;
-        --gray-bg: #f6f6f6;
-        --gray-mid: #6b7280;
-        --white: #ffffff;
-        --border: #e5e7eb;
-        --green: #16a34a;
-        --green-bg: #dcfce7;
-        --yellow: #d97706;
-        --yellow-bg: #fef3c7;
-        --red: #dc2626;
-        --red-bg: #fee2e2;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
-        --r-sm: 8px;
-        --r-md: 12px;
-        --font: "DM Sans", sans-serif;
-      }
 
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      html {
-        font-size: 16px;
-      }
-      body {
-        font-family: var(--font);
-        background: var(--gray-bg);
-        color: var(--gray-main);
-        -webkit-font-smoothing: antialiased;
-        min-height: 100vh;
-      }
-      button {
-        font-family: var(--font);
-        cursor: pointer;
-        border: none;
-        outline: none;
-      }
-      input,
-      select {
-        font-family: var(--font);
-      }
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-
-      /* HEADER */
-      #header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 100;
-        background: var(--blue-dark);
-        height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 24px;
-        box-shadow: 0 2px 12px rgba(5, 34, 136, 0.3);
-      }
-      .header-logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .logo-svg {
-        width: 44px;
-        height: 44px;
-      }
-      .header-title {
-        color: #fff;
-        font-weight: 700;
-        font-size: 1.1rem;
-        letter-spacing: -0.3px;
-      }
-      .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .header-actions button {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        color: #fff;
-        width: 36px;
-        height: 36px;
-        border-radius: var(--r-sm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.15s;
-      }
-      .header-actions button:hover {
-        background: rgba(255, 255, 255, 0.2);
-      }
-
-      /* MAIN */
-      #app {
-        padding-top: 60px;
-      }
-      .content-wrap {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 24px 16px;
-      }
-
-      /* METRICS */
-      .metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        margin-bottom: 20px;
-      }
-      .metric-card {
-        background: var(--white);
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        padding: 18px 20px;
-        box-shadow: var(--shadow-sm);
-      }
-      .metric-label {
-        font-size: 0.78rem;
-        color: var(--gray-mid);
-        font-weight: 500;
-        margin-bottom: 6px;
-      }
-      .metric-value {
-        font-size: 1.9rem;
-        font-weight: 800;
-        line-height: 1;
-      }
-      .metric-value.green {
-        color: var(--green);
-      }
-      .metric-value.yellow {
-        color: var(--yellow);
-      }
-      .metric-value.black {
-        color: var(--gray-main);
-      }
-
-      /* TABS ROW (tabs-bar + botão Novo Pedido lado a lado) */
-      .tabs-row {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-        align-items: stretch;
-      }
-      .btn-novo-pedido {
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 0 18px;
-        background: var(--blue-vivid);
-        color: #fff;
-        border-radius: var(--r-md);
-        font-size: 0.85rem;
-        font-weight: 700;
-        white-space: nowrap;
-        box-shadow: var(--shadow-sm);
-        transition: background 0.15s;
-      }
-      .btn-novo-pedido:hover {
-        background: var(--blue-hover);
-      }
-      .btn-novo-pedido svg {
-        width: 16px;
-        height: 16px;
-      }
-
-      /* TABS */
-      .tabs-bar {
-        background: var(--white);
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        padding: 6px;
-        display: flex;
-        gap: 4px;
-        flex: 1;
-        box-shadow: var(--shadow-sm);
-      }
-      .tab-btn {
-        flex: 1;
-        background: transparent;
-        border: 2px solid transparent;
-        border-radius: var(--r-sm);
-        padding: 9px 12px;
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: var(--gray-mid);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        transition: all 0.15s;
-        white-space: nowrap;
-      }
-      .tab-btn:hover {
-        background: var(--blue-tint);
-        color: var(--blue-vivid);
-      }
-      .tab-btn.active {
-        border-color: var(--blue-vivid);
-        background: var(--blue-tint);
-        color: var(--blue-vivid);
-      }
-      .tab-btn svg {
-        width: 14px;
-        height: 14px;
-      }
-
-      /* TAB PANELS */
-      .tab-panel {
-        display: none;
-      }
-      .tab-panel.active {
-        display: block;
-      }
-
-      /* TOOLBAR */
-      .toolbar {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 16px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      .search-wrap {
-        position: relative;
-        flex: 1;
-        min-width: 200px;
-      }
-      .search-wrap svg {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--gray-mid);
-        width: 15px;
-        height: 15px;
-      }
-      .search-wrap input {
-        width: 100%;
-        padding: 9px 12px 9px 34px;
-        border: 1px solid var(--border);
-        border-radius: var(--r-sm);
-        background: var(--white);
-        font-size: 0.85rem;
-        color: var(--gray-main);
-        transition: border-color 0.15s;
-      }
-      .search-wrap input:focus {
-        outline: none;
-        border-color: var(--blue-vivid);
-      }
-      .filter-select {
-        padding: 9px 12px;
-        border: 1px solid var(--border);
-        border-radius: var(--r-sm);
-        background: var(--white);
-        font-size: 0.85rem;
-        color: var(--gray-main);
-        cursor: pointer;
-      }
-      .filter-select:focus {
-        outline: none;
-        border-color: var(--blue-vivid);
-      }
-      .date-input {
-        padding: 9px 12px;
-        border: 1px solid var(--border);
-        border-radius: var(--r-sm);
-        background: var(--white);
-        font-size: 0.85rem;
-        color: var(--gray-main);
-      }
-      .date-input:focus {
-        outline: none;
-        border-color: var(--blue-vivid);
-      }
-      .btn-primary {
-        background: var(--blue-vivid);
-        color: #fff;
-        padding: 9px 16px;
-        border-radius: var(--r-sm);
-        font-size: 0.85rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        transition: background 0.15s;
-        white-space: nowrap;
-      }
-      .btn-primary:hover {
-        background: var(--blue-hover);
-      }
-      .btn-primary svg {
-        width: 14px;
-        height: 14px;
-      }
-      .btn-secondary {
-        background: var(--white);
-        color: var(--gray-main);
-        padding: 9px 14px;
-        border-radius: var(--r-sm);
-        font-size: 0.85rem;
-        font-weight: 600;
-        border: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        transition: all 0.15s;
-      }
-      .btn-secondary:hover {
-        border-color: var(--blue-vivid);
-        color: var(--blue-vivid);
-      }
-
-      /* CARDS LIST */
-      .list-card {
-        background: var(--white);
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        padding: 14px 18px;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 8px;
-        box-shadow: var(--shadow-sm);
-        transition: box-shadow 0.15s;
-      }
-      .list-card:hover {
-        box-shadow: var(--shadow-md);
-      }
-      .card-icon-wrap {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        background: var(--blue-tint);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-      .card-icon-wrap svg {
-        width: 16px;
-        height: 16px;
-        color: var(--blue-vivid);
-      }
-      .card-icon-wrap.green-icon {
-        background: var(--green-bg);
-      }
-      .card-icon-wrap.green-icon svg {
-        color: var(--green);
-      }
-      .card-info {
-        flex: 1;
-        min-width: 0;
-      }
-      .card-top {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 3px;
-      }
-      .card-title {
-        font-weight: 700;
-        font-size: 0.9rem;
-        color: var(--gray-main);
-      }
-      .card-sub {
-        font-size: 0.78rem;
-        color: var(--gray-mid);
-      }
-      .card-right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-shrink: 0;
-      }
-      .card-date {
-        font-size: 0.78rem;
-        color: var(--gray-mid);
-        white-space: nowrap;
-      }
-      .action-btns {
-        display: flex;
-        gap: 6px;
-      }
-      .action-btn {
-        width: 30px;
-        height: 30px;
-        border-radius: var(--r-sm);
-        background: var(--gray-bg);
-        border: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.15s;
-        color: var(--gray-mid);
-      }
-      .action-btn:hover {
-        background: var(--blue-tint);
-        color: var(--blue-vivid);
-        border-color: var(--blue-vivid);
-      }
-      .action-btn.danger:hover {
-        background: var(--red-bg);
-        color: var(--red);
-        border-color: var(--red);
-      }
-      .action-btn svg {
-        width: 13px;
-        height: 13px;
-      }
-
-      /* BADGES */
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 2px 9px;
-        border-radius: 99px;
-        font-size: 0.72rem;
-        font-weight: 600;
-        letter-spacing: 0.2px;
-      }
-      .badge-blue {
-        background: var(--blue-vivid);
-        color: #fff;
-      }
-      .badge-yellow {
-        background: var(--yellow-bg);
-        color: var(--yellow);
-      }
-      .badge-red {
-        background: var(--red-bg);
-        color: var(--red);
-      }
-      .badge-green {
-        background: var(--green-bg);
-        color: var(--green);
-      }
-      .badge-gray {
-        background: var(--gray-bg);
-        color: var(--gray-mid);
-        border: 1px solid var(--border);
-      }
-
-      /* SECTION HEADER */
-      .section-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 14px;
-        margin-top: 24px;
-      }
-      .section-header:first-child {
-        margin-top: 0;
-      }
-      .section-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 700;
-        font-size: 1rem;
-      }
-      .section-title svg {
-        width: 18px;
-        height: 18px;
-        color: var(--blue-vivid);
-      }
-
-      /* FATURAMENTO */
-      .fat-layout {
-        display: grid;
-        grid-template-columns: 320px 1fr;
-        gap: 16px;
-      }
-      .fat-sidebar {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      .fat-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .fat-client {
-        background: var(--white);
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        padding: 14px 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-        transition: all 0.15s;
-      }
-      .fat-client:hover {
-        border-color: var(--blue-vivid);
-      }
-      .fat-client.selected {
-        border-color: var(--blue-vivid);
-        background: var(--blue-tint);
-      }
-      .fat-client .ci {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: var(--blue-tint);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-      .fat-client .ci svg {
-        width: 15px;
-        height: 15px;
-        color: var(--blue-vivid);
-      }
-      .fat-client .cname {
-        font-weight: 600;
-        font-size: 0.85rem;
-      }
-      .fat-client .cprice {
-        font-size: 0.75rem;
-        color: var(--gray-mid);
-      }
-      .fat-client-actions {
-        margin-left: auto;
-        display: flex;
-        gap: 5px;
-      }
-      .fat-preview {
-        background: var(--white);
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        padding: 24px;
-        display: flex;
-        flex-direction: column;
-        min-height: 300px;
-      }
-      .fat-empty {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: var(--gray-mid);
-        gap: 10px;
-      }
-      .fat-empty svg {
-        width: 40px;
-        height: 40px;
-        color: #d1d5db;
-      }
-      .fat-empty p {
-        font-size: 0.85rem;
-      }
-
-      /* PAGAMENTOS */
-      .pag-summary {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-      .pag-card {
-        background: var(--white);
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        padding: 14px 16px;
-        box-shadow: var(--shadow-sm);
-      }
-      .pag-label {
-        font-size: 0.75rem;
-        color: var(--gray-mid);
-        font-weight: 500;
-        margin-bottom: 4px;
-      }
-      .pag-value {
-        font-size: 1.6rem;
-        font-weight: 800;
-      }
-      .pag-card.green .pag-value {
-        color: var(--green);
-      }
-      .pag-card.yellow .pag-value {
-        color: var(--yellow);
-      }
-      .pag-card.red .pag-value {
-        color: var(--red);
-      }
-      .pag-card.black .pag-value {
-        color: var(--gray-main);
-      }
-      .pag-status-select {
-        padding: 6px 10px;
-        border: 1px solid var(--border);
-        border-radius: var(--r-sm);
-        font-size: 0.78rem;
-        font-weight: 600;
-        cursor: pointer;
-        background: var(--white);
-        color: var(--gray-main);
-      }
-
-      /* RELATÓRIOS */
-      .rel-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-      .rel-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 700;
-        font-size: 1.05rem;
-      }
-      .rel-title svg {
-        width: 18px;
-        height: 18px;
-        color: var(--blue-vivid);
-      }
-      .rel-controls {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
-      .rel-table-wrap {
-        background: var(--white);
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      thead {
-        background: var(--gray-bg);
-      }
-      th {
-        padding: 12px 20px;
-        text-align: left;
-        font-size: 0.78rem;
-        font-weight: 600;
-        color: var(--gray-mid);
-        border-bottom: 1px solid var(--border);
-      }
-      th:not(:first-child) {
-        text-align: right;
-      }
-      td {
-        padding: 14px 20px;
-        font-size: 0.85rem;
-        border-bottom: 1px solid var(--border);
-      }
-      td:not(:first-child) {
-        text-align: right;
-      }
-      tr:last-child td {
-        border-bottom: none;
-      }
-      tr.total-row td {
-        font-weight: 700;
-        background: var(--gray-bg);
-      }
-      tbody tr:hover {
-        background: #fafafa;
-      }
-
-      /* EMPTY */
-      .empty-state {
-        padding: 48px 24px;
-        text-align: center;
-        color: var(--gray-mid);
-      }
-      .empty-state svg {
-        width: 36px;
-        height: 36px;
-        color: #d1d5db;
-        margin: 0 auto 10px;
-      }
-      .empty-state p {
-        font-size: 0.85rem;
-      }
-
-      /* RESPONSIVE */
-      @media (max-width: 900px) {
-        .metrics-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .pag-summary {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .fat-layout {
-          grid-template-columns: 1fr;
-        }
-        .tab-btn span {
-          display: none;
-        }
-        .btn-novo-pedido {
-          padding: 0 14px;
-        }
-        .btn-novo-pedido span {
-          display: none;
-        }
-      }
-      @media (max-width: 600px) {
-        .metrics-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .tabs-bar {
-          gap: 2px;
-        }
-        .tab-btn {
-          padding: 8px 6px;
-        }
-        .content-wrap {
-          padding: 16px 10px;
-        }
-        .card-right {
-          display: none;
-        }
-        .toolbar {
-          gap: 6px;
-        }
-      }
-    </style>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css" />
     <base target="_blank" />
   </head>
   <body>
-    <!-- HEADER -->
-    <header id="header">
-      <div class="header-logo">
-        <svg
-          class="logo-svg"
-          viewBox="0 0 44 44"
-          xmlns="http://www.w3.org/2000/svg"
+    <!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+    <header id="navbar">
+      <div class="container nav-inner">
+        <!-- Logo inline SVG -->
+        <a
+          href="#hero"
+          class="nav-logo"
+          aria-label="LS Check — Verificação Técnica Veicular"
         >
-          <path
-            d="M22 2 L38 8 L38 24 C38 33 22 42 22 42 C22 42 6 33 6 24 L6 8 Z"
-            fill="#0453cc"
-            stroke="#fff"
-            stroke-width="1.5"
-          />
-          <text
-            x="22"
-            y="27"
-            text-anchor="middle"
-            font-family="DM Sans,sans-serif"
-            font-weight="800"
-            font-size="13"
-            fill="white"
+          <img src="logo-navbar.png" alt="LS Check" class="logo-img" />
+        </a>
+
+        <!-- Desktop Menu -->
+        <nav class="nav-menu">
+          <a href="#hero" class="nav-link" data-section="hero">
+            <i data-lucide="search" style="width: 16px; height: 16px"></i>
+            Consultar
+          </a>
+          <a href="#servicos" class="nav-link" data-section="servicos">
+            <i data-lucide="wrench" style="width: 16px; height: 16px"></i>
+            Serviços
+          </a>
+          <a
+            href="https://wa.me/5587996541760?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20a%20consulta%20veicular."
+            target="_blank"
+            class="nav-link"
+            data-section="contato"
           >
-            LS
-          </text>
-        </svg>
-        <span class="header-title">LS Check Admin</span>
-      </div>
-      <div class="header-actions">
-        <button title="Atualizar" onclick="location.reload()">
-          <i data-lucide="refresh-cw"></i>
-        </button>
-        <button title="Download"><i data-lucide="download"></i></button>
-        <button title="Upload"><i data-lucide="upload"></i></button>
-        <button title="Sair" onclick="logout()">
-          <i data-lucide="log-out"></i>
-        </button>
-      </div>
-    </header>
+            <i
+              data-lucide="message-circle"
+              style="width: 16px; height: 16px"
+            ></i>
+            Fale Conosco
+          </a>
+          <a href="#faq" class="nav-link" data-section="faq">
+            <i data-lucide="help-circle" style="width: 16px; height: 16px"></i>
+            FAQ
+          </a>
+        </nav>
 
-    <div id="app">
-      <div class="content-wrap">
-        <!-- METRICS -->
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <div class="metric-label">Total Pedidos</div>
-            <div class="metric-value black" id="m-total">0</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Pendentes</div>
-            <div class="metric-value yellow" id="m-pendentes">0</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Enviados</div>
-            <div class="metric-value green" id="m-enviados">0</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Admins</div>
-            <div class="metric-value black" id="m-admins">0</div>
-          </div>
-        </div>
-
-        <!-- TABS + NOVO PEDIDO -->
-        <div class="tabs-row">
-          <div class="tabs-bar">
-            <button class="tab-btn active" data-tab="pedidos">
-              <i data-lucide="file-text"></i><span>Pedidos</span>
-            </button>
-            <button class="tab-btn" data-tab="usuarios">
-              <i data-lucide="users"></i><span>Usuários</span>
-            </button>
-            <button class="tab-btn" data-tab="faturamento">
-              <i data-lucide="receipt"></i><span>Faturamento</span>
-            </button>
-            <button class="tab-btn" data-tab="pagamentos">
-              <i data-lucide="credit-card"></i><span>Pagamentos</span>
-            </button>
-            <button class="tab-btn" data-tab="relatorios">
-              <i data-lucide="bar-chart-2"></i><span>Relatórios</span>
-            </button>
-          </div>
-          <a href="painel-admin.html" class="btn-novo-pedido">
-            <i data-lucide="plus-circle"></i><span>Novo Pedido</span>
+        <!-- Desktop Actions -->
+        <div class="nav-actions">
+          <a
+            href="https://wa.me/5587996541760?text=Já%20paguei%2C%20quero%20meu%20relatório."
+            target="_blank"
+            class="btn-outline"
+          >
+            <i data-lucide="credit-card" style="width: 15px; height: 15px"></i>
+            Já Paguei
+          </a>
+          <a href="login.html" class="btn-primary">
+            <i data-lucide="log-in" style="width: 15px; height: 15px"></i>
+            Entrar
           </a>
         </div>
 
-        <!-- ABA PEDIDOS -->
-        <div class="tab-panel active" id="tab-pedidos">
-          <div class="toolbar">
-            <div class="search-wrap">
-              <i data-lucide="search"></i>
+        <!-- Hamburger -->
+        <button class="hamburger" aria-label="Abrir menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+      <!-- Mobile Drawer -->
+      <nav class="nav-drawer">
+        <a href="#hero" class="nav-link"
+          ><i data-lucide="search"></i> Consultar</a
+        >
+        <a href="#servicos" class="nav-link"
+          ><i data-lucide="wrench"></i> Serviços</a
+        >
+        <a
+          href="https://wa.me/5587996541760?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20a%20consulta%20veicular."
+          target="_blank"
+          class="nav-link"
+          ><i data-lucide="message-circle"></i> Fale Conosco</a
+        >
+        <a href="#faq" class="nav-link"
+          ><i data-lucide="help-circle"></i> FAQ</a
+        >
+        <div class="nav-actions">
+          <a
+            href="https://wa.me/5587996541760?text=Já%20paguei%2C%20quero%20meu%20relatório."
+            target="_blank"
+            class="btn-outline"
+            ><i data-lucide="credit-card" style="width: 14px; height: 14px"></i>
+            Já Paguei</a
+          >
+          <a href="login.html" class="btn-primary"
+            ><i data-lucide="log-in" style="width: 14px; height: 14px"></i>
+            Entrar</a
+          >
+        </div>
+      </nav>
+    </header>
+
+    <!-- WhatsApp Flutuante -->
+    <a
+      class="whatsapp-float"
+      href="https://wa.me/5587996541760?text=Ol%C3%A1%21%20Tenho%20interesse%20na%20consulta%20veicular%20da%20LS%20Check."
+      target="_blank"
+      aria-label="Fale pelo WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+        />
+      </svg>
+    </a>
+
+    <!-- ============================================================
+     HERO
+     ============================================================ -->
+    <section id="hero">
+      <div class="container">
+        <div class="hero-content">
+          <span class="section-badge fade-up"
+            >A consulta mais completa do mercado</span
+          >
+
+          <h1 class="hero-title fade-up">
+            Consulta Veicular <span class="text-blue">Completa</span><br />pela
+            Placa
+          </h1>
+
+          <p class="hero-sub fade-up">
+            Sinistro, leilão, roubo/furto, débitos e muito mais — tudo em um
+            único relatório detalhado.
+          </p>
+
+          <!-- Search Box -->
+          <div class="hero-search fade-up">
+            <div class="hero-search-input-wrap">
+              <i
+                data-lucide="car"
+                style="width: 20px; height: 20px; color: var(--blue-vivid)"
+              ></i>
               <input
                 type="text"
-                id="pedido-search"
-                placeholder="Buscar por nome, placa, protocolo..."
+                id="placa-input"
+                placeholder="ABC1D23 ou ABC1023"
+                maxlength="7"
+                autocomplete="off"
               />
             </div>
-            <input type="date" class="date-input" title="Data início" />
-            <input type="date" class="date-input" title="Data fim" />
-            <select class="filter-select" id="pedido-status">
-              <option value="">Todos Status</option>
-              <option value="pending_review">Aguardando revisão</option>
-              <option value="queries_runnig">Consultando</option>
-              <option value="queries_done">Consultas concluídas</option>
-              <option value="pending_payment">Aguardando pagamento</option>
-              <option value="processing">Processando</option>
-              <option value="pdf_review">Aguardando PDF</option>
-              <option value="completed">Concluído</option>
-              <option value="rejected">Rejeitado</option>
-              <option value="failed">Falhou</option>
-            </select>
-          </div>
-          <div id="pedidos-list">
-            <div class="empty-state">
-              <i data-lucide="inbox"></i>
-              <p>Carregando...</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- ABA USUARIOS -->
-        <div class="tab-panel" id="tab-usuarios">
-          <div class="section-header">
-            <div class="section-title">
-              <i data-lucide="shield-check"></i> Administradores
-            </div>
-          </div>
-          <div id="admins-list">
-            <div class="empty-state">
-              <i data-lucide="inbox"></i>
-              <p>Carregando...</p>
-            </div>
+            <button class="btn-primary consultar-trigger hero-search-btn">
+              Consultar Agora
+              <i
+                data-lucide="arrow-right"
+                style="width: 16px; height: 16px"
+              ></i>
+            </button>
           </div>
 
-          <div class="section-header">
-            <div class="section-title">
-              <i data-lucide="user"></i> Usuários Comuns
-            </div>
-          </div>
-          <div id="usuarios-list">
-            <div class="empty-state">
-              <i data-lucide="inbox"></i>
-              <p>Carregando...</p>
-            </div>
-          </div>
-        </div>
+          <p class="hero-note fade-up">
+            <i
+              data-lucide="message-circle"
+              style="width: 14px; height: 14px; color: #25d366"
+            ></i>
+            Relatório completo e detalhado. Preço negociado via WhatsApp.
+          </p>
 
-        <!-- ABA FATURAMENTO -->
-        <div class="tab-panel" id="tab-faturamento">
-          <div class="empty-state">
-            <i data-lucide="clock"></i>
-            <p>Faturamento em breve</p>
-          </div>
-        </div>
-
-        <!-- ABA PAGAMENTOS -->
-        <div class="tab-panel" id="tab-pagamentos">
-          <div class="empty-state">
-            <i data-lucide="clock"></i>
-            <p>Pagamentos em breve</p>
-          </div>
-        </div>
-
-        <!-- ABA RELATÓRIOS -->
-        <div class="tab-panel" id="tab-relatorios">
-          <div class="rel-header">
-            <div class="rel-title">
-              <i data-lucide="file-bar-chart"></i> Relatório de Custos por
-              Consulta
+          <!-- Trust badges -->
+          <div class="hero-trust fade-up">
+            <div class="trust-item">
+              <i
+                data-lucide="shield-check"
+                style="width: 16px; height: 16px; color: var(--blue-vivid)"
+              ></i>
+              Dados oficiais
             </div>
-            <div class="rel-controls">
-              <input type="month" class="date-input" value="2026-05" />
-              <button class="btn-primary">
-                <i data-lucide="download"></i> Exportar
-              </button>
+            <div class="trust-item">
+              <i
+                data-lucide="zap"
+                style="width: 16px; height: 16px; color: var(--blue-vivid)"
+              ></i>
+              Resultado em até 24h
             </div>
-          </div>
-          <div class="rel-table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Tipo de Consulta</th>
-                  <th>Quantidade</th>
-                  <th>Custo Unitário</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody id="rel-tbody">
-                <tr>
-                  <td colspan="4" class="empty-state">
-                    <i data-lucide="clock"></i>
-                    <p>Relatórios em breve</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="trust-item">
+              <i
+                data-lucide="lock"
+                style="width: 16px; height: 16px; color: var(--blue-vivid)"
+              ></i>
+              Pagamento seguro
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
+    <!-- ============================================================
+     SERVIÇOS
+     ============================================================ -->
+    <section id="servicos">
+      <div class="container">
+        <div class="section-header text-center">
+          <span class="section-badge fade-up">Consulta Completa</span>
+          <h2 class="section-title fade-up">
+            A consulta mais <span class="text-blue">completa</span> do mercado
+          </h2>
+          <p class="section-sub fade-up">
+            Tudo que você precisa para tomar a melhor decisão na compra ou venda
+            do veículo, em um único relatório.
+          </p>
+        </div>
+
+        <div class="services-grid">
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i
+                data-lucide="shield-alert"
+                style="width: 22px; height: 22px"
+              ></i>
+            </div>
+            <div class="service-info">
+              <h3>Indício de Sinistro</h3>
+              <p>Verificação em múltiplas bases de sinistro e acidentes.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="gavel" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Leilão</h3>
+              <p>Histórico completo em base primária de leilões.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i
+                data-lucide="bar-chart-2"
+                style="width: 22px; height: 22px"
+              ></i>
+            </div>
+            <div class="service-info">
+              <h3>Leilão Avançado</h3>
+              <p>Score, aceitação por seguradoras e detalhes completos.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i
+                data-lucide="clipboard-check"
+                style="width: 22px; height: 22px"
+              ></i>
+            </div>
+            <div class="service-info">
+              <h3>Parecer Técnico</h3>
+              <p>Análise técnica detalhada e parecer profissional.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i
+                data-lucide="alert-triangle"
+                style="width: 22px; height: 22px"
+              ></i>
+            </div>
+            <div class="service-info">
+              <h3>Indício de Sinistro Avançado</h3>
+              <p>Base avançada com cruzamento de ocorrências.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="shield-off" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Roubo e Furto</h3>
+              <p>Histórico completo de ocorrências de roubo/furto.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="refresh-cw" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Leilão / Remarketing</h3>
+              <p>Eventos corporativos e remarketing de seguradoras.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="cpu" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Decodificador</h3>
+              <p>Decodificação completa do chassi e agregados.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="receipt" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Débitos Veiculares</h3>
+              <p>IPVA, licenciamento, multas e pendências financeiras.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="map-pin" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Estadual</h3>
+              <p>Consulta restrições estaduais.</p>
+            </div>
+          </div>
+
+          <div class="service-card fade-up">
+            <div class="service-icon">
+              <i data-lucide="lock" style="width: 22px; height: 22px"></i>
+            </div>
+            <div class="service-info">
+              <h3>Bloqueios</h3>
+              <p>Bloqueios administrativos e restrições ativas.</p>
+            </div>
+          </div>
+
+          <!-- Placeholder para manter grid par -->
+          <div
+            class="service-card service-card--empty fade-up"
+            aria-hidden="true"
+          ></div>
+        </div>
+
+        <div class="services-cta fade-up">
+          <button
+            class="btn-primary consultar-trigger"
+            style="font-size: 1rem; padding: 15px 40px"
+          >
+            Consultar Agora
+            <i data-lucide="arrow-right" style="width: 18px; height: 18px"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     COMO FUNCIONA
+     ============================================================ -->
+    <section id="como-funciona">
+      <div class="container">
+        <div class="section-header text-center">
+          <h2 class="section-title fade-up">Como funciona?</h2>
+          <p class="section-sub fade-up">
+            Simples, rápido e prático. Seu relatório em poucos passos:
+          </p>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-card fade-up">
+            <span class="step-number">01</span>
+            <div class="step-icon">
+              <i data-lucide="search" style="width: 26px; height: 26px"></i>
+            </div>
+            <h3>Digite a placa</h3>
+            <p>Insira a placa no formato AAA0A00 ou AAA0000.</p>
+          </div>
+
+          <div class="step-card fade-up">
+            <span class="step-number">02</span>
+            <div class="step-icon">
+              <i
+                data-lucide="check-circle"
+                style="width: 26px; height: 26px"
+              ></i>
+            </div>
+            <h3>Confirme o veículo</h3>
+            <p>Verifique marca, modelo e ano do veículo encontrado.</p>
+          </div>
+
+          <div class="step-card fade-up">
+            <span class="step-number">03</span>
+            <div class="step-icon">
+              <i data-lucide="user" style="width: 26px; height: 26px"></i>
+            </div>
+            <h3>Preencha seus dados</h3>
+            <p>Nome, e-mail e WhatsApp para receber o relatório.</p>
+          </div>
+
+          <div class="step-card fade-up">
+            <span class="step-number">04</span>
+            <div class="step-icon">
+              <i data-lucide="bell" style="width: 26px; height: 26px"></i>
+            </div>
+            <h3>Receba o relatório</h3>
+            <p>
+              Após o pagamento, seu relatório completo é liberado em até 24h.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     POR QUE ESCOLHER
+     ============================================================ -->
+    <section id="por-que">
+      <div class="container">
+        <div class="section-header text-center">
+          <h2 class="section-title fade-up">
+            Por que escolher a LS Engenharia?
+          </h2>
+          <p class="section-sub fade-up">
+            Credibilidade técnica, dados certificados e atendimento de verdade.
+          </p>
+        </div>
+
+        <div class="why-grid">
+          <div class="why-card fade-up">
+            <div class="why-icon">
+              <i data-lucide="zap" style="width: 28px; height: 28px"></i>
+            </div>
+            <h3>Rápido</h3>
+            <p>Resultado em até 24 horas após aprovação do pagamento.</p>
+          </div>
+
+          <div class="why-card fade-up">
+            <div class="why-icon">
+              <i
+                data-lucide="shield-check"
+                style="width: 28px; height: 28px"
+              ></i>
+            </div>
+            <h3>Confiável</h3>
+            <p>Dados certificados e atualizados de fontes oficiais.</p>
+          </div>
+
+          <div class="why-card fade-up">
+            <div class="why-icon">
+              <i data-lucide="star" style="width: 28px; height: 28px"></i>
+            </div>
+            <h3>Completa</h3>
+            <p>
+              A consulta mais abrangente do mercado, tudo em um único relatório.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     FAQ
+     ============================================================ -->
+    <section
+      id="faq"
+      style="
+        padding: 90px 0;
+        background: var(--white);
+        border-top: 1px solid var(--border);
+      "
+    >
+      <div class="container" style="max-width: 760px">
+        <div class="section-header text-center" style="margin-bottom: 40px">
+          <span class="section-badge fade-up">Dúvidas frequentes</span>
+          <h2 class="section-title fade-up">Perguntas Frequentes</h2>
+        </div>
+
+        <div
+          class="faq-list"
+          style="display: flex; flex-direction: column; gap: 14px"
+        >
+          <details
+            class="faq-item fade-up"
+            style="
+              background: var(--gray-bg);
+              border-radius: var(--radius-md);
+              border: 1px solid var(--border);
+              overflow: hidden;
+            "
+          >
+            <summary
+              style="
+                padding: 18px 22px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.95rem;
+                color: var(--gray-main);
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Quanto tempo leva para receber o relatório?
+              <i
+                data-lucide="chevron-down"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  color: var(--blue-vivid);
+                  flex-shrink: 0;
+                "
+              ></i>
+            </summary>
+            <div
+              style="
+                padding: 0 22px 18px;
+                font-size: 0.9rem;
+                color: var(--gray-dark);
+                line-height: 1.7;
+              "
+            >
+              Após a confirmação do pagamento, o relatório é entregue em até 24
+              horas úteis pelo WhatsApp ou e-mail informado.
+            </div>
+          </details>
+
+          <details
+            class="faq-item fade-up"
+            style="
+              background: var(--gray-bg);
+              border-radius: var(--radius-md);
+              border: 1px solid var(--border);
+              overflow: hidden;
+            "
+          >
+            <summary
+              style="
+                padding: 18px 22px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.95rem;
+                color: var(--gray-main);
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Qual o formato de placa aceito?
+              <i
+                data-lucide="chevron-down"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  color: var(--blue-vivid);
+                  flex-shrink: 0;
+                "
+              ></i>
+            </summary>
+            <div
+              style="
+                padding: 0 22px 18px;
+                font-size: 0.9rem;
+                color: var(--gray-dark);
+                line-height: 1.7;
+              "
+            >
+              Aceitamos placas no formato antigo (AAA0000) e Mercosul (AAA0A00).
+              Basta digitar no campo de busca.
+            </div>
+          </details>
+
+          <details
+            class="faq-item fade-up"
+            style="
+              background: var(--gray-bg);
+              border-radius: var(--radius-md);
+              border: 1px solid var(--border);
+              overflow: hidden;
+            "
+          >
+            <summary
+              style="
+                padding: 18px 22px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.95rem;
+                color: var(--gray-main);
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Os dados são confiáveis e atualizados?
+              <i
+                data-lucide="chevron-down"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  color: var(--blue-vivid);
+                  flex-shrink: 0;
+                "
+              ></i>
+            </summary>
+            <div
+              style="
+                padding: 0 22px 18px;
+                font-size: 0.9rem;
+                color: var(--gray-dark);
+                line-height: 1.7;
+              "
+            >
+              Sim. Utilizamos bases de dados certificadas e fontes oficiais para
+              garantir a precisão e atualidade das informações.
+            </div>
+          </details>
+
+          <details
+            class="faq-item fade-up"
+            style="
+              background: var(--gray-bg);
+              border-radius: var(--radius-md);
+              border: 1px solid var(--border);
+              overflow: hidden;
+            "
+          >
+            <summary
+              style="
+                padding: 18px 22px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.95rem;
+                color: var(--gray-main);
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Como funciona o pagamento?
+              <i
+                data-lucide="chevron-down"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  color: var(--blue-vivid);
+                  flex-shrink: 0;
+                "
+              ></i>
+            </summary>
+            <div
+              style="
+                padding: 0 22px 18px;
+                font-size: 0.9rem;
+                color: var(--gray-dark);
+                line-height: 1.7;
+              "
+            >
+              O valor é combinado via WhatsApp antes da realização da consulta.
+              O pagamento é feito de forma segura via Pix ou outro meio
+              acordado.
+            </div>
+          </details>
+
+          <details
+            class="faq-item fade-up"
+            style="
+              background: var(--gray-bg);
+              border-radius: var(--radius-md);
+              border: 1px solid var(--border);
+              overflow: hidden;
+            "
+          >
+            <summary
+              style="
+                padding: 18px 22px;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 0.95rem;
+                color: var(--gray-main);
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              Já paguei. Como recebo meu relatório?
+              <i
+                data-lucide="chevron-down"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  color: var(--blue-vivid);
+                  flex-shrink: 0;
+                "
+              ></i>
+            </summary>
+            <div
+              style="
+                padding: 0 22px 18px;
+                font-size: 0.9rem;
+                color: var(--gray-dark);
+                line-height: 1.7;
+              "
+            >
+              Clique no botão "Já Paguei" no menu ou entre em contato pelo
+              WhatsApp (87) 99654-1760 enviando o comprovante.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     CTA FINAL
+     ============================================================ -->
+    <section id="cta-final">
+      <div class="container">
+        <div class="cta-final-inner">
+          <h2 class="section-title fade-up">Não compre um veículo às cegas</h2>
+          <p
+            class="section-sub fade-up"
+            style="margin-top: 12px; margin-bottom: 32px"
+          >
+            Evite prejuízos com sinistro, leilão, roubo e débitos ocultos. Faça
+            sua consulta agora.
+          </p>
+          <div class="cta-final-actions fade-up">
+            <button
+              class="btn-primary consultar-trigger"
+              style="font-size: 1rem; padding: 16px 44px"
+            >
+              Consultar Agora
+              <i
+                data-lucide="arrow-right"
+                style="width: 18px; height: 18px"
+              ></i>
+            </button>
+            <div class="cta-secure">
+              <i data-lucide="lock" style="width: 14px; height: 14px"></i>
+              Pagamento seguro &bull; Dados protegidos
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+     FOOTER
+     ============================================================ -->
+    <footer id="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <!-- Marca -->
+          <div class="footer-brand">
+            <img
+              src="logo-icon-footer.png"
+              alt="LS Check"
+              class="footer-logo-img"
+            />
+            <p class="footer-tagline">
+              Consultas veiculares completas e confiáveis. Credibilidade técnica
+              e dados certificados para sua segurança.
+            </p>
+            <div class="footer-social">
+              <a
+                href="https://wa.me/5587996541760"
+                target="_blank"
+                aria-label="WhatsApp"
+              >
+                <i data-lucide="message-circle"></i>
+              </a>
+              <a href="mailto:lincoleng2001@outlook.com" aria-label="E-mail">
+                <i data-lucide="mail"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Links -->
+          <div class="footer-col">
+            <h4>Links Úteis</h4>
+            <ul>
+              <li>
+                <a href="#hero"
+                  ><i
+                    data-lucide="search"
+                    style="width: 14px; height: 14px"
+                  ></i>
+                  Consultar Placa</a
+                >
+              </li>
+              <li>
+                <a href="#servicos"
+                  ><i
+                    data-lucide="wrench"
+                    style="width: 14px; height: 14px"
+                  ></i>
+                  Serviços</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/5587996541760?text=Já%20paguei%2C%20quero%20meu%20relatório."
+                  target="_blank"
+                  ><i
+                    data-lucide="credit-card"
+                    style="width: 14px; height: 14px"
+                  ></i>
+                  Já Paguei</a
+                >
+              </li>
+              <li>
+                <a href="#faq"
+                  ><i
+                    data-lucide="help-circle"
+                    style="width: 14px; height: 14px"
+                  ></i>
+                  Perguntas Frequentes</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/5587996541760?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20a%20consulta%20veicular."
+                  target="_blank"
+                  ><i
+                    data-lucide="message-circle"
+                    style="width: 14px; height: 14px"
+                  ></i>
+                  Fale Conosco</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contato -->
+          <div class="footer-col">
+            <h4>Contato</h4>
+            <div class="footer-contact-item">
+              <i
+                data-lucide="message-circle"
+                style="width: 16px; height: 16px"
+              ></i>
+              <a href="https://wa.me/5587996541760" target="_blank">
+                WhatsApp: (87) 99654-1760
+              </a>
+            </div>
+            <div class="footer-contact-item">
+              <i data-lucide="mail" style="width: 16px; height: 16px"></i>
+              <a href="mailto:lincoleng2001@outlook.com">
+                lincoleng2001@outlook.com
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          &copy; 2026 LS Engenharia. Todos os direitos reservados.
+        </div>
+      </div>
+    </footer>
+
+    <!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
     <script>
-      // ============================================
-      // CONFIG - URL DO BACKEND
-      // ============================================
-      const API_URL = "https://plataforma-consultas-backend-rqp0.onrender.com";
-
-      // ============================================
-      // PROTEÇÃO: verifica se está logado
-      // ============================================
-      const token = localStorage.getItem("token");
-      if (!token) {
-        location.href = "login.html";
-      }
-
-      const currentUser = JSON.parse(localStorage.getItem("user") || "null");
-      if (!currentUser || currentUser.role !== "admin") {
-        location.href = "dashboard.html";
-      }
-
-      // ============================================
-      // API HELPER
-      // ============================================
-      async function api(endpoint, options = {}) {
-        const url = endpoint.startsWith("http") ? endpoint : API_URL + endpoint;
-
-        try {
-          const res = await fetch(url, {
-            ...options,
-            headers: {
-              Authorization: "Bearer " + token,
-              "Content-Type": "application/json",
-              ...options.headers,
-            },
-          });
-
-          if (res.status === 401) {
-            localStorage.removeItem("token");
-            location.href = "login.html";
-            return;
-          }
-
-          if (!res.ok) {
-            const err = await res
-              .json()
-              .catch(() => ({ error: "Erro " + res.status }));
-            throw new Error(err.error || "Erro na requisição");
-          }
-
-          return res.json();
-        } catch (err) {
-          console.error("API Error:", err);
-          throw err;
-        }
-      }
-
-      function logout() {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        location.href = "login.html";
-      }
-
-      // ============================================
-      // DADOS (vindos da API)
-      // ============================================
-      let pedidos = [];
-      let admins = [];
-      let usuarios = [];
-
-      // ============================================
-      // MAPA DE STATUS (bate com o enum real do backend)
-      // ============================================
-      const STATUS_LABELS = {
-        pending_review: "Aguardando revisão",
-        queries_runnig: "Consultando",
-        queries_done: "Consultas concluídas",
-        pending_payment: "Aguardando pagamento",
-        processing: "Processando",
-        pdf_review: "Aguardando PDF",
-        completed: "Concluído",
-        rejected: "Rejeitado",
-        failed: "Falhou",
-      };
-
-      const STATUS_BADGE = {
-        pending_review: "badge-yellow",
-        queries_runnig: "badge-blue",
-        queries_done: "badge-blue",
-        pending_payment: "badge-yellow",
-        processing: "badge-blue",
-        pdf_review: "badge-yellow",
-        completed: "badge-green",
-        rejected: "badge-red",
-        failed: "badge-red",
-      };
-
-      function confirm2(msg) {
-        return confirm(msg);
-      }
-
-      // ============================================
-      // CARREGAMENTO DE DADOS DA API
-      // ============================================
-      async function carregarPedidos() {
-        try {
-          const json = await api("/api/orders/admin/all");
-          pedidos = json.data?.orders || [];
-          renderPedidos();
-        } catch (err) {
-          console.error("Erro ao carregar pedidos:", err);
-          document.getElementById("pedidos-list").innerHTML =
-            '<div class="empty-state"><i data-lucide="alert-circle"></i><p>Erro ao carregar pedidos</p></div>';
-          lucide.createIcons();
-        }
-      }
-
-      async function carregarUsuarios() {
-        try {
-          const json = await api("/usuarios");
-          admins = json.data?.admins || [];
-          usuarios = json.data?.usuarios || [];
-          renderUsuarios();
-        } catch (err) {
-          console.error("Erro ao carregar usuários:", err);
-          document.getElementById("admins-list").innerHTML =
-            '<div class="empty-state"><i data-lucide="alert-circle"></i><p>Erro ao carregar</p></div>';
-          document.getElementById("usuarios-list").innerHTML =
-            '<div class="empty-state"><i data-lucide="alert-circle"></i><p>Erro ao carregar</p></div>';
-          lucide.createIcons();
-        }
-      }
-
-      async function carregarMetricas() {
-        try {
-          const json = await api("/api/orders/admin/metrics");
-          const m = json.data || {};
-          document.getElementById("m-total").textContent = m.totalPedidos || 0;
-          document.getElementById("m-pendentes").textContent = m.pendentes || 0;
-          document.getElementById("m-enviados").textContent = m.enviados || 0;
-          document.getElementById("m-admins").textContent = m.admins || 0;
-        } catch (err) {
-          console.error("Erro ao carregar métricas:", err);
-        }
-      }
-
-      // ============================================
-      // PEDIDOS
-      // ============================================
-      function renderPedidos() {
-        const search = document
-          .getElementById("pedido-search")
-          .value.toLowerCase();
-        const status = document.getElementById("pedido-status").value;
-        const list = document.getElementById("pedidos-list");
-
-        let filtered = pedidos.filter((p) => {
-          const nomeCliente = p.userId?.name || "";
-          const matchSearch =
-            !search ||
-            p.placa?.toLowerCase().includes(search) ||
-            nomeCliente.toLowerCase().includes(search);
-          const matchStatus = !status || p.status === status;
-          return matchSearch && matchStatus;
-        });
-
-        if (!filtered.length) {
-          list.innerHTML = `<div class="empty-state"><i data-lucide="inbox"></i><p>Nenhum pedido encontrado.</p></div>`;
-          lucide.createIcons();
-          return;
-        }
-
-        list.innerHTML = filtered
-          .map((p) => {
-            const nomeCliente = p.userId?.name || "Cliente";
-            const tipo =
-              p.orderType === "report" ? p.reportType || "Relatório" : "Avulso";
-            const data = p.createdAt
-              ? new Date(p.createdAt).toLocaleDateString("pt-BR")
-              : "";
-
-            return `
-    <div class="list-card" id="pedido-${p._id}">
-      <div class="card-icon-wrap green-icon"><i data-lucide="file-text"></i></div>
-      <div class="card-info">
-        <div class="card-top">
-          <span class="card-title">${p.placa}</span>
-          <span class="badge ${STATUS_BADGE[p.status] || "badge-gray"}">${STATUS_LABELS[p.status] || p.status}</span>
-        </div>
-        <div class="card-sub">${nomeCliente} &middot; ${tipo}</div>
-      </div>
-      <div class="card-right">
-        <span class="card-date">${data}</span>
-        <div class="action-btns">
-          ${acoesPedido(p)}
-          <button class="action-btn danger" title="Excluir" onclick="deletarPedido('${p._id}')"><i data-lucide="trash-2"></i></button>
-        </div>
-      </div>
-    </div>
-  `;
-          })
-          .join("");
-        lucide.createIcons();
-      }
-
-      // Botões de ação de acordo com o estágio do pedido (fluxo real do backend)
-      function acoesPedido(p) {
-        switch (p.status) {
-          case "pending_review":
-            return `
-        <button class="action-btn" title="Rodar consultas" onclick="rodarConsultas('${p._id}')"><i data-lucide="play"></i></button>
-        <button class="action-btn danger" title="Rejeitar" onclick="rejeitarPedido('${p._id}')"><i data-lucide="x"></i></button>
-      `;
-          case "queries_done":
-            return `
-        <button class="action-btn" title="Aprovar para pagamento" onclick="aprovarPedido('${p._id}')"><i data-lucide="check"></i></button>
-        <button class="action-btn" title="Retentar falhas" onclick="retentarFalhas('${p._id}')"><i data-lucide="refresh-cw"></i></button>
-      `;
-          case "pending_payment":
-            return `<button class="action-btn" title="Confirmar pagamento" onclick="confirmarPagamento('${p._id}')"><i data-lucide="dollar-sign"></i></button>`;
-          case "pdf_review":
-            return `<button class="action-btn" title="Gerar PDF" onclick="gerarPdf('${p._id}')"><i data-lucide="file-down"></i></button>`;
-          case "failed":
-            return `<button class="action-btn" title="Retentar falhas" onclick="retentarFalhas('${p._id}')"><i data-lucide="refresh-cw"></i></button>`;
-          default:
-            return "";
-        }
-      }
-
-      async function rodarConsultas(id) {
-        try {
-          await api(`/api/orders/admin/${id}/run-queries`, { method: "POST" });
-          alert("Consultas disparadas. Atualizando em instantes...");
-          setTimeout(carregarPedidos, 4000);
-        } catch (err) {
-          alert("Erro: " + err.message);
-        }
-      }
-
-      async function rejeitarPedido(id) {
-        const motivo = prompt("Motivo da rejeição (opcional):") || undefined;
-        try {
-          await api(`/api/orders/admin/${id}/review`, {
-            method: "PATCH",
-            body: JSON.stringify({ approved: false, rejectionReason: motivo }),
-          });
-          await carregarPedidos();
-          await carregarMetricas();
-        } catch (err) {
-          alert("Erro: " + err.message);
-        }
-      }
-
-      async function aprovarPedido(id) {
-        try {
-          await api(`/api/orders/admin/${id}/approve`, { method: "PATCH" });
-          await carregarPedidos();
-        } catch (err) {
-          alert("Erro: " + err.message);
-        }
-      }
-
-      async function retentarFalhas(id) {
-        try {
-          await api(`/api/orders/admin/${id}/retry-failed`, { method: "POST" });
-          alert("Reprocessando falhas. Atualizando em instantes...");
-          setTimeout(carregarPedidos, 4000);
-        } catch (err) {
-          alert("Erro: " + err.message);
-        }
-      }
-
-      async function confirmarPagamento(id) {
-        if (!confirm2("Confirmar pagamento deste pedido?")) return;
-        try {
-          await api(`/api/orders/admin/${id}/confirm-payment`, {
-            method: "PATCH",
-          });
-          await carregarPedidos();
-        } catch (err) {
-          alert("Erro: " + err.message);
-        }
-      }
-
-      async function gerarPdf(id) {
-        try {
-          await api(`/api/orders/admin/${id}/generate-pdf`, { method: "POST" });
-          alert("Gerando PDF. Atualizando em instantes...");
-          setTimeout(carregarPedidos, 4000);
-        } catch (err) {
-          alert("Erro: " + err.message);
-        }
-      }
-
-      async function deletarPedido(id) {
-        if (!confirm2("Excluir este pedido?")) return;
-        try {
-          await api(`/api/orders/admin/${id}`, { method: "DELETE" });
-          pedidos = pedidos.filter((p) => p._id !== id);
-          renderPedidos();
-          await carregarMetricas();
-        } catch (err) {
-          alert("Erro ao excluir: " + err.message);
-        }
-      }
-
-      // ============================================
-      // USUÁRIOS
-      // ============================================
-      function renderUsuarios() {
-        const al = document.getElementById("admins-list");
-        if (!admins.length) {
-          al.innerHTML =
-            '<div class="empty-state"><i data-lucide="inbox"></i><p>Nenhum administrador.</p></div>';
-        } else {
-          al.innerHTML = admins
-            .map(
-              (a) => `
-      <div class="list-card" id="admin-${a._id}">
-        <div class="card-icon-wrap"><i data-lucide="shield"></i></div>
-        <div class="card-info">
-          <div class="card-top"><span class="card-title">${a.name}</span><span class="badge badge-gray">${a.role}</span></div>
-          <div class="card-sub">${a.email}</div>
-        </div>
-        <div class="card-right">
-          <div class="action-btns">
-            <button class="action-btn danger" title="Excluir" onclick="deletarUsuario('${a._id}')"><i data-lucide="trash-2"></i></button>
-          </div>
-        </div>
-      </div>
-    `,
-            )
-            .join("");
-        }
-
-        const ul = document.getElementById("usuarios-list");
-        if (!usuarios.length) {
-          ul.innerHTML =
-            '<div class="empty-state"><i data-lucide="inbox"></i><p>Nenhum usuário.</p></div>';
-        } else {
-          ul.innerHTML = usuarios
-            .map(
-              (u) => `
-      <div class="list-card" id="user-${u._id}">
-        <div class="card-icon-wrap"><i data-lucide="user"></i></div>
-        <div class="card-info">
-          <div class="card-top"><span class="card-title">${u.name}</span></div>
-          <div class="card-sub">${u.email}</div>
-        </div>
-        <div class="card-right">
-          <div class="action-btns">
-            <button class="action-btn danger" title="Excluir" onclick="deletarUsuario('${u._id}')"><i data-lucide="trash-2"></i></button>
-          </div>
-        </div>
-      </div>
-    `,
-            )
-            .join("");
-        }
-        lucide.createIcons();
-      }
-
-      // Um só endpoint de exclusão pra admin e usuário comum (DELETE /usuarios/:id)
-      async function deletarUsuario(id) {
-        if (!confirm2("Remover este usuário?")) return;
-        try {
-          await api(`/usuarios/${id}`, { method: "DELETE" });
-          admins = admins.filter((a) => a._id !== id);
-          usuarios = usuarios.filter((u) => u._id !== id);
-          renderUsuarios();
-          await carregarMetricas();
-        } catch (err) {
-          alert("Erro: " + err.message);
-        }
-      }
-
-      // ============================================
-      // TABS
-      // ============================================
-      document.querySelectorAll(".tab-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          document
-            .querySelectorAll(".tab-btn")
-            .forEach((b) => b.classList.remove("active"));
-          document
-            .querySelectorAll(".tab-panel")
-            .forEach((p) => p.classList.remove("active"));
-          btn.classList.add("active");
-          document
-            .getElementById("tab-" + btn.dataset.tab)
-            .classList.add("active");
-        });
-      });
-
-      document
-        .getElementById("pedido-search")
-        .addEventListener("input", renderPedidos);
-      document
-        .getElementById("pedido-status")
-        .addEventListener("change", renderPedidos);
-
-      // ============================================
-      // INIT
-      // ============================================
-      (async function init() {
-        lucide.createIcons();
-        await carregarPedidos();
-        await carregarUsuarios();
-        await carregarMetricas();
-      })();
+      lucide.createIcons();
     </script>
+    <script src="script.js"></script>
   </body>
 </html>
