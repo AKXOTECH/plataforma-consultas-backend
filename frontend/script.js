@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const target = document.querySelector(anchor.getAttribute("href"));
       if (!target) return;
       e.preventDefault();
-      const offset = 80; /* navbar height */
+      const offset = navbar.classList.contains("scrolled") ? 88 : 112;
       const top = target.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top, behavior: "smooth" });
     });
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
     navLinks.forEach((link) => {
-      link.classList.toggle("active-link", link.dataset.section === current);
+      link.classList.toggle("active", link.dataset.section === current);
     });
   });
 });
