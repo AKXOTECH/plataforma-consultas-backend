@@ -164,6 +164,36 @@
         color: var(--gray-main);
       }
 
+      /* TABS ROW (tabs-bar + botão Novo Pedido lado a lado) */
+      .tabs-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        align-items: stretch;
+      }
+      .btn-novo-pedido {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 18px;
+        background: var(--blue-vivid);
+        color: #fff;
+        border-radius: var(--r-md);
+        font-size: 0.85rem;
+        font-weight: 700;
+        white-space: nowrap;
+        box-shadow: var(--shadow-sm);
+        transition: background 0.15s;
+      }
+      .btn-novo-pedido:hover {
+        background: var(--blue-hover);
+      }
+      .btn-novo-pedido svg {
+        width: 16px;
+        height: 16px;
+      }
+
       /* TABS */
       .tabs-bar {
         background: var(--white);
@@ -172,7 +202,7 @@
         padding: 6px;
         display: flex;
         gap: 4px;
-        margin-bottom: 20px;
+        flex: 1;
         box-shadow: var(--shadow-sm);
       }
       .tab-btn {
@@ -704,6 +734,12 @@
         .tab-btn span {
           display: none;
         }
+        .btn-novo-pedido {
+          padding: 0 14px;
+        }
+        .btn-novo-pedido span {
+          display: none;
+        }
       }
       @media (max-width: 600px) {
         .metrics-grid {
@@ -791,23 +827,28 @@
           </div>
         </div>
 
-        <!-- TABS -->
-        <div class="tabs-bar">
-          <button class="tab-btn active" data-tab="pedidos">
-            <i data-lucide="file-text"></i><span>Pedidos</span>
-          </button>
-          <button class="tab-btn" data-tab="usuarios">
-            <i data-lucide="users"></i><span>Usuários</span>
-          </button>
-          <button class="tab-btn" data-tab="faturamento">
-            <i data-lucide="receipt"></i><span>Faturamento</span>
-          </button>
-          <button class="tab-btn" data-tab="pagamentos">
-            <i data-lucide="credit-card"></i><span>Pagamentos</span>
-          </button>
-          <button class="tab-btn" data-tab="relatorios">
-            <i data-lucide="bar-chart-2"></i><span>Relatórios</span>
-          </button>
+        <!-- TABS + NOVO PEDIDO -->
+        <div class="tabs-row">
+          <div class="tabs-bar">
+            <button class="tab-btn active" data-tab="pedidos">
+              <i data-lucide="file-text"></i><span>Pedidos</span>
+            </button>
+            <button class="tab-btn" data-tab="usuarios">
+              <i data-lucide="users"></i><span>Usuários</span>
+            </button>
+            <button class="tab-btn" data-tab="faturamento">
+              <i data-lucide="receipt"></i><span>Faturamento</span>
+            </button>
+            <button class="tab-btn" data-tab="pagamentos">
+              <i data-lucide="credit-card"></i><span>Pagamentos</span>
+            </button>
+            <button class="tab-btn" data-tab="relatorios">
+              <i data-lucide="bar-chart-2"></i><span>Relatórios</span>
+            </button>
+          </div>
+          <a href="painel-admin.html" class="btn-novo-pedido">
+            <i data-lucide="plus-circle"></i><span>Novo Pedido</span>
+          </a>
         </div>
 
         <!-- ABA PEDIDOS -->

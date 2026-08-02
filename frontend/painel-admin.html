@@ -1,0 +1,1651 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Admin — Consulta Veicular</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0f1117;
+        --surface: #1a1d27;
+        --surface2: #222636;
+        --border: #2e3348;
+        --accent: #4f8ef7;
+        --accent2: #7c3aed;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --text: #e2e8f0;
+        --text2: #94a3b8;
+        --text3: #64748b;
+        --font: "Inter", system-ui, sans-serif;
+        --mono: "JetBrains Mono", "Fira Code", monospace;
+      }
+
+      body {
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* HEADER */
+      header {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 0 2rem;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .logo {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 8px var(--accent);
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .server-status {
+        font-size: 12px;
+        color: var(--text3);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text3);
+      }
+
+      .status-dot.online {
+        background: var(--success);
+        box-shadow: 0 0 6px var(--success);
+      }
+      .status-dot.offline {
+        background: var(--danger);
+      }
+
+      /* LAYOUT */
+      .layout {
+        display: flex;
+        flex: 1;
+      }
+
+      /* SIDEBAR */
+      aside {
+        width: 240px;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        padding: 1.5rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-height: calc(100vh - 56px);
+      }
+
+      .nav-section {
+        padding: 0 1rem 0.5rem;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 1rem;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 1rem;
+        margin: 0 0.5rem;
+        border-radius: 6px;
+        font-size: 13.5px;
+        color: var(--text2);
+        cursor: pointer;
+        transition: all 0.15s;
+        border: 1px solid transparent;
+      }
+
+      .nav-item:hover {
+        background: var(--surface2);
+        color: var(--text);
+      }
+      .nav-item.active {
+        background: rgba(79, 142, 247, 0.12);
+        color: var(--accent);
+        border-color: rgba(79, 142, 247, 0.2);
+      }
+
+      .nav-badge {
+        margin-left: auto;
+        background: var(--accent2);
+        color: white;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 1px 7px;
+        border-radius: 20px;
+        min-width: 20px;
+        text-align: center;
+      }
+
+      /* MAIN */
+      main {
+        flex: 1;
+        padding: 2rem;
+        overflow-y: auto;
+        max-width: 1100px;
+      }
+
+      /* CONFIG CARD */
+      .config-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .config-card h3 {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text2);
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .config-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .field label {
+        font-size: 12px;
+        color: var(--text3);
+        font-weight: 500;
+      }
+
+      .field input,
+      .field select {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 8px 10px;
+        color: var(--text);
+        font-size: 13px;
+        font-family: var(--font);
+        transition: border-color 0.15s;
+        width: 100%;
+      }
+
+      .field input:focus,
+      .field select:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+
+      .field input::placeholder {
+        color: var(--text3);
+      }
+
+      /* BUTTONS */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.15s;
+        font-family: var(--font);
+      }
+
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+      }
+      .btn-primary:hover:not(:disabled) {
+        background: #3d7de8;
+      }
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+      .btn-success:hover:not(:disabled) {
+        background: #16a34a;
+      }
+      .btn-warning {
+        background: var(--warning);
+        color: #1a1a1a;
+      }
+      .btn-warning:hover:not(:disabled) {
+        background: #d97706;
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+      .btn-danger:hover:not(:disabled) {
+        background: #dc2626;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--text2);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover:not(:disabled) {
+        background: var(--surface2);
+        color: var(--text);
+      }
+      .btn-sm {
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+
+      /* PAGE TITLE */
+      .page-title {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        margin-bottom: 0.25rem;
+      }
+
+      .page-subtitle {
+        font-size: 13px;
+        color: var(--text3);
+        margin-bottom: 1.5rem;
+      }
+
+      /* PIPELINE */
+      .pipeline {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin-bottom: 2rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .pipeline-step {
+        flex: 1;
+        padding: 14px 16px;
+        text-align: center;
+        position: relative;
+        border-right: 1px solid var(--border);
+        transition: all 0.3s;
+      }
+
+      .pipeline-step:last-child {
+        border-right: none;
+      }
+
+      .pipeline-step.active {
+        background: rgba(79, 142, 247, 0.1);
+      }
+
+      .pipeline-step.done {
+        background: rgba(34, 197, 94, 0.08);
+      }
+
+      .pipeline-step.current {
+        background: rgba(79, 142, 247, 0.18);
+        box-shadow: inset 0 -2px 0 var(--accent);
+      }
+
+      .step-num {
+        font-size: 10px;
+        color: var(--text3);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 3px;
+      }
+
+      .step-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text2);
+      }
+
+      .pipeline-step.done .step-label {
+        color: var(--success);
+      }
+      .pipeline-step.current .step-label {
+        color: var(--accent);
+      }
+
+      /* ORDER CARD */
+      .order-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+
+      .order-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .order-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .placa-badge {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-family: var(--mono);
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--text);
+      }
+
+      .order-meta {
+        font-size: 12px;
+        color: var(--text3);
+        line-height: 1.6;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .status-pending_review {
+        background: rgba(148, 163, 184, 0.15);
+        color: #94a3b8;
+      }
+      .status-queries_running {
+        background: rgba(79, 142, 247, 0.15);
+        color: #4f8ef7;
+      }
+      .status-queries_done {
+        background: rgba(124, 58, 237, 0.15);
+        color: #a78bfa;
+      }
+      .status-pending_payment {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+      }
+      .status-processing {
+        background: rgba(79, 142, 247, 0.15);
+        color: #4f8ef7;
+      }
+      .status-completed {
+        background: rgba(34, 197, 94, 0.15);
+        color: #22c55e;
+      }
+      .status-failed {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+      }
+      .status-rejected {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+      }
+
+      /* ENDPOINTS LIST */
+      .order-body {
+        padding: 1.5rem;
+      }
+
+      .endpoints-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 8px;
+        margin-bottom: 1.5rem;
+      }
+
+      .endpoint-item {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12.5px;
+      }
+
+      .endpoint-name {
+        color: var(--text2);
+        font-weight: 500;
+      }
+
+      .endpoint-status {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 10px;
+      }
+
+      .ep-pending {
+        background: rgba(148, 163, 184, 0.12);
+        color: var(--text3);
+      }
+      .ep-success {
+        background: rgba(34, 197, 94, 0.15);
+        color: var(--success);
+      }
+      .ep-error {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+      }
+      .ep-running {
+        background: rgba(79, 142, 247, 0.15);
+        color: var(--accent);
+      }
+
+      /* RESULTS PREVIEW */
+      .results-preview {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--text2);
+        max-height: 200px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+        margin-bottom: 1.5rem;
+      }
+
+      /* ACTIONS */
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      /* LOG */
+      .log-area {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        max-height: 200px;
+        overflow-y: auto;
+        color: var(--text2);
+      }
+
+      .log-line {
+        padding: 2px 0;
+        line-height: 1.6;
+      }
+      .log-line.info {
+        color: var(--accent);
+      }
+      .log-line.success {
+        color: var(--success);
+      }
+      .log-line.warn {
+        color: var(--warning);
+      }
+      .log-line.error {
+        color: var(--danger);
+      }
+      .log-line.dim {
+        color: var(--text3);
+      }
+
+      /* LOADING SPINNER */
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        display: inline-block;
+      }
+
+      /* TOAST */
+      #toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 13px;
+        color: var(--text);
+        max-width: 320px;
+        transform: translateY(80px);
+        opacity: 0;
+        transition: all 0.25s;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      #toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      #toast.toast-success {
+        border-left: 3px solid var(--success);
+      }
+      #toast.toast-error {
+        border-left: 3px solid var(--danger);
+      }
+      #toast.toast-info {
+        border-left: 3px solid var(--accent);
+      }
+
+      /* DIVIDER */
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 1.5rem 0;
+      }
+
+      .section-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 10px;
+      }
+
+      .pdf-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        border-radius: 8px;
+        color: var(--success);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.15s;
+      }
+
+      .pdf-link:hover {
+        background: rgba(34, 197, 94, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 44 44"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M22 2 L38 8 L38 24 C38 33 22 42 22 42 C22 42 6 33 6 24 L6 8 Z"
+            fill="#0453cc"
+            stroke="#fff"
+            stroke-width="1.5"
+          />
+          <text
+            x="22"
+            y="27"
+            text-anchor="middle"
+            font-family="DM Sans,sans-serif"
+            font-weight="800"
+            font-size="13"
+            fill="white"
+          >
+            LS
+          </text>
+        </svg>
+        LS Check — Painel Admin
+      </div>
+      <div class="header-right">
+        <div class="server-status">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Verificando...</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside>
+        <div class="nav-section">Acesso</div>
+        <div class="nav-item" onclick="showSection('login')">
+          <span>🔑</span> Login Admin
+        </div>
+
+        <div class="nav-section">Pedidos</div>
+        <div
+          class="nav-item active"
+          id="nav-fluxo"
+          onclick="showSection('fluxo')"
+        >
+          <span>⚡</span> Novo Pedido
+        </div>
+        <div
+          class="nav-item"
+          id="nav-pendentes"
+          onclick="showSection('pendentes')"
+        >
+          <span>📋</span> Pendentes
+          <span class="nav-badge" id="badgePendentes">0</span>
+        </div>
+
+        <div class="nav-section">Sistema</div>
+        <div
+          class="nav-item"
+          id="nav-historico"
+          onclick="showSection('historico')"
+        >
+          <span>🔌</span> Historico
+        </div>
+        <div
+          class="nav-item"
+          id="nav-endpoints"
+          onclick="showSection('endpoints')"
+        >
+          <span>🔌</span> Endpoints
+        </div>
+      </aside>
+
+      <main id="mainContent">
+        <!-- Conteúdo dinâmico aqui -->
+      </main>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+      // ─── CONFIG ────────────────────────────────────────────────────────────────
+      const API = "http://localhost:3333";
+      let token = localStorage.getItem("admin_token") || "";
+      let currentOrder = null;
+
+      // ─── UTILS ─────────────────────────────────────────────────────────────────
+      function toast(msg, type = "info") {
+        const el = document.getElementById("toast");
+        el.textContent = msg;
+        el.className = `show toast-${type}`;
+        setTimeout(() => (el.className = ""), 3000);
+      }
+
+      function log(msg, type = "dim") {
+        const area = document.getElementById("logArea");
+        if (!area) return;
+        const line = document.createElement("div");
+        line.className = `log-line ${type}`;
+        const time = new Date().toLocaleTimeString("pt-BR");
+        line.textContent = `[${time}] ${msg}`;
+        area.appendChild(line);
+        area.scrollTop = area.scrollHeight;
+      }
+
+      async function api(method, path, body) {
+        const opts = {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          ...(body ? { body: JSON.stringify(body) } : {}),
+        };
+        const res = await fetch(API + path, opts);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Erro na requisição");
+        return data;
+      }
+
+      // ─── STATUS CHECK ───────────────────────────────────────────────────────────
+      async function checkServer() {
+        try {
+          await fetch(API + "/health");
+          document.getElementById("statusDot").className = "status-dot online";
+          document.getElementById("statusText").textContent = "Servidor online";
+        } catch {
+          document.getElementById("statusDot").className = "status-dot offline";
+          document.getElementById("statusText").textContent =
+            "Servidor offline";
+        }
+      }
+
+      // ─── PIPELINE HELPER ────────────────────────────────────────────────────────
+      function getPipelineStep(status) {
+        const map = {
+          pending_review: 0,
+          queries_running: 1,
+          queries_done: 2,
+          pending_payment: 3,
+          pdf_review: 4,
+          processing: 5,
+          completed: 6,
+          failed: 6,
+          rejected: 6,
+        };
+        return map[status] ?? 0;
+      }
+
+      function renderPipeline(status) {
+        const steps = [
+          "Criado",
+          "Consultando",
+          "Consultado",
+          "Aguardando Pix",
+          "Revisão PDF",
+          "Processando",
+          status === "failed"
+            ? "Falhou"
+            : status === "rejected"
+              ? "Rejeitado"
+              : "Concluído",
+        ];
+        const current = getPipelineStep(status);
+
+        return `<div class="pipeline">
+    ${steps
+      .map(
+        (s, i) => `
+      <div class="pipeline-step ${i < current ? "done" : i === current ? "current" : ""}">
+        <div class="step-num">${i < current ? "✓" : `0${i + 1}`}</div>
+        <div class="step-label">${s}</div>
+      </div>
+    `,
+      )
+      .join("")}
+  </div>`;
+      }
+
+      function renderEndpoints(endpoints, results) {
+        return endpoints
+          .map((ep) => {
+            const result = results?.[ep];
+            let statusClass = "ep-pending";
+            let statusLabel = "Pendente";
+
+            if (result) {
+              if (result.error) {
+                statusClass = "ep-error";
+                statusLabel = "Erro";
+              } else {
+                statusClass = "ep-success";
+                statusLabel = "OK";
+              }
+            }
+
+            return `<div class="endpoint-item">
+      <span class="endpoint-name">${ep}</span>
+      <span class="endpoint-status ${statusClass}">${statusLabel}</span>
+    </div>`;
+          })
+          .join("");
+      }
+
+      // ─── SECTIONS ───────────────────────────────────────────────────────────────
+      function showSection(name) {
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((el) => el.classList.remove("active"));
+        const navEl = document.getElementById(`nav-${name}`);
+        if (navEl) navEl.classList.add("active");
+
+        const sections = {
+          login: renderLogin,
+          fluxo: renderFluxo,
+          pendentes: renderPendentes,
+          historico: renderHistorico,
+          endpoints: renderEndpoints2,
+        };
+        if (sections[name]) sections[name]();
+      }
+
+      // ─── LOGIN ──────────────────────────────────────────────────────────────────
+      function renderLogin() {
+        document.getElementById("mainContent").innerHTML = `
+    <div class="page-title">Login Admin</div>
+    <div class="page-subtitle">Entre com sua conta de administrador</div>
+
+    <div class="config-card" style="max-width:420px">
+      <h3>Credenciais</h3>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="field">
+          <label>Email</label>
+          <input id="loginEmail" type="email" placeholder="admin@email.com" value="">
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input id="loginPass" type="password" placeholder="••••••" value="">
+        </div>
+        <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
+        ${token ? `<div style="font-size:12px;color:var(--success)">✓ Já autenticado</div>` : ""}
+      </div>
+    </div>
+  `;
+      }
+
+      async function doLogin() {
+        try {
+          const email = document.getElementById("loginEmail").value;
+          const pass = document.getElementById("loginPass").value;
+          const data = await api("POST", "/api/auth/login", {
+            email,
+            password: pass,
+          });
+          token = data.data.token;
+          localStorage.setItem("admin_token", token);
+          toast("Login realizado com sucesso!", "success");
+          showSection("fluxo");
+        } catch (err) {
+          toast(err.message, "error");
+        }
+      }
+
+      // ─── FLUXO PRINCIPAL ────────────────────────────────────────────────────────
+      function renderFluxo() {
+        document.getElementById("mainContent").innerHTML = `
+    <div class="page-title">Novo Pedido de Consulta</div>
+    <div class="page-subtitle">Simule o fluxo completo como admin — do pedido ao PDF</div>
+
+    <div class="config-card">
+      <h3>1. Criar Pedido (como cliente)</h3>
+      <div class="config-grid">
+        <div class="field">
+          <label>Placa do veículo</label>
+          <input id="inputPlaca" placeholder="ABC1234" value="KGU1B03">
+        </div>
+        <div class="field">
+          <label>Tipo</label>
+          <select id="inputTipo" onchange="toggleTipo()">
+            <option value="custom">Avulso</option>
+            <option value="report">Relatório pronto</option>
+          </select>
+        </div>
+        <div class="field" id="fieldReport" style="display:none">
+          <label>Relatório</label>
+          <select id="inputReport">
+            <option value="check_basic">Check Basic</option>
+            <option value="check_pro">Check Pro</option>
+            <option value="check_premium">Check Premium</option>
+            <option value="check_leilao_sinistro">Check Leilão & Sinistro</option>
+            <option value="check_leilao_completo">Check Leilão Completo</option>
+          </select>
+        </div>
+      </div>
+      <div id="fieldEndpoints" style="margin-top:12px">
+        <div class="field">
+          <label>Endpoints (separados por vírgula)</label>
+          <input id="inputEndpoints" placeholder="decodificador, debitosveiculares, renajud" value="decodificador, debitosveiculares">
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <button class="btn btn-primary" onclick="criarPedido()">Criar Pedido</button>
+      </div>
+    </div>
+
+    <div id="orderSection" style="display:none">
+      <div id="orderContent"></div>
+
+      <div class="config-card">
+        <h3>Log de Ações</h3>
+        <div class="log-area" id="logArea">
+          <div class="log-line dim">Aguardando ações...</div>
+        </div>
+      </div>
+    </div>
+  `;
+      }
+
+      function toggleTipo() {
+        const tipo = document.getElementById("inputTipo").value;
+        document.getElementById("fieldReport").style.display =
+          tipo === "report" ? "flex" : "none";
+        document.getElementById("fieldEndpoints").style.display =
+          tipo === "custom" ? "block" : "none";
+      }
+
+      async function criarPedido() {
+        if (!token) {
+          toast("Faça login primeiro", "error");
+          return;
+        }
+
+        const placa = document.getElementById("inputPlaca").value.trim();
+        const tipo = document.getElementById("inputTipo").value;
+
+        let body = { placa, orderType: tipo };
+
+        if (tipo === "report") {
+          body.reportType = document.getElementById("inputReport").value;
+        } else {
+          const eps = document
+            .getElementById("inputEndpoints")
+            .value.split(",")
+            .map((e) => e.trim())
+            .filter(Boolean);
+          body.endpoints = eps;
+        }
+
+        try {
+          const data = await api("POST", "/api/orders", body);
+          currentOrder = data.data.order;
+          document.getElementById("orderSection").style.display = "block";
+          renderOrder();
+          log(`Pedido criado: ${currentOrder._id}`, "info");
+          log(
+            `Placa: ${currentOrder.placa} | Valor: R$ ${currentOrder.totalPrice}`,
+            "dim",
+          );
+          toast("Pedido criado!", "success");
+        } catch (err) {
+          toast(err.message, "error");
+          log(`Erro ao criar: ${err.message}`, "error");
+        }
+      }
+
+      function renderOrder() {
+        if (!currentOrder) return;
+        const o = currentOrder;
+        const failedCount =
+          o.endpoints?.filter((ep) => o.results?.[ep]?.error).length || 0;
+        const successCount =
+          o.endpoints?.filter((ep) => o.results?.[ep] && !o.results[ep].error)
+            .length || 0;
+
+        const pdfSection = o.pdfPath
+          ? `
+    <hr class="divider">
+    <div class="section-title">Relatório Gerado</div>
+    <a href="${API}${o.pdfPath}" target="_blank" class="pdf-link">
+      📄 Abrir PDF do Relatório
+    </a>
+  `
+          : "";
+
+        const resultsSection = o.results
+          ? `
+    <hr class="divider">
+    <div class="section-title">Resultados (${successCount} ok, ${failedCount} erro)</div>
+    <div class="endpoints-grid">${renderEndpoints(o.endpoints, o.results)}</div>
+    ${
+      failedCount > 0 && ["queries_done", "pdf_review"].includes(o.status)
+        ? `
+      <button class="btn btn-warning btn-sm" style="margin-bottom:14px" onclick="retryFailed()">
+      🔄 Retentar ${failedCount} endpoint(s) com erro
+      </button>
+    `
+        : ""
+    }
+    <div class="section-title" style="margin-top:14px">Dados retornados por endpoint</div>
+    ${o.endpoints
+      .map((ep) => {
+        const result = o.results[ep];
+        const hasError = result?.error;
+        return `
+        <div style="margin-bottom:10px">
+          <div style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:8px 12px;
+            background:${hasError ? "rgba(239,68,68,0.08)" : "rgba(34,197,94,0.08)"};
+            border:1px solid ${hasError ? "rgba(239,68,68,0.25)" : "rgba(34,197,94,0.25)"};
+            border-radius:8px 8px 0 0;
+            cursor:pointer;
+          " onclick="toggleResult('result_${ep}')">
+            <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:${hasError ? "var(--danger)" : "var(--success)"}">
+              ${hasError ? "✕" : "✓"} ${ep}
+            </span>
+            <span style="font-size:11px;color:var(--text3)">clique para expandir ▾</span>
+          </div>
+          <div id="result_${ep}" style="display:none">
+            <pre style="
+              background:var(--bg);
+              border:1px solid ${hasError ? "rgba(239,68,68,0.25)" : "rgba(34,197,94,0.25)"};
+              border-top:none;
+              border-radius:0 0 8px 8px;
+              padding:12px;
+              font-family:var(--mono);
+              font-size:11px;
+              color:var(--text2);
+              max-height:400px;
+              overflow-y:auto;
+              white-space:pre-wrap;
+              word-break:break-all;
+              margin:0;
+            ">${JSON.stringify(sanitizeResult, null, 2)}</pre>
+          </div>
+        </div>
+    `;
+      })
+      .join("")}
+`
+          : `
+  <hr class="divider">
+  <div class="section-title">Endpoints solicitados</div>
+  <div class="endpoints-grid">${renderEndpoints(o.endpoints, null)}</div>
+`;
+
+        const actions = renderActions(o.status);
+
+        document.getElementById("orderContent").innerHTML = `
+    ${renderPipeline(o.status)}
+
+    <div class="order-card">
+      <div class="order-header">
+        <div class="order-info">
+          <div class="placa-badge">${o.placa}</div>
+          <div class="order-meta">
+            ID: ${o._id}<br>
+            Tipo: ${o.orderType === "report" ? o.reportType : "Avulso"} &nbsp;·&nbsp;
+            Custo: R$ ${o.totalCost} &nbsp;·&nbsp; Venda: R$ ${o.totalPrice}
+          </div>
+        </div>
+        <span class="status-badge status-${o.status}">${o.status.replaceAll("_", " ")}</span>
+      </div>
+
+      <div class="order-body">
+        ${resultsSection}
+        ${pdfSection}
+        ${actions}
+      </div>
+    </div>
+  `;
+      }
+
+      function renderActions(status) {
+        const btnRefresh = `<button class="btn btn-ghost btn-sm" onclick="refreshOrder()">↻ Atualizar</button>`;
+
+        const map = {
+          pending_review: `
+      <div class="section-title">Ações disponíveis</div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="runQueries()">
+          ▶ Disparar Consultas
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="rejeitar()">✕ Rejeitar</button>
+        ${btnRefresh}
+      </div>
+    `,
+          queries_running: `
+      <div class="section-title">Status</div>
+      <div class="actions">
+        <span style="color:var(--accent);font-size:13px">
+          <span class="spinner"></span> &nbsp;Consultando APIs em paralelo...
+        </span>
+        ${btnRefresh}
+      </div>
+    `,
+          queries_done: `
+      <div class="section-title">Ações disponíveis</div>
+      <div class="actions">
+        <button class="btn btn-success" onclick="aprovar()">✓ Aprovar para Pagamento</button>
+        <button class="btn btn-primary btn-sm" onclick="runQueries()">↻ Consultar Novamente</button>
+        <button class="btn btn-danger btn-sm" onclick="rejeitar()">✕ Rejeitar</button>
+        ${btnRefresh}
+      </div>
+    `,
+          pending_payment: `
+      <div class="section-title">Aguardando Pix</div>
+      <div class="actions">
+        <button class="btn btn-success" onclick="confirmarPagamento()">
+          💰 Confirmar Pagamento Recebido
+        </button>
+        ${btnRefresh}
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text3)">
+        ⚡ Envie a chave Pix para o cliente via WhatsApp e confirme aqui quando pagar.
+      </div>
+    `,
+          pdf_review: `
+      <div class="section-title">Revisar antes de entregar ao cliente</div>
+      <div style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.3);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:#a78bfa">
+        Revise os resultados acima antes de gerar o PDF.
+        Relatório só será entregue após clicar em "Gerar PDF".
+      </div>
+      <div class="actions">
+        <button class="btn btn-success" onclick="gerarPdf()">
+          Gerar PDF e Entregar
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="runQueries()">Reprocessar Consultas</button>
+        ${btnRefresh}
+      </div>
+    `,
+          processing: `
+      <div class="actions">
+        <span style="color:var(--accent);font-size:13px">
+          <span class="spinner"></span> &nbsp;Gerando relatório PDF...
+        </span>
+        ${btnRefresh}
+      </div>
+    `,
+          completed: `
+      <div class="actions">
+        <span style="color:var(--success);font-size:13px;font-weight:600">
+          ✓ Pedido concluído com sucesso
+        </span>
+        ${btnRefresh}
+      </div>
+    `,
+          failed: `
+      <div class="actions">
+        <span style="color:var(--danger);font-size:13px">✕ Pedido falhou</span>
+        ${btnRefresh}
+      </div>
+    `,
+          rejected: `
+      <div class="actions">
+        <span style="color:var(--danger);font-size:13px">✕ Pedido rejeitado</span>
+      </div>
+    `,
+        };
+
+        return map[status] || btnRefresh;
+      }
+
+      // ─── AÇÕES DO FLUXO ─────────────────────────────────────────────────────────
+      async function runQueries() {
+        try {
+          log("Disparando consultas nas APIs...", "info");
+          await api(
+            "POST",
+            `/api/orders/admin/${currentOrder._id}/run-queries`,
+            {},
+          );
+          toast("Consultas disparadas!", "info");
+          log("Consultas em andamento — aguardando resultados...", "dim");
+          currentOrder.status = "queries_running";
+          renderOrder();
+          const poll = setInterval(async () => {
+            await refreshOrder();
+            if (currentOrder.status !== "queries_running") {
+              clearInterval(poll);
+              log(
+                `Consultas finalizadas - status: ${currentOrder.status}`,
+                "success",
+              );
+            }
+          }, 5000);
+        } catch (err) {
+          toast(err.message, "error");
+          log(`Erro: ${err.message}`, "error");
+        }
+      }
+
+      async function retryFailed() {
+        try {
+          log("Retentando endpoints com erro...", "warn");
+          await api(
+            "POST",
+            `/api/orders/admin/${currentOrder._id}/retry-failed`,
+            {},
+          );
+          toast("Retry disparado!", "info");
+          setTimeout(refreshOrder, 5000);
+        } catch (err) {
+          toast(err.message, "error");
+        }
+      }
+
+      async function aprovar() {
+        try {
+          const data = await api(
+            "PATCH",
+            `/api/orders/admin/${currentOrder._id}/approve`,
+            {},
+          );
+          currentOrder = data.data.order;
+          log("Pedido aprovado — aguardando pagamento", "success");
+          toast("Aprovado!", "success");
+          renderOrder();
+        } catch (err) {
+          toast(err.message, "error");
+          log(`Erro: ${err.message}`, "error");
+        }
+      }
+
+      async function gerarPdf() {
+        try {
+          log("Gerando PDF do relatório...", "info");
+          await api(
+            "POST",
+            `/api/orders/admin/${currentOrder._id}/generate-pdf`,
+            {},
+          );
+          toast("PDF sendo gerado!", "success");
+          log("PDF em processamento - aguardando...", "dim");
+          currentOrder.status = "processing";
+          renderOrder();
+          const poll = setInterval(async () => {
+            await refreshOrder();
+            if (currentOrder.status !== "processing") {
+              clearInterval(poll);
+              log(`PDF gerado! Status: ${currentOrder.status}`, "success");
+            }
+          }, 5000);
+        } catch (err) {
+          toast(err.message, "error");
+          log(`Erro: ${err.message}`, "error");
+        }
+      }
+
+      function toggleResult(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const isOpen = el.style.display !== "none";
+        el.style.display = isOpen ? "none" : "block";
+      }
+
+      function sanitizeResult(data) {
+        if (!data || typeof data !== "object") return data;
+        const cleaned = { ...data };
+
+        delete cleaned.pdfBase64;
+        delete cleaned.base64;
+        delete cleaned.pdf;
+
+        return cleaned;
+      }
+
+      async function rejeitar() {
+        const motivo = prompt("Motivo da rejeição:") || "Não especificado";
+        try {
+          const data = await api(
+            "PATCH",
+            `/api/orders/admin/${currentOrder._id}/review`,
+            {
+              approved: false,
+              rejectionReason: motivo,
+            },
+          );
+          currentOrder = data.data.order;
+          log(`Pedido rejeitado: ${motivo}`, "error");
+          toast("Pedido rejeitado", "error");
+          renderOrder();
+        } catch (err) {
+          toast(err.message, "error");
+        }
+      }
+
+      async function confirmarPagamento() {
+        try {
+          const data = await api(
+            "PATCH",
+            `/api/orders/admin/${currentOrder._id}/confirm-payment`,
+            {},
+          );
+          currentOrder = data.data.order;
+          log("Pagamento confirmado — gerando PDF...", "success");
+          toast("Pagamento confirmado!", "success");
+          renderOrder();
+          setTimeout(refreshOrder, 8000);
+        } catch (err) {
+          toast(err.message, "error");
+          log(`Erro: ${err.message}`, "error");
+        }
+      }
+
+      async function refreshOrder() {
+        try {
+          const data = await api("GET", `/api/orders/${currentOrder._id}`);
+          const prev = currentOrder.status;
+          currentOrder = data.data.order;
+          if (prev !== currentOrder.status) {
+            log(`Status: ${prev} → ${currentOrder.status}`, "success");
+          }
+          renderOrder();
+        } catch (err) {
+          log(`Erro ao atualizar: ${err.message}`, "error");
+        }
+      }
+
+      // ─── PEDIDOS PENDENTES ──────────────────────────────────────────────────────
+      async function renderPendentes() {
+        document.getElementById("mainContent").innerHTML = `
+    <div class="page-title">Pedidos Pendentes</div>
+    <div class="page-subtitle">Pedidos aguardando revisão ou pagamento</div>
+    <div id="listaPendentes"><div style="color:var(--text3);font-size:13px">Carregando...</div></div>
+  `;
+
+        try {
+          const [rev, pay] = await Promise.all([
+            api("GET", "/api/orders/admin/pending-review"),
+            api("GET", "/api/orders/admin/pending-payment"),
+          ]);
+
+          const all = [
+            ...rev.data.orders.map((o) => ({
+              ...o,
+              _group: "Aguardando Revisão",
+            })),
+            ...pay.data.orders.map((o) => ({
+              ...o,
+              _group: "Aguardando Pagamento",
+            })),
+          ];
+
+          document.getElementById("badgePendentes").textContent = all.length;
+
+          if (all.length === 0) {
+            document.getElementById("listaPendentes").innerHTML =
+              `<div style="color:var(--text3);font-size:13px;padding:2rem 0">Nenhum pedido pendente 🎉</div>`;
+            return;
+          }
+
+          document.getElementById("listaPendentes").innerHTML = all
+            .map(
+              (o) => `
+      <div class="order-card" style="margin-bottom:1rem">
+        <div class="order-header">
+          <div class="order-info">
+            <div class="placa-badge">${o.placa}</div>
+            <div class="order-meta">
+              ${o._group}<br>
+              ${o.userId?.name || o.userId?.email || "Cliente"} &nbsp;·&nbsp;
+              R$ ${o.totalPrice} &nbsp;·&nbsp;
+              ${new Date(o.createdAt).toLocaleString("pt-BR")}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="status-badge status-${o.status}">${o.status.replace("_", " ")}</span>
+            <button class="btn btn-primary btn-sm" onclick="abrirPedido('${o._id}')">
+              Gerenciar →
+            </button>
+          </div>
+        </div>
+      </div>
+    `,
+            )
+            .join("");
+        } catch (err) {
+          document.getElementById("listaPendentes").innerHTML =
+            `<div style="color:var(--danger);font-size:13px">Erro: ${err.message}</div>`;
+        }
+      }
+
+      async function renderHistorico() {
+        document.getElementById("mainContent").innerHTML = `
+    <div class="page-title">Histórico de Pedidos</div>
+    <div class="page-subtitle">Todos os pedidos — filtre por status, cliente ou período</div>
+
+    <div class="config-card">
+      <h3>Filtros</h3>
+      <div class="config-grid">
+        <div class="field">
+          <label>Status</label>
+          <select id="filtroStatus">
+            <option value="">Todos</option>
+            <option value="pending_review">Pendente revisão</option>
+            <option value="queries_running">Consultando</option>
+            <option value="queries_done">Consultado</option>
+            <option value="pending_payment">Aguardando Pix</option>
+            <option value="pdf_review">Revisão PDF</option>
+            <option value="processing">Processando</option>
+            <option value="completed">Concluído</option>
+            <option value="failed">Falhou</option>
+            <option value="rejected">Rejeitado</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Data inicial</label>
+          <input type="date" id="filtroInicio">
+        </div>
+        <div class="field">
+          <label>Data final</label>
+          <input type="date" id="filtroFim">
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="buscarHistorico(1)">🔍 Buscar</button>
+        <button class="btn btn-ghost" onclick="limparFiltros()">✕ Limpar</button>
+      </div>
+    </div>
+
+    <div id="resultadoHistorico">
+      <div style="color:var(--text3);font-size:13px">Use os filtros acima para buscar pedidos.</div>
+    </div>
+  `;
+      }
+
+      async function buscarHistorico(page = 1) {
+        const status = document.getElementById("filtroStatus").value;
+        const startDate = document.getElementById("filtroInicio").value;
+        const endDate = document.getElementById("filtroFim").value;
+
+        const params = new URLSearchParams({ page });
+        if (status) params.append("status", status);
+        if (startDate) params.append("startDate", startDate);
+        if (endDate) params.append("endDate", endDate);
+
+        document.getElementById("resultadoHistorico").innerHTML =
+          `<div style="color:var(--text3);font-size:13px">Carregando...</div>`;
+
+        try {
+          const data = await api(
+            "GET",
+            `/api/orders/admin/all?${params.toString()}`,
+          );
+          const { orders, total, totalPages, page: currentPage } = data.data;
+
+          if (orders.length === 0) {
+            document.getElementById("resultadoHistorico").innerHTML =
+              `<div style="color:var(--text3);font-size:13px;padding:1rem 0">Nenhum pedido encontrado.</div>`;
+            return;
+          }
+
+          document.getElementById("resultadoHistorico").innerHTML = `
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">
+        ${total} pedido(s) encontrado(s) — página ${currentPage} de ${totalPages}
+      </div>
+
+      ${orders
+        .map(
+          (o) => `
+        <div class="order-card" style="margin-bottom:10px">
+          <div class="order-header">
+            <div class="order-info">
+              <div class="placa-badge">${o.placa}</div>
+              <div class="order-meta">
+                <strong>${o.userId?.name || "Cliente"}</strong> &nbsp;·&nbsp;
+                ${o.userId?.email || ""}<br>
+                R$ ${o.totalPrice} &nbsp;·&nbsp;
+                ${new Date(o.createdAt).toLocaleString("pt-BR")}
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="status-badge status-${o.status}">
+                ${o.status.replaceAll("_", " ")}
+              </span>
+              <button class="btn btn-primary btn-sm" onclick="abrirPedido('${o._id}')">
+                Gerenciar →
+              </button>
+            </div>
+          </div>
+        </div>
+      `,
+        )
+        .join("")}
+
+      ${
+        totalPages > 1
+          ? `
+        <div style="display:flex;gap:8px;margin-top:14px;justify-content:center">
+          ${
+            currentPage > 1
+              ? `
+            <button class="btn btn-ghost btn-sm" onclick="buscarHistorico(${currentPage - 1})">
+              ← Anterior
+            </button>
+          `
+              : ""
+          }
+          <span style="font-size:13px;color:var(--text3);align-self:center">
+            ${currentPage} / ${totalPages}
+          </span>
+          ${
+            currentPage < totalPages
+              ? `
+            <button class="btn btn-ghost btn-sm" onclick="buscarHistorico(${currentPage + 1})">
+              Próxima →
+            </button>
+          `
+              : ""
+          }
+        </div>
+      `
+          : ""
+      }
+    `;
+        } catch (err) {
+          document.getElementById("resultadoHistorico").innerHTML =
+            `<div style="color:var(--danger);font-size:13px">Erro: ${err.message}</div>`;
+        }
+      }
+
+      function limparFiltros() {
+        document.getElementById("filtroStatus").value = "";
+        document.getElementById("filtroInicio").value = "";
+        document.getElementById("filtroFim").value = "";
+        document.getElementById("resultadoHistorico").innerHTML =
+          `<div style="color:var(--text3);font-size:13px">Use os filtros acima para buscar pedidos.</div>`;
+      }
+
+      async function abrirPedido(id) {
+        try {
+          const data = await api("GET", `/api/orders/${id}`);
+          currentOrder = data.data.order;
+          showSection("fluxo");
+          document.getElementById("orderSection").style.display = "block";
+          renderOrder();
+        } catch (err) {
+          toast(err.message, "error");
+        }
+      }
+
+      // ─── ENDPOINTS ───────────────────────────────────────────────────────────────
+      async function renderEndpoints2() {
+        document.getElementById("mainContent").innerHTML = `
+    <div class="page-title">Gerenciar Endpoints</div>
+    <div class="page-subtitle">Atualize os paths das APIs do fornecedor sem precisar de deploy</div>
+    <div id="listaEndpoints"><div style="color:var(--text3);font-size:13px">Carregando...</div></div>
+  `;
+
+        try {
+          const data = await api("GET", "/api/admin/endpoint-configs");
+          const configs = data.data.configs;
+
+          document.getElementById("listaEndpoints").innerHTML = `
+      <div class="config-card">
+        <h3>${configs.length} endpoints configurados</h3>
+        <div style="display:grid;gap:8px">
+          ${configs
+            .map(
+              (c) => `
+            <div style="display:grid;grid-template-columns:180px 1fr auto;gap:10px;align-items:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px">
+              <span style="font-family:var(--mono);font-size:12px;color:var(--text2)">${c.key}</span>
+              <input
+                id="ep_${c.key}"
+                value="${c.path}"
+                style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-family:var(--mono);font-size:12px;width:100%"
+              >
+              <button class="btn btn-primary btn-sm" onclick="salvarEndpoint('${c.key}')">Salvar</button>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
+        } catch (err) {
+          document.getElementById("listaEndpoints").innerHTML =
+            `<div style="color:var(--danger);font-size:13px">Erro: ${err.message}. Faça login primeiro.</div>`;
+        }
+      }
+
+      async function salvarEndpoint(key) {
+        const path = document.getElementById(`ep_${key}`).value.trim();
+        try {
+          await api("PATCH", `/api/admin/endpoint-configs/${key}`, { path });
+          toast(`"${key}" atualizado!`, "success");
+        } catch (err) {
+          toast(err.message, "error");
+        }
+      }
+
+      // ─── INIT ────────────────────────────────────────────────────────────────────
+      checkServer();
+      setInterval(checkServer, 15000);
+      showSection("fluxo");
+    </script>
+  </body>
+</html>
