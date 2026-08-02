@@ -833,7 +833,7 @@ function renderOrder() {
   const pdfSection = o.pdfPath ? `
     <hr class="divider">
     <div class="section-title">Relatório Gerado</div>
-    <a href="${API}${o.pdfPath}" target="_blank" class="pdf-link">
+    <a href="${API}/api/orders/${o._id}/pdf?token=${token}" target="_blank" class="pdf-link">
       📄 Abrir PDF do Relatório
     </a>
   ` : ''

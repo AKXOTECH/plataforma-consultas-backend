@@ -20,6 +20,10 @@ export async function ordersRoutes(fastify: FastifyInstance) {
     ordersController.listPendingPayment
   )
   fastify.get(
+    '/:id/pdf',
+    ordersController.getPdf
+  )
+  fastify.get(
     '/admin/all',
     { preHandler: adminMiddleware },
     ordersController.listAll
