@@ -569,7 +569,8 @@
 <script>
 // ─── CONFIG ────────────────────────────────────────────────────────────────
 const API = 'http://localhost:3333'
-let token = localStorage.getItem('token') || ''
+let token = localStorage.getItem("token") || ''
+console.log("Token ao carregar: ", token)
 let currentOrder = null
 
 // ─── UTILS ─────────────────────────────────────────────────────────────────
