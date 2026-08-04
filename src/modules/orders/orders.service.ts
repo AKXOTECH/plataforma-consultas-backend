@@ -13,6 +13,7 @@ import type { ReportType } from '../../config/constants'
 import { processOrder } from './orders.processor'
 import { logger } from '../../shared/logger'
 import { User } from '@models/User.model'
+import path from 'node:path'
 
 export class OrdersService {
   async createOrder(userId: string, input: CreateOrderInput) {
@@ -220,6 +221,34 @@ export class OrdersService {
 
     return order
   }
+
+  async getPdfPath(orderId: string, userId: string, userRole: string) {
+    const order = await this.getById(orderId)
+
+    if (order.userId.toString() !== userId && userRole !== 'admin') {
+      throw AppError.forbidden('Você não tem permissão para acessar este relatório')
+    }
+
+    if (order.status !== 'completed') {
+      throw AppError.conflict('O relatório ainda não está disponivel')
+    }
+
+    if (!order.pdfPath) {
+      throw AppError.notFound('PDF não encontrado para este pedido')
+    }
+
+    const absolutePath = path.join(
+      process.cwd(),
+      'storage',
+      'reports',
+      order.pdfPath.replace('/reports/', '')
+    )
+
+    return { absolutePath, placa: order.placa }
+  }
+
+
+
   async getMetrics() {
     const [total, pendingReview, completed, failed] = await Promise.all([
       Order.countDocuments(),

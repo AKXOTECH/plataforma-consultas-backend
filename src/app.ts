@@ -81,11 +81,7 @@ export async function buildApp() {
             deepLinking: false,
         },
     })
-    await app.register(staticFiles, {
-        root: path.join(process.cwd(), 'storage', 'reports'),
-        prefix: '/reports/',
-    })
-
+    
     await app.register(staticFiles, {
         root: path.join(process.cwd(), 'public'),
         prefix: '/public/',

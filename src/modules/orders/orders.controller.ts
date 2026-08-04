@@ -4,6 +4,8 @@ import { OrdersService, ordersService } from "./orders.service";
 import { processOrder, retryFailedEndpoints } from "./orders.processor";
 import { logger } from "@shared/logger";
 import { success } from "zod";
+import fs from 'node:fs'
+import { AppError } from "@shared/errors/AppError";
 
 export class OrdersController {
   async create(request: FastifyRequest, reply: FastifyReply) {
@@ -112,6 +114,34 @@ export class OrdersController {
       message: "Gerando PDF. Aguarde alguns segundos e consulte o pedido.",
       data: { order },
     });
+  }
+
+  async getPdf(request: FastifyRequest, reply: FastifyReply) {
+    const { id } = request.params as { id: string }
+
+    const queryToken = (request.query as Record<string, string>).token
+    if (queryToken && !request.headers.authorization) {
+      request.headers.authorization = `Bearer ${queryToken}`
+    }
+
+    await request.jwtVerify()
+
+    const { absolutePath, placa } = await ordersService.getPdfPath(
+      id,
+      request.user.sub,
+      request.user.role
+    )
+
+    if (!fs.existsSync(absolutePath)) {
+      throw AppError.notFound('Arquivo PDF não encontrado no servidor')
+    }
+
+    const stream = fs.createReadStream(absolutePath)
+
+    return reply
+      .header('Content-type', 'application/pdf')
+      .header('Content-Disposition', `inline; filename="relatorio-${placa}.pdf"`)
+      .send(stream)
   }
 
   async runQueries(request: FastifyRequest, reply: FastifyReply) {

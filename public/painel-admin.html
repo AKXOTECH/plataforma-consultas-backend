@@ -569,7 +569,8 @@
 <script>
 // ─── CONFIG ────────────────────────────────────────────────────────────────
 const API = 'http://localhost:3333'
-let token = localStorage.getItem('admin_token') || ''
+let token = localStorage.getItem("token") || ''
+console.log("Token ao carregar: ", token)
 let currentOrder = null
 
 // ─── UTILS ─────────────────────────────────────────────────────────────────
@@ -592,6 +593,8 @@ function log(msg, type = 'dim') {
 }
 
 async function api(method, path, body) {
+
+  console.log("TOKEN:", token)
   const opts = {
     method,
     headers: {
@@ -833,7 +836,7 @@ function renderOrder() {
   const pdfSection = o.pdfPath ? `
     <hr class="divider">
     <div class="section-title">Relatório Gerado</div>
-    <a href="${API}${o.pdfPath}" target="_blank" class="pdf-link">
+    <a href="${API}/api/orders/${o._id}/pdf?token=${token}" target="_blank" class="pdf-link">
       📄 Abrir PDF do Relatório
     </a>
   ` : ''
