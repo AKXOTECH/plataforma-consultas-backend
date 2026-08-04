@@ -893,16 +893,11 @@
               />
             </div>
             <input
-              type="date"
+              type="text"
               class="date-input"
-              id="pedido-data-inicio"
-              title="Data início"
-            />
-            <input
-              type="date"
-              class="date-input"
-              id="pedido-data-fim"
-              title="Data fim"
+              id="pedido-data-busca"
+              title="Buscar por data"
+              placeholder="Data (ex: 2026, 07, 31/07)"
             />
             <select class="filter-select" id="pedido-status">
               <option value="">Todos Status</option>
@@ -1199,8 +1194,9 @@
           .getElementById("pedido-search")
           .value.toLowerCase();
         const status = document.getElementById("pedido-status").value;
-        const dataInicio = document.getElementById("pedido-data-inicio").value;
-        const dataFim = document.getElementById("pedido-data-fim").value;
+        const dataBusca = document
+          .getElementById("pedido-data-busca")
+          .value.trim();
         const list = document.getElementById("pedidos-list");
 
         let filtered = pedidos.filter((p) => {
@@ -1211,12 +1207,12 @@
             nomeCliente.toLowerCase().includes(search);
           const matchStatus = !status || p.status === status;
 
-          const dataPedido = p.createdAt ? p.createdAt.slice(0, 10) : "";
-          const matchInicio =
-            !dataInicio || (dataPedido && dataPedido >= dataInicio);
-          const matchFim = !dataFim || (dataPedido && dataPedido <= dataFim);
+          const dataFormatada = p.createdAt
+            ? new Date(p.createdAt).toLocaleDateString("pt-BR")
+            : "";
+          const matchData = !dataBusca || dataFormatada.includes(dataBusca);
 
-          return matchSearch && matchStatus && matchInicio && matchFim;
+          return matchSearch && matchStatus && matchData;
         });
 
         if (!filtered.length) {
@@ -1626,11 +1622,8 @@
         .getElementById("pedido-status")
         .addEventListener("change", renderPedidos);
       document
-        .getElementById("pedido-data-inicio")
-        .addEventListener("change", renderPedidos);
-      document
-        .getElementById("pedido-data-fim")
-        .addEventListener("change", renderPedidos);
+        .getElementById("pedido-data-busca")
+        .addEventListener("input", renderPedidos);
 
       // ============================================
       // INIT
