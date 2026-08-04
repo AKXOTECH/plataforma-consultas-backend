@@ -892,8 +892,18 @@
                 placeholder="Buscar por nome, placa, protocolo..."
               />
             </div>
-            <input type="date" class="date-input" title="Data início" />
-            <input type="date" class="date-input" title="Data fim" />
+            <input
+              type="date"
+              class="date-input"
+              id="pedido-data-inicio"
+              title="Data início"
+            />
+            <input
+              type="date"
+              class="date-input"
+              id="pedido-data-fim"
+              title="Data fim"
+            />
             <select class="filter-select" id="pedido-status">
               <option value="">Todos Status</option>
               <option value="pending_review">Aguardando revisão</option>
@@ -1189,6 +1199,8 @@
           .getElementById("pedido-search")
           .value.toLowerCase();
         const status = document.getElementById("pedido-status").value;
+        const dataInicio = document.getElementById("pedido-data-inicio").value;
+        const dataFim = document.getElementById("pedido-data-fim").value;
         const list = document.getElementById("pedidos-list");
 
         let filtered = pedidos.filter((p) => {
@@ -1198,7 +1210,13 @@
             p.placa?.toLowerCase().includes(search) ||
             nomeCliente.toLowerCase().includes(search);
           const matchStatus = !status || p.status === status;
-          return matchSearch && matchStatus;
+
+          const dataPedido = p.createdAt ? p.createdAt.slice(0, 10) : "";
+          const matchInicio =
+            !dataInicio || (dataPedido && dataPedido >= dataInicio);
+          const matchFim = !dataFim || (dataPedido && dataPedido <= dataFim);
+
+          return matchSearch && matchStatus && matchInicio && matchFim;
         });
 
         if (!filtered.length) {
@@ -1606,6 +1624,12 @@
         .addEventListener("input", renderPedidos);
       document
         .getElementById("pedido-status")
+        .addEventListener("change", renderPedidos);
+      document
+        .getElementById("pedido-data-inicio")
+        .addEventListener("change", renderPedidos);
+      document
+        .getElementById("pedido-data-fim")
         .addEventListener("change", renderPedidos);
 
       // ============================================
