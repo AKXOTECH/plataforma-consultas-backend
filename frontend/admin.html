@@ -251,6 +251,12 @@
         gap: 4px;
         flex: 1;
         box-shadow: var(--shadow-sm);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .tabs-bar::-webkit-scrollbar {
+        display: none;
       }
       .tab-btn {
         flex: 1;
@@ -267,6 +273,7 @@
         gap: 6px;
         transition: all 0.15s;
         white-space: nowrap;
+        min-width: 0;
       }
       .tab-btn:hover {
         background: var(--blue-tint);
@@ -280,6 +287,7 @@
       .tab-btn svg {
         width: 14px;
         height: 14px;
+        flex-shrink: 0;
       }
 
       /* TAB PANELS */
@@ -528,6 +536,8 @@
         justify-content: space-between;
         margin-bottom: 14px;
         margin-top: 24px;
+        flex-wrap: wrap;
+        gap: 8px;
       }
       .section-header:first-child {
         margin-top: 0;
@@ -706,6 +716,7 @@
         display: flex;
         gap: 10px;
         align-items: center;
+        flex-wrap: wrap;
       }
       .rel-table-wrap {
         background: var(--white);
@@ -713,10 +724,13 @@
         border-radius: var(--r-md);
         overflow: hidden;
         box-shadow: var(--shadow-sm);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
       table {
         width: 100%;
         border-collapse: collapse;
+        min-width: 600px;
       }
       thead {
         background: var(--gray-bg);
@@ -728,6 +742,7 @@
         font-weight: 600;
         color: var(--gray-mid);
         border-bottom: 1px solid var(--border);
+        white-space: nowrap;
       }
       th:not(:first-child) {
         text-align: right;
@@ -736,6 +751,7 @@
         padding: 14px 20px;
         font-size: 0.85rem;
         border-bottom: 1px solid var(--border);
+        white-space: nowrap;
       }
       td:not(:first-child) {
         text-align: right;
@@ -789,23 +805,220 @@
         }
       }
       @media (max-width: 600px) {
+        /* Header mobile */
+        #header {
+          padding: 0 12px;
+          height: 52px;
+        }
+        .header-title {
+          font-size: 0.95rem;
+        }
+        .header-logo-img {
+          height: 32px;
+        }
+        .header-actions {
+          gap: 4px;
+        }
+        .header-actions button {
+          width: 34px;
+          height: 34px;
+        }
+        .header-actions button svg {
+          width: 16px;
+          height: 16px;
+        }
+
+        /* App padding ajustado */
+        #app {
+          padding-top: 52px;
+        }
+        .content-wrap {
+          padding: 12px 10px;
+        }
+
+        /* Metrics */
         .metrics-grid {
           grid-template-columns: repeat(2, 1fr);
+          gap: 8px;
+        }
+        .metric-card {
+          padding: 12px 14px;
+        }
+        .metric-value {
+          font-size: 1.5rem;
+        }
+        .metric-label {
+          font-size: 0.7rem;
+        }
+
+        /* Tabs */
+        .tabs-row {
+          gap: 6px;
+          margin-bottom: 14px;
         }
         .tabs-bar {
           gap: 2px;
+          padding: 4px;
         }
         .tab-btn {
           padding: 8px 6px;
+          min-width: 36px;
         }
-        .content-wrap {
-          padding: 16px 10px;
+        .tab-btn svg {
+          width: 16px;
+          height: 16px;
+        }
+        .btn-novo-pedido {
+          padding: 0 10px;
+          border-radius: var(--r-sm);
+        }
+        .btn-novo-pedido svg {
+          width: 18px;
+          height: 18px;
+        }
+
+        /* Toolbar */
+        .toolbar {
+          gap: 8px;
+        }
+        .search-wrap {
+          min-width: 100%;
+          order: -1;
+        }
+        .filter-select,
+        .date-input {
+          flex: 1;
+          min-width: 120px;
+        }
+
+        /* Cards - REESTRUTURADO: data e botoes agora visiveis */
+        .list-card {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 12px 14px;
+        }
+        .card-icon-wrap {
+          width: 30px;
+          height: 30px;
+        }
+        .card-icon-wrap svg {
+          width: 14px;
+          height: 14px;
+        }
+        .card-info {
+          width: 100%;
+        }
+        .card-top {
+          gap: 6px;
+        }
+        .card-title {
+          font-size: 0.85rem;
+        }
+        .card-sub {
+          font-size: 0.75rem;
         }
         .card-right {
-          display: none;
+          width: 100%;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 8px;
+          padding-top: 8px;
+          border-top: 1px solid var(--border);
         }
-        .toolbar {
+        .card-date {
+          font-size: 0.75rem;
+        }
+        .action-btns {
+          gap: 8px;
+        }
+        .action-btn {
+          width: 36px;
+          height: 36px;
+        }
+        .action-btn svg {
+          width: 16px;
+          height: 16px;
+        }
+
+        /* Section header */
+        .section-header {
+          margin-top: 18px;
+          margin-bottom: 10px;
+        }
+        .section-title {
+          font-size: 0.95rem;
+        }
+
+        /* Faturamento */
+        .fat-preview {
+          padding: 16px;
+          min-height: auto;
+        }
+
+        /* Pagamentos summary */
+        .pag-summary {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 8px;
+        }
+        .pag-card {
+          padding: 12px 14px;
+        }
+        .pag-value {
+          font-size: 1.3rem;
+        }
+
+        /* Relatorios */
+        .rel-header {
+          margin-bottom: 14px;
+        }
+        .rel-title {
+          font-size: 0.95rem;
+        }
+        .rel-controls {
+          width: 100%;
+        }
+        .rel-controls .date-input {
+          flex: 1;
+        }
+
+        /* Tabelas */
+        .rel-table-wrap {
+          border-radius: var(--r-sm);
+        }
+        th,
+        td {
+          padding: 10px 14px;
+          font-size: 0.8rem;
+        }
+      }
+
+      /* ============================================
+         RESPONSIVE - MOBILE PEQUENO (max-width: 480px)
+         ============================================ */
+      @media (max-width: 480px) {
+        .metrics-grid {
+          grid-template-columns: 1fr;
+        }
+        .pag-summary {
+          grid-template-columns: 1fr;
+        }
+        .tab-btn {
+          padding: 6px 4px;
+          min-width: 32px;
+        }
+        .tab-btn svg {
+          width: 14px;
+          height: 14px;
+        }
+        .card-right {
+          flex-direction: column;
+          align-items: flex-start;
           gap: 6px;
+        }
+        .action-btns {
+          width: 100%;
+          justify-content: flex-end;
         }
       }
     </style>
