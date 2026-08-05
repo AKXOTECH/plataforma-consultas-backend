@@ -208,7 +208,7 @@ export class OrdersController {
 
     return reply
       .header('Content-Type', 'application/pdf')
-      .header('Content-Diposition', `inline; filename="${placa}.pdf"`)
+      .header('Content-Disposition', `inline; filename="${placa}.pdf"`)
       .send(stream)
   }
 }
