@@ -65,11 +65,6 @@ export async function ordersRoutes(fastify: FastifyInstance) {
     { preHandler: adminMiddleware },
     ordersController.delete
   )
-  fastify.get(
-    '/:id',
-    { preHandler: authMiddleware},
-    ordersController.getOne
-  )
   fastify.post(
     '/:id/pdf-link',
     { preHandler: authMiddleware },
