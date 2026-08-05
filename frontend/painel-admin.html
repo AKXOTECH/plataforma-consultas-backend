@@ -51,6 +51,7 @@
         background: var(--bg);
         color: var(--text);
         height: 100vh;
+        height: 100dvh;
         display: flex;
         flex-direction: column;
         overflow: hidden;
@@ -80,6 +81,24 @@
       .logo svg {
         width: 26px;
         height: 26px;
+      }
+      .hamburger-btn {
+        display: none;
+        background: transparent;
+        border: none;
+        color: var(--text);
+        padding: 4px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+      }
+      .hamburger-btn svg,
+      .hamburger-btn i {
+        width: 20px;
+        height: 20px;
+      }
+      .mobile-overlay {
+        display: none;
       }
       .header-right {
         display: flex;
@@ -129,6 +148,7 @@
         flex: 1;
         overflow: hidden;
         height: calc(100vh - 52px);
+        height: calc(100dvh - 52px);
       }
 
       /* SIDEBAR */
@@ -188,6 +208,18 @@
         border-radius: 20px;
         min-width: 18px;
         text-align: center;
+      }
+
+      .nav-item.back-link {
+        text-decoration: none;
+        border-bottom: 1px solid var(--border);
+        border-radius: 0;
+        padding-bottom: 14px;
+        margin: 0 10px 6px !important;
+        color: var(--text2);
+      }
+      .nav-item.back-link:hover {
+        color: var(--text);
       }
 
       /* MAIN */
@@ -720,24 +752,54 @@
 
       /* RESPONSIVE */
       @media (max-width: 768px) {
+        .hamburger-btn {
+          display: flex;
+        }
         aside {
-          width: 60px;
+          position: fixed;
+          top: 52px;
+          left: 0;
+          bottom: 0;
+          width: 230px;
+          max-width: 80vw;
+          z-index: 200;
+          transform: translateX(-100%);
+          transition: transform 0.2s ease;
+          box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+        }
+        aside.open {
+          transform: translateX(0);
         }
         .nav-item span:not(.nav-badge) {
-          display: none;
+          display: inline;
         }
         .nav-item {
-          justify-content: center;
-          padding: 8px;
-          margin: 1px 6px;
+          justify-content: flex-start;
+          padding: 8px 14px;
+          margin: 1px 10px;
         }
         .nav-section {
-          text-align: center;
-          padding: 12px 0 4px;
-          font-size: 9px;
+          text-align: left;
+          padding: 16px 16px 6px;
+          font-size: 10px;
+        }
+        .mobile-overlay {
+          display: block;
+          position: fixed;
+          inset: 52px 0 0 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 150;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.2s ease;
+        }
+        .mobile-overlay.open {
+          opacity: 1;
+          pointer-events: auto;
         }
         main {
           padding: 14px;
+          width: 100%;
         }
         .grid-3,
         .grid-4 {
@@ -746,14 +808,50 @@
         .pipeline {
           overflow-x: auto;
         }
+        .table-wrap {
+          max-width: 100%;
+          -webkit-overflow-scrolling: touch;
+        }
+        .endpoint-row {
+          grid-template-columns: 1fr !important;
+          gap: 6px !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        header {
+          padding: 0 14px;
+        }
+        .logo {
+          font-size: 12px;
+          gap: 6px;
+        }
+        .status-pill span {
+          display: none;
+        }
+        main {
+          padding: 10px;
+        }
+        .card-body {
+          padding: 12px;
+        }
+        .page-title {
+          font-size: 16px;
+        }
       }
     </style>
-    <base target="_blank" />
-    <base target="_blank" />
   </head>
   <body>
     <header>
       <div class="logo">
+        <button
+          class="hamburger-btn"
+          id="hamburgerBtn"
+          aria-label="Abrir menu"
+          onclick="toggleMobileMenu()"
+        >
+          <i data-lucide="menu"></i>
+        </button>
         <img
           src="logo-icon-footer.png"
           alt="LS Check"
@@ -776,7 +874,14 @@
     </header>
 
     <div class="layout">
-      <aside>
+      <aside id="sidebar">
+        <a
+          href="admin.html"
+          class="nav-item back-link"
+          style="margin-bottom: 6px"
+        >
+          <i data-lucide="arrow-left"></i><span>Voltar</span>
+        </a>
         <div class="nav-section">Menu</div>
         <div
           class="nav-item"
@@ -822,6 +927,11 @@
       </aside>
 
       <main id="mainContent"></main>
+      <div
+        class="mobile-overlay"
+        id="mobileOverlay"
+        onclick="toggleMobileMenu()"
+      ></div>
     </div>
 
     <div id="toast"></div>
@@ -887,7 +997,17 @@
 
       function logout() {
         localStorage.clear();
+        closeMobileMenu();
         location.href = "login.html";
+      }
+
+      function toggleMobileMenu() {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("mobileOverlay").classList.toggle("open");
+      }
+      function closeMobileMenu() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("mobileOverlay").classList.remove("open");
       }
 
       function showSection(name) {
@@ -905,6 +1025,7 @@
         };
         if (sections[name]) sections[name]();
         lucide.createIcons();
+        closeMobileMenu();
       }
 
       /* ─── DASHBOARD ─── */
@@ -1104,7 +1225,7 @@
             .length || 0;
         renderPipeline(o.status);
         const pdfSection = o.pdfPath
-          ? `<div style="margin-bottom:12px"><a href="${API}/api/orders/${o._id}/pdf?token=${token}" target="_blank" class="pdf-link"><i data-lucide="file-text" style="width:14px;height:14px"></i> Abrir PDF</a></div>`
+          ? `<div style="margin-bottom:12px"><a href="${API}${o.pdfPath}" target="_blank" class="pdf-link"><i data-lucide="file-text" style="width:14px;height:14px"></i> Abrir PDF</a></div>`
           : "";
         const resultsSection = o.results
           ? `
@@ -1432,7 +1553,7 @@
           const configs = data.data.configs;
           document.getElementById("listaEndpoints").innerHTML =
             `<div class="card"><div class="card-header"><h3>${configs.length} endpoints</h3></div><div class="card-body" style="display:grid;gap:8px">
-    ${configs.map((c) => `<div style="display:grid;grid-template-columns:160px 1fr auto;gap:10px;align-items:center;padding:8px 10px;background:#0B0F19;border:1px solid var(--border);border-radius:6px"><span style="font-family:var(--mono);font-size:11px;color:var(--text2)">${c.key}</span><input id="ep_${c.key}" value="${c.path}" style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-family:var(--mono);font-size:11px;width:100%;outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"><button class="btn btn-primary btn-sm" onclick="salvarEndpoint('${c.key}')">Salvar</button></div>`).join("")}
+    ${configs.map((c) => `<div class="endpoint-row" style="display:grid;grid-template-columns:160px 1fr auto;gap:10px;align-items:center;padding:8px 10px;background:#0B0F19;border:1px solid var(--border);border-radius:6px"><span style="font-family:var(--mono);font-size:11px;color:var(--text2)">${c.key}</span><input id="ep_${c.key}" value="${c.path}" style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-family:var(--mono);font-size:11px;width:100%;outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"><button class="btn btn-primary btn-sm" onclick="salvarEndpoint('${c.key}')">Salvar</button></div>`).join("")}
     </div></div>`;
         } catch (err) {
           document.getElementById("listaEndpoints").innerHTML =

@@ -62,12 +62,15 @@
       body {
         font-family: var(--font);
         min-height: 100vh;
+        min-height: 100dvh;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 12px 16px;
         position: relative;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         background-color: #020617;
       }
 
@@ -170,18 +173,24 @@
         align-items: center;
         justify-content: center;
         text-decoration: none;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        transition:
+          background 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+          border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+          color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 20;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0.15);
       }
-      .back-home:hover {
+      .back-home:hover,
+      .back-home:active {
         background: rgba(255, 255, 255, 0.1);
         border-color: rgba(255, 255, 255, 0.12);
         color: var(--white);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       }
       .back-home svg {
         width: 15px;
         height: 15px;
+        pointer-events: none;
       }
 
       /* ── LOGO ── */
@@ -557,6 +566,16 @@
           grid-template-columns: 1fr;
           gap: 8px;
         }
+        .back-home {
+          top: 12px;
+          left: 12px;
+          width: 44px;
+          height: 44px;
+        }
+        .back-home svg {
+          width: 20px;
+          height: 20px;
+        }
       }
 
       /* ── FLOATING PARTICLES (decorative, smaller) ── */
@@ -585,8 +604,6 @@
         }
       }
     </style>
-    <base target="_blank" />
-    <base target="_blank" />
   </head>
   <body>
     <!-- Subtle grain overlay -->
