@@ -14,6 +14,8 @@ import { processOrder } from './orders.processor'
 import { logger } from '../../shared/logger'
 import { User } from '@models/User.model'
 import path from 'node:path'
+import { PdfToken } from '@models/PdfToken.model'
+import crypto from 'node:crypto'
 
 export class OrdersService {
   async createOrder(userId: string, input: CreateOrderInput) {
@@ -235,6 +237,69 @@ export class OrdersService {
 
     if (!order.pdfPath) {
       throw AppError.notFound('PDF não encontrado para este pedido')
+    }
+
+    const absolutePath = path.join(
+      process.cwd(),
+      'storage',
+      'reports',
+      order.pdfPath.replace('/reports/', '')
+    )
+
+    return { absolutePath, placa: order.placa }
+  }
+
+  async generatePdfLink(orderId: string, userId: string, userRole: string) {
+    const order = await this.getById(orderId)
+
+    if (order.userId.toString() !== userId && userRole !== 'admin') {
+      throw AppError.forbidden('Você não tem permissão para acessar este relatório')
+    }
+
+    if (order.status !== 'completed') {
+      throw AppError.conflict('O relatório ainda não está disponível')
+    }
+
+    if (!order.pdfPath) {
+      throw AppError.notFound('PDF não encontrado para este pedido')
+    }
+
+    // Remove token anterior, caso exista
+    await PdfToken.deleteMany({ orderId, userId })
+
+    // Gera token aleátorio seguro
+    const token = crypto.randomBytes(32).toString('hex')
+
+    //Expira em 7d
+
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 7)
+
+    await PdfToken.create({
+      orderId,
+      userId,
+      token,
+      expiresAt,
+    })
+
+    return { token, expiresAt }
+  }
+
+  async getPdfByToken( orderId: string, token: string) {
+    const pdfToken = await PdfToken.findOne({
+      orderId,
+      token,
+      expiresAt: { $gt: new Date() },
+    })
+
+    if (!pdfToken) {
+      throw AppError.unauthorized('Link inválido ou expirado. Solicite um novo link.')
+    }
+
+    const order = await this.getById(orderId)
+
+    if (!order.pdfPath) {
+      throw AppError.notFound('PDF não encontrado')
     }
 
     const absolutePath = path.join(

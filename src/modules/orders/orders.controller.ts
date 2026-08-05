@@ -116,33 +116,6 @@ export class OrdersController {
     });
   }
 
-  async getPdf(request: FastifyRequest, reply: FastifyReply) {
-    const { id } = request.params as { id: string }
-
-    const queryToken = (request.query as Record<string, string>).token
-    if (queryToken && !request.headers.authorization) {
-      request.headers.authorization = `Bearer ${queryToken}`
-    }
-
-    await request.jwtVerify()
-
-    const { absolutePath, placa } = await ordersService.getPdfPath(
-      id,
-      request.user.sub,
-      request.user.role
-    )
-
-    if (!fs.existsSync(absolutePath)) {
-      throw AppError.notFound('Arquivo PDF não encontrado no servidor')
-    }
-
-    const stream = fs.createReadStream(absolutePath)
-
-    return reply
-      .header('Content-type', 'application/pdf')
-      .header('Content-Disposition', `inline; filename="relatorio-${placa}.pdf"`)
-      .send(stream)
-  }
 
   async runQueries(request: FastifyRequest, reply: FastifyReply) {
     const { id } = request.params as { id: string };
@@ -195,6 +168,48 @@ export class OrdersController {
     const { id } = request.params as { id: string };
     await ordersService.delete(id);
     return reply.status(200).send({ success: true });
+  }
+
+  async generatePdfLink(request: FastifyRequest, reply: FastifyReply) {
+    const { id } = request.params as { id: string }
+
+    const { token, expiresAt } = await ordersService.generatePdfLink(
+      id,
+      request.user.sub,
+      request.user.role
+    )
+
+    const pdfUrl = `${process.env.PUBLIC_URL}/api/orders/${id}/pdf?token=${token}`
+
+    return reply.status(200).send({
+      success: true,
+      data: {
+        url: pdfUrl,
+        expiresAt,
+      },
+    })
+  }
+
+  async getPdf(request: FastifyRequest, reply: FastifyReply) {
+    const { id } = request.params as { id: string }
+    const { token } = request.query as { token: string }
+
+    if (!token) {
+      throw AppError.unauthorized('Token de acesso não informado')
+    }
+
+    const { absolutePath, placa } = await ordersService.getPdfByToken(id, token)
+
+    if (!fs.existsSync(absolutePath)) {
+      throw AppError.notFound('Arquivo PDF não encontrado no servidor')
+    }
+
+    const stream = fs.createReadStream(absolutePath)
+
+    return reply
+      .header('Content-Type', 'application/pdf')
+      .header('Content-Diposition', `inline; filename="${placa}.pdf"`)
+      .send(stream)
   }
 }
 
