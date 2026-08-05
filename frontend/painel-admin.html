@@ -984,6 +984,19 @@
         return data;
       }
 
+      async function abrirPdf(orderId) {
+        try {
+          log('Gerando link de acesso ao PDF...', 'info')
+          const data = await api('POST', `/api/orders/${orderId}/pdf-link`, {})
+          const url = data.data.url
+          window.open(url, '_blank')
+          toast('PDF aberto em nova aba!', success)
+        } catch (err) {
+          toast(err.message, 'error')
+          log(`Erro ao gerar link do PDF: ${err.message}`, )
+        }
+      }
+
       async function checkServer() {
         try {
           await fetch(API + "/health");
@@ -1225,7 +1238,7 @@
             .length || 0;
         renderPipeline(o.status);
         const pdfSection = o.pdfPath
-          ? `<div style="margin-bottom:12px"><button onclick="abrirPdf('${o._id}')" class="pdf-link" style"cursor:pointer;border:none;background:none;padding:0;display:inline-flex;align-items:center;gap:6px"><i data-lucide="file-text" style="width:14px;height:14px"></i> Abrir PDF</a></div>`
+          ? `<div style="margin-bottom:12px"><button onclick="abrirPdf('${o._id}')" class="pdf-link" style="cursor:pointer;border:none;background:none;padding:0;display:inline-flex;align-items:center;gap:6px"><i data-lucide="file-text" style="width:14px;height:14px"></i> Abrir PDF</button></div>`
           : "";
         const resultsSection = o.results
           ? `
