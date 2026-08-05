@@ -1225,7 +1225,7 @@
             .length || 0;
         renderPipeline(o.status);
         const pdfSection = o.pdfPath
-          ? `<div style="margin-bottom:12px"><a href="${API}${o.pdfPath}" target="_blank" class="pdf-link"><i data-lucide="file-text" style="width:14px;height:14px"></i> Abrir PDF</a></div>`
+          ? `<div style="margin-bottom:12px"><button onclick="abrirPdf('${o._id}')" class="pdf-link" style"cursor:pointer;border:none;background:none;padding:0;display:inline-flex;align-items:center;gap:6px"><i data-lucide="file-text" style="width:14px;height:14px"></i> Abrir PDF</a></div>`
           : "";
         const resultsSection = o.results
           ? `

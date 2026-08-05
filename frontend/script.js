@@ -2,6 +2,9 @@
    LS CHECK — script.js
    ============================================ */
 
+const { log } = require("node:console");
+const { success } = require("zod");
+
 document.addEventListener("DOMContentLoaded", () => {
   /* ---- Navbar scroll shadow ---- */
   const navbar = document.getElementById("navbar");
@@ -84,6 +87,19 @@ document.addEventListener("DOMContentLoaded", () => {
       window.open(url, "_blank");
     });
   });
+
+  async function abrirPdf(orderId) {
+    try {
+      log('Gerando link de acesso ao PDF...', 'info')
+      const data = await api('POST', `/api/orders/${orderId}/pdf-link`, {})
+      const url = data.data.url
+      window.open(url, '_blank')
+      toast('PDF aberto em nova aba!', success)
+    } catch (err) {
+      toast(err.message, 'error')
+      log(`Erro ao gerar link do PDF: ${err.message}`, 'error')
+    }
+  }
 
   /* ---- Active nav link on scroll ---- */
   const sections = document.querySelectorAll("section[id]");

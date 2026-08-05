@@ -6,8 +6,7 @@ export async function ordersRoutes(fastify: FastifyInstance) {
   // ─── Rotas (clientes) 
   fastify.post('/', { preHandler: authMiddleware }, ordersController.create)
   fastify.get('/mine', { preHandler: authMiddleware }, ordersController.listMine)
-  fastify.get('/:id', { preHandler: authMiddleware }, ordersController.getOne)
-
+  
   // ─── Rotas administrativas 
   fastify.get(
     '/admin/pending-review',
@@ -73,5 +72,10 @@ export async function ordersRoutes(fastify: FastifyInstance) {
   fastify.get(
     '/:id/pdf',
     ordersController.getPdf
+  )
+  fastify.get(
+    '/:id', 
+    { preHandler: authMiddleware },
+    ordersController.getOne
   )
 }
