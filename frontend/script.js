@@ -2,8 +2,6 @@
    LS CHECK — script.js
    ============================================ */
 
-const { log } = require("node:console");
-const { success } = require("zod");
 
 document.addEventListener("DOMContentLoaded", () => {
   /* ---- Navbar scroll shadow ---- */
